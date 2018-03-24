@@ -1,2 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources></resources>
+<resources>
+    <string name="app_name">BookShelf</string>
+    <string name="nome_utente">Nome utente</string>
+    <string name="email">Email</string>
+    <string name="biografia">Biografia</string>
+</resources>

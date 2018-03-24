@@ -1,9 +1,55 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.afec.bookshelf.ShowUser">
+    tools:context="com.afec.bookshelf.EditUser"
+    android:orientation="vertical">
 
-</android.support.constraint.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/immagineUtente"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="30dp"
+        app:srcCompat="@drawable/imgprofilo" />
+
+    <TextView
+        android:id="@+id/nomeUtente"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:text="Nomeutente"
+        android:textAlignment="center" />
+
+    <TextView
+        android:id="@+id/emailUtente"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:text="Email"
+        android:textAlignment="center" />
+
+    <RatingBar
+        android:id="@+id/ratingUser"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp" />
+
+    <TextView
+        android:id="@+id/bioUtente"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:text="Bio"
+        android:textAlignment="center" />
+</LinearLayout>
+
