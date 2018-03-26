@@ -8,13 +8,22 @@
     tools:context="com.afec.bookshelf.EditUser">
 
 
-    <ImageView
-        android:id="@+id/editImmagineUtente"
+    <android.support.v7.widget.CardView
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:layout_gravity="center_horizontal"
+        android:layout_gravity="center"
         android:layout_margin="30dp"
-        android:background="@drawable/imgprofilo" />
+        android:shape="ring"
+        android:innerRadius="10dp"
+        app:cardCornerRadius="40dp">
+
+        <ImageView
+            android:id="@+id/editImmagineUtente"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:background="@drawable/imgprofilo" />
+    </android.support.v7.widget.CardView>
 
     <EditText
         android:id="@+id/editNomeUtente"
@@ -49,6 +58,13 @@
         android:hint="@string/biografia"
         android:inputType="textMultiLine" />
 
+    <Button
+        android:id="@+id/button_edit_confirm"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_margin="60dp"
+        android:text="Confirm changes" />
 
 
 </LinearLayout>

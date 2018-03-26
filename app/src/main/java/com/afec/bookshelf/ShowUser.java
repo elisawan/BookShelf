@@ -3,6 +3,8 @@ package com.afec.bookshelf;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
+import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -15,6 +17,8 @@ public class ShowUser extends AppCompatActivity {
 
     ImageView immagineUtente;
     TextView nomeUtente, emailUtente, bioUtente;
+    RoundedBitmapDrawable dr;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
