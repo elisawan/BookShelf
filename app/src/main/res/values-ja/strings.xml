@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">BookShelf</string>
+    <string name="email">メール</string>
+    <string name="biografia">伝記</string>
+    <string name="nome_utente">ユーザー名</string>
+</resources>

@@ -8,6 +8,15 @@
     android:orientation="vertical">
 
 
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/show_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="?attr/colorPrimary"
+        android:elevation="4dp"
+        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+
     <ImageView
         android:id="@+id/immagineUtente"
         android:layout_width="150dp"
@@ -23,8 +32,8 @@
         android:layout_marginBottom="15dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:text="Nomeutente"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:text="@string/nome_utente" />
 
     <TextView
         android:id="@+id/emailUtente"
@@ -33,7 +42,7 @@
         android:layout_marginBottom="15dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:text="Email"
+        android:text="@string/email"
         android:textAlignment="center" />
 
     <RatingBar
@@ -49,7 +58,7 @@
         android:layout_height="wrap_content"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:text="Bio"
+        android:text="@string/biografia"
         android:textAlignment="center" />
 </LinearLayout>
 
