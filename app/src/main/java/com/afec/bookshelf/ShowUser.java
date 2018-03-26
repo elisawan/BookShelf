@@ -1,6 +1,7 @@
 package com.afec.bookshelf;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -61,10 +62,15 @@ public class ShowUser extends AppCompatActivity {
                 // User chose the "Settings" item, show the app settings UI...
                 return true;
 
-            case R.id.action_favorite:
+            case R.id.action_edit:
+                Intent intent = new Intent(getBaseContext(), EditUser.class);
+                startActivity(intent);
+                return true;
+
+            /*case R.id.action_favorite:
                 // User chose the "Favorite" action, mark the current item
                 // as a favorite...
-                return true;
+                return true;*/
 
             default:
                 // If we got here, the user's action was not recognized.

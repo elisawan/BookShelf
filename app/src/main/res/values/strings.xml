@@ -3,4 +3,6 @@
     <string name="nome_utente">Username</string>
     <string name="email">Email</string>
     <string name="biografia">Biography</string>
+    <string name="edit_profile">Edit Profile</string>
+    <string name="settings">Settings</string>
 </resources>
