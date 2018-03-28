@@ -1,8 +1,11 @@
 package com.afec.bookshelf;
 
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
@@ -10,15 +13,19 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.squareup.picasso.Picasso;
 
 public class ShowUser extends AppCompatActivity {
 
     ImageView immagineUtente;
     TextView nomeUtente, emailUtente, bioUtente;
     RoundedBitmapDrawable dr;
-
+    Dialog builder;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +60,16 @@ public class ShowUser extends AppCompatActivity {
         else
             bioUtente.setText("-");
 
+        //percepisce il tap lungo
+        immagineUtente.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View view) {
+                publicationQuickView();
+                return true;
+            }
+            
 
-
+        });
 
 
     }
@@ -90,5 +105,24 @@ public class ShowUser extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.show_user_menu, menu);
         return true;
     }
+
+
+    public void publicationQuickView(){
+        View view = getLayoutInflater().inflate( R.layout.inflater_immagine_profilo, null);
+
+        ImageView profileImage = (ImageView) view.findViewById(R.id.inflated_imageview);
+
+
+
+        Picasso.with(this).load(R.drawable.imgprofilo).noPlaceholder().into(profileImage);
+
+        builder = new Dialog(this);
+        builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        builder.getWindow().setBackgroundDrawable(
+                new ColorDrawable(Color.TRANSPARENT));
+        builder.setContentView(view);
+        builder.show();
+    }
+
 
 }
