@@ -41,8 +41,9 @@
         android:layout_marginBottom="15dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
+        android:text="@string/nome_utente"
         android:textAlignment="center"
-        android:text="@string/nome_utente" />
+        android:textColor="@android:color/black" />
 
     <TextView
         android:id="@+id/emailUtente"
@@ -52,7 +53,8 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:text="@string/email"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textColor="@android:color/black" />
 
     <RatingBar
         android:id="@+id/ratingUser"
@@ -67,6 +69,68 @@
         android:numStars="5"
         android:rating="2" />
 
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:orientation="horizontal"
+        android:layout_marginBottom="15dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/editbox_background_normal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/shared_book_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:text="97"
+                android:textColor="@android:color/black"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/shared_book"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:text="Shared books" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@android:drawable/editbox_background_normal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/taken_book_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:text="203"
+                android:textColor="@android:color/black"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/taken_book"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:text="Taken books" />
+        </LinearLayout>
+    </LinearLayout>
+
     <TextView
         android:id="@+id/bioUtente"
         android:layout_width="match_parent"
@@ -75,6 +139,9 @@
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:text="@string/biografia"
-        android:textAlignment="center" />
+        android:textAlignment="center"
+        android:textColor="@android:color/black" />
+
+
 </LinearLayout>
 
