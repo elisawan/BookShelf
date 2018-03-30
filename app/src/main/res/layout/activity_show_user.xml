@@ -22,9 +22,9 @@
         android:layout_height="150dp"
         android:layout_gravity="center"
         android:layout_margin="30dp"
+        android:innerRadius="0dp"
         android:shape="ring"
-        android:innerRadius="10dp"
-        app:cardCornerRadius="40dp">
+        app:cardCornerRadius="75dp">
 
         <ImageView
             android:id="@+id/immagineUtente"
@@ -56,19 +56,24 @@
 
     <RatingBar
         android:id="@+id/ratingUser"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="15dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:clickable="false" />
+        android:clickable="false"
+        android:isIndicator="true"
+        android:numStars="5"
+        android:rating="2" />
 
     <TextView
         android:id="@+id/bioUtente"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="15dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginTop="50dp"
         android:text="@string/biografia"
         android:textAlignment="center" />
 </LinearLayout>

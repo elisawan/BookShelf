@@ -38,7 +38,7 @@ public class EditUser extends AppCompatActivity {
         nomeUtente = (EditText) findViewById(R.id.editNomeUtente);
         emailUtente = (EditText) findViewById(R.id.editEmailUtente);
         bioUtente = (EditText) findViewById(R.id.editBioUtente);
-        b = (Button) findViewById(R.id.editUserSubmitButton);
+        b = (Button) findViewById(R.id.button_edit_confirm);
         sharedPref = this.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
 
         String nome = sharedPref.getString("nomeUtente", null);
