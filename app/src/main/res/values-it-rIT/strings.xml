@@ -4,4 +4,5 @@
     <string name="nome_utente">Nome utente</string>
     <string name="email">Email</string>
     <string name="biografia">Biografia</string>
+    <string name="user_profile_image">Immagine utente</string>
 </resources>

@@ -5,4 +5,5 @@
     <string name="biografia">Biography</string>
     <string name="edit_profile">Edit Profile</string>
     <string name="settings">Settings</string>
+    <string name="user_profile_image">User profile image</string>
 </resources>

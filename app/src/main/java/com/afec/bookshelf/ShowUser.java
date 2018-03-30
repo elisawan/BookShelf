@@ -26,6 +26,7 @@ public class ShowUser extends AppCompatActivity {
     TextView nomeUtente, emailUtente, bioUtente;
     RoundedBitmapDrawable dr;
     Dialog builder;
+    SharedPreferences sharedPref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,7 +43,7 @@ public class ShowUser extends AppCompatActivity {
         emailUtente = (TextView) findViewById(R.id.emailUtente);
         bioUtente = (TextView) findViewById(R.id.bioUtente);
 
-        SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        sharedPref = this.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
         String nome = sharedPref.getString("nomeUtente", null);
         String email = sharedPref.getString("emailUtente", null);
         String bio = sharedPref.getString("bioUtente", null);
@@ -67,7 +68,7 @@ public class ShowUser extends AppCompatActivity {
                 publicationQuickView();
                 return true;
             }
-            
+
 
         });
 
