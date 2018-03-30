@@ -36,8 +36,6 @@ public class ShowUser extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.show_toolbar);
         setSupportActionBar(myToolbar);
 
-
-
         immagineUtente = (ImageView) findViewById(R.id.immagineUtente);
         nomeUtente = (TextView) findViewById(R.id.nomeUtente);
         emailUtente = (TextView) findViewById(R.id.emailUtente);
@@ -68,11 +66,7 @@ public class ShowUser extends AppCompatActivity {
                 publicationQuickView();
                 return true;
             }
-
-
         });
-
-
     }
 
     @Override
@@ -87,16 +81,10 @@ public class ShowUser extends AppCompatActivity {
                 startActivity(intent);
                 return true;
 
-            /*case R.id.action_favorite:
-                // User chose the "Favorite" action, mark the current item
-                // as a favorite...
-                return true;*/
-
             default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);
-
         }
     }
 
@@ -107,23 +95,14 @@ public class ShowUser extends AppCompatActivity {
         return true;
     }
 
-
     public void publicationQuickView(){
         View view = getLayoutInflater().inflate( R.layout.inflater_immagine_profilo, null);
-
         ImageView profileImage = (ImageView) view.findViewById(R.id.inflated_imageview);
-
-
-
         Picasso.with(this).load(R.drawable.imgprofilo).noPlaceholder().into(profileImage);
-
         builder = new Dialog(this);
         builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
-        builder.getWindow().setBackgroundDrawable(
-                new ColorDrawable(Color.TRANSPARENT));
+        builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         builder.setContentView(view);
         builder.show();
     }
-
-
 }

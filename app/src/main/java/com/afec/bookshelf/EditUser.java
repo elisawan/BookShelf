@@ -8,8 +8,10 @@ import android.net.Uri;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +35,9 @@ public class EditUser extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit_user);
+
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.show_toolbar);
+        setSupportActionBar(myToolbar);
 
         immagineUtente = (ImageView) findViewById(R.id.editImmagineUtente);
         nomeUtente = (EditText) findViewById(R.id.editNomeUtente);
@@ -92,7 +97,31 @@ public class EditUser extends AppCompatActivity {
         });
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_settings:
+                // User chose the "Settings" item, show the app settings UI...
+                return true;
 
+            case R.id.action_show:
+                Intent intent = new Intent(getBaseContext(), ShowUser.class);
+                startActivity(intent);
+                return true;
+
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.edit_user_menu, menu);
+        return true;
+    }
 
 
 }
