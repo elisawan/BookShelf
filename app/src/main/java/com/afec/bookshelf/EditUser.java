@@ -1,10 +1,17 @@
 package com.afec.bookshelf;
 
+import android.annotation.SuppressLint;
+import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Environment;
+import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -21,15 +28,24 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStream;
+
 public class EditUser extends AppCompatActivity {
 
     ImageView immagineUtente;
     EditText nomeUtente, emailUtente, bioUtente;
     AlertDialog.Builder alert;
-    final CharSequence[] choice = {"Choose from Gallery","Capture a photo"};
-    int from;
+    //final CharSequence[] choice = {"Choose from Gallery","Capture a photo"};
+    //int from;
     Button b;
     SharedPreferences sharedPref;
+    public static final int PICK_IMAGE = 1;
+    public static final int SNAP_PIC = 2;
+    private Uri mUri;
+    private Bitmap mPhoto;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +93,17 @@ public class EditUser extends AppCompatActivity {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         Toast.makeText(EditUser.this,"You Clicked : " + menuItem.getTitle(),Toast.LENGTH_SHORT).show();
-
+                        if(menuItem.getTitle().equals(getResources().getString(R.string.camera))){
+                            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                                startActivityForResult(takePictureIntent, SNAP_PIC);
+                            }
+                        }else{
+                            Intent intent = new Intent();
+                            intent.setType("image/*");
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
+                            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+                        }
                         return true;
 
                     }
@@ -123,5 +149,34 @@ public class EditUser extends AppCompatActivity {
         return true;
     }
 
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data)
+    {
+        switch (requestCode) {
+            case PICK_IMAGE:
+                if (resultCode == Activity.RESULT_OK) {
+                    if (data == null) {
+                        //Display an error
+                        return;
+                    }
+                    try {
+                        InputStream inputStream = getContentResolver().openInputStream(data.getData());
+                        mPhoto = BitmapFactory.decodeStream(inputStream);
+                        ((ImageView)findViewById(R.id.editImmagineUtente)).setImageBitmap(mPhoto);
+                    } catch (FileNotFoundException e) {
+                        Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }
+                break;
+            case SNAP_PIC:
+                if (resultCode == RESULT_OK) {
+                    Bundle extras = data.getExtras();
+                    Bitmap imageBitmap = (Bitmap) extras.get("data");
+                    immagineUtente.setImageBitmap(imageBitmap);
+                }
 
+
+                break;
+        }
+    }
 }

@@ -66,11 +66,7 @@ public class ShowUser extends AppCompatActivity {
                 publicationQuickView();
                 return true;
             }
-<<<<<<< Updated upstream
-=======
 
-
->>>>>>> Stashed changes
         });
     }
 

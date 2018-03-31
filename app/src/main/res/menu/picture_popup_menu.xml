@@ -2,9 +2,9 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:id="@+id/apri_galleria"
-        android:title="Gallery"/>
+        android:title="@string/gallery"/>
 
     <item
         android:id="@+id/apri_fotocamera"
-        android:title="Camera"/>
+        android:title="@string/camera"/>
 </menu>
