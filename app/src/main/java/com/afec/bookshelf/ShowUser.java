@@ -66,7 +66,10 @@ public class ShowUser extends AppCompatActivity {
                 publicationQuickView();
                 return true;
             }
+<<<<<<< HEAD
 
+=======
+>>>>>>> master
         });
     }
 
