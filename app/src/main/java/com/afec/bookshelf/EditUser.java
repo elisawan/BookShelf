@@ -15,9 +15,14 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.BaseAdapter;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
@@ -25,11 +30,12 @@ public class EditUser extends AppCompatActivity {
 
     ImageView immagineUtente;
     EditText nomeUtente, emailUtente, bioUtente;
+    Button b;
     AlertDialog.Builder alert;
     final CharSequence[] choice = {"Choose from Gallery","Capture a photo"};
     int from;
-    Button b;
     SharedPreferences sharedPref;
+    private String[] contact_methods = {"WhatsApp","E-mail","Telegram","Instant Messaging"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,14 +56,8 @@ public class EditUser extends AppCompatActivity {
         String email = sharedPref.getString("emailUtente", null);
         String bio = sharedPref.getString("bioUtente", null);
 
-
-        if(nome != null) {
+        if(nome != null)
             nomeUtente.setText(nome);
-            Log.d("nomeUtente", nome);
-        }
-        else{
-            Log.d("nomeUtente", "nullo");
-        }
         if(email != null)
             emailUtente.setText(email);
         if(bio != null)
@@ -77,14 +77,13 @@ public class EditUser extends AppCompatActivity {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         Toast.makeText(EditUser.this,"You Clicked : " + menuItem.getTitle(),Toast.LENGTH_SHORT).show();
-
                         return true;
-
                     }
                 });
                 popupMenu.show();
             }
         });
+
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -93,6 +92,8 @@ public class EditUser extends AppCompatActivity {
                 editor.putString("emailUtente", String.valueOf(emailUtente.getText()));
                 editor.putString("bioUtente", String.valueOf(bioUtente.getText()));
                 editor.commit();
+                Intent intent= new Intent(getApplicationContext(),ShowUser.class);
+                startActivity(intent);
             }
         });
     }
@@ -122,6 +123,4 @@ public class EditUser extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.edit_user_menu, menu);
         return true;
     }
-
-
 }
