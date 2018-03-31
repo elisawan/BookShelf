@@ -43,22 +43,11 @@ public class EditUser extends AppCompatActivity {
     EditText nomeUtente, emailUtente, bioUtente;
     Button b;
     AlertDialog.Builder alert;
-<<<<<<< HEAD
-    //final CharSequence[] choice = {"Choose from Gallery","Capture a photo"};
-    //int from;
-    Button b;
     SharedPreferences sharedPref;
     public static final int PICK_IMAGE = 1;
     public static final int SNAP_PIC = 2;
     private Uri mUri;
     private Bitmap mPhoto;
-
-=======
-    final CharSequence[] choice = {"Choose from Gallery","Capture a photo"};
-    int from;
-    SharedPreferences sharedPref;
-    private String[] contact_methods = {"WhatsApp","E-mail","Telegram","Instant Messaging"};
->>>>>>> master
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -100,7 +89,6 @@ public class EditUser extends AppCompatActivity {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         Toast.makeText(EditUser.this,"You Clicked : " + menuItem.getTitle(),Toast.LENGTH_SHORT).show();
-<<<<<<< HEAD
                         if(menuItem.getTitle().equals(getResources().getString(R.string.camera))){
                             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                             if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
@@ -112,8 +100,6 @@ public class EditUser extends AppCompatActivity {
                             intent.setAction(Intent.ACTION_GET_CONTENT);
                             startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
                         }
-=======
->>>>>>> master
                         return true;
                     }
                 });
@@ -160,7 +146,6 @@ public class EditUser extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.edit_user_menu, menu);
         return true;
     }
-<<<<<<< HEAD
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
@@ -187,11 +172,7 @@ public class EditUser extends AppCompatActivity {
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
                     immagineUtente.setImageBitmap(imageBitmap);
                 }
-
-
                 break;
         }
     }
-=======
->>>>>>> master
 }
