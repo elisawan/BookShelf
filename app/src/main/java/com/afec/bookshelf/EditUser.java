@@ -42,6 +42,7 @@ public class EditUser extends AppCompatActivity {
     ImageView immagineUtente;
     EditText nomeUtente, emailUtente, bioUtente;
     Button b;
+    CheckBox email_cb, whatsapp_cb, call_cb;
     AlertDialog.Builder alert;
     SharedPreferences sharedPref;
     public static final int PICK_IMAGE = 1;
@@ -62,18 +63,17 @@ public class EditUser extends AppCompatActivity {
         emailUtente = (EditText) findViewById(R.id.editEmailUtente);
         bioUtente = (EditText) findViewById(R.id.editBioUtente);
         b = (Button) findViewById(R.id.button_edit_confirm);
+        email_cb = (CheckBox) findViewById(R.id.email_cb);
+        whatsapp_cb = (CheckBox) findViewById(R.id.whatsapp_cb);
+        call_cb = (CheckBox) findViewById(R.id.call_cb);
         sharedPref = this.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
 
-        String nome = sharedPref.getString("nomeUtente", null);
-        String email = sharedPref.getString("emailUtente", null);
-        String bio = sharedPref.getString("bioUtente", null);
-
-        if(nome != null)
-            nomeUtente.setText(nome);
-        if(email != null)
-            emailUtente.setText(email);
-        if(bio != null)
-            bioUtente.setText(bio);
+        nomeUtente.setText(sharedPref.getString("nomeUtente", null));
+        emailUtente.setText(sharedPref.getString("emailUtente", null));
+        bioUtente.setText(sharedPref.getString("bioUtente", null));
+        email_cb.setChecked(sharedPref.getBoolean("contact_email",false));
+        whatsapp_cb.setChecked(sharedPref.getBoolean("contact_whatsapp",false));
+        call_cb.setChecked(sharedPref.getBoolean("contact_call",false));
 
         immagineUtente.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -114,6 +114,9 @@ public class EditUser extends AppCompatActivity {
                 editor.putString("nomeUtente", String.valueOf(nomeUtente.getText()));
                 editor.putString("emailUtente", String.valueOf(emailUtente.getText()));
                 editor.putString("bioUtente", String.valueOf(bioUtente.getText()));
+                editor.putBoolean("contact_email", email_cb.isChecked());
+                editor.putBoolean("contact_whatsapp", whatsapp_cb.isChecked());
+                editor.putBoolean("contact_call", call_cb.isChecked());
                 editor.commit();
                 Intent intent= new Intent(getApplicationContext(),ShowUser.class);
                 startActivity(intent);
