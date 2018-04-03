@@ -159,7 +159,15 @@ public class EditUser extends AppCompatActivity {
                     }
                     try {
                         InputStream inputStream = getContentResolver().openInputStream(data.getData());
+
+                        //Saving image uri in shared preferences
+                        Uri CurrImageUri = data.getData(); //percorso dell'immagine
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putString(CurrImageUri.toString(), "imageUri");
+                        editor.commit();
+
                         mPhoto = BitmapFactory.decodeStream(inputStream);
+                        MediaStore.Images.Media.insertImage(getContentResolver(), mPhoto, "newProfileImage" , "Profile image for Bookshelf");
                         ((ImageView)findViewById(R.id.editImmagineUtente)).setImageBitmap(mPhoto);
                     } catch (FileNotFoundException e) {
                         Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -169,7 +177,15 @@ public class EditUser extends AppCompatActivity {
             case SNAP_PIC:
                 if (resultCode == RESULT_OK) {
                     Bundle extras = data.getExtras();
+
+                    //Saving image uri in shared preferences
+                    Uri CurrImageUri = data.getData(); //percorso dell'immagine
+                    SharedPreferences.Editor editor = sharedPref.edit();
+                    editor.putString(CurrImageUri.toString(), "imageUri");
+                    editor.commit();
+
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
+                    MediaStore.Images.Media.insertImage(getContentResolver(), imageBitmap, "newProfileImage" , "Profile image for Bookshelf");
                     immagineUtente.setImageBitmap(imageBitmap);
                 }
                 break;
