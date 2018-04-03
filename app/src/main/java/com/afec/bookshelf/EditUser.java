@@ -78,10 +78,10 @@ public class EditUser extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                Intent gallery = new Intent(Intent.ACTION_GET_CONTENT);
+                Intent gallery = new Intent(Intent.ACTION_PICK);
                 gallery.setType("image/*");
-                Intent chooser = Intent.createChooser(camera,"Profile image");
-                chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{gallery});
+                Intent chooser = Intent.createChooser(gallery,"Profile image");
+                chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{camera});
                 if(chooser.resolveActivity(getPackageManager())!=null){
                     startActivityForResult(chooser,1);
                 }
@@ -100,7 +100,7 @@ public class EditUser extends AppCompatActivity {
                 editor.putBoolean("contact_call", call_cb.isChecked());
                 editor.commit();
                 Intent intent= new Intent(getApplicationContext(),ShowUser.class);
-                startActivity(intent);
+                startActivityForResult(intent,1);
             }
         });
     }
@@ -136,7 +136,16 @@ public class EditUser extends AppCompatActivity {
     {
         switch (requestCode) {
             case 1:
-                //TODO
+                if (resultCode == RESULT_OK) {
+                    if(data.hasExtra("data")){
+                        Log.d("action","camera selected");
+                        immagineUtente.setImageBitmap((Bitmap) data.getExtras().get("data"));
+                    }else{
+                        Log.d("action","gallery selected");
+                        Uri uri = data.getData();
+
+                    }
+                }
             default:
                 //TODO
         }
