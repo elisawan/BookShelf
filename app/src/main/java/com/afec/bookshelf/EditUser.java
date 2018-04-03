@@ -28,6 +28,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
@@ -42,12 +43,10 @@ public class EditUser extends AppCompatActivity {
     ImageView immagineUtente;
     EditText nomeUtente, emailUtente, bioUtente;
     Button b;
+    ImageButton ib;
     AlertDialog.Builder alert;
     SharedPreferences sharedPref;
-    public static final int PICK_IMAGE = 1;
-    public static final int SNAP_PIC = 2;
-    private Uri mUri;
-    private Bitmap mPhoto;
+    CheckBox email_cb, whatsapp_cb, call_cb;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,48 +61,30 @@ public class EditUser extends AppCompatActivity {
         emailUtente = (EditText) findViewById(R.id.editEmailUtente);
         bioUtente = (EditText) findViewById(R.id.editBioUtente);
         b = (Button) findViewById(R.id.button_edit_confirm);
+        ib = (ImageButton) findViewById(R.id.edit_profile_image_bt);
+        email_cb = (CheckBox) findViewById(R.id.email_cb);
+        whatsapp_cb = (CheckBox) findViewById(R.id.whatsapp_cb);
+        call_cb = (CheckBox) findViewById(R.id.call_cb);
         sharedPref = this.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
 
-        String nome = sharedPref.getString("nomeUtente", null);
-        String email = sharedPref.getString("emailUtente", null);
-        String bio = sharedPref.getString("bioUtente", null);
+        nomeUtente.setText(sharedPref.getString("nomeUtente", null));
+        emailUtente.setText(sharedPref.getString("emailUtente", null));
+        bioUtente.setText(sharedPref.getString("bioUtente", null));
+        email_cb.setChecked(sharedPref.getBoolean("contact_email",false));
+        whatsapp_cb.setChecked(sharedPref.getBoolean("contact_whatsapp",false));
+        call_cb.setChecked(sharedPref.getBoolean("contact_call",false));
 
-        if(nome != null)
-            nomeUtente.setText(nome);
-        if(email != null)
-            emailUtente.setText(email);
-        if(bio != null)
-            bioUtente.setText(bio);
-
-        immagineUtente.setOnClickListener(new View.OnClickListener() {
+        ib.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                /*Intent intent = new Intent();
-                intent.setType("image/*");
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);*/
-                PopupMenu popupMenu = new PopupMenu(EditUser.this, immagineUtente);
-                popupMenu.getMenuInflater().inflate(R.menu.picture_popup_menu, popupMenu.getMenu());
-
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuItem) {
-                        Toast.makeText(EditUser.this,"You Clicked : " + menuItem.getTitle(),Toast.LENGTH_SHORT).show();
-                        if(menuItem.getTitle().equals(getResources().getString(R.string.camera))){
-                            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
-                                startActivityForResult(takePictureIntent, SNAP_PIC);
-                            }
-                        }else{
-                            Intent intent = new Intent();
-                            intent.setType("image/*");
-                            intent.setAction(Intent.ACTION_GET_CONTENT);
-                            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
-                        }
-                        return true;
-                    }
-                });
-                popupMenu.show();
+                Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                Intent gallery = new Intent(Intent.ACTION_GET_CONTENT);
+                gallery.setType("image/*");
+                Intent chooser = Intent.createChooser(camera,"Profile image");
+                chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{gallery});
+                if(chooser.resolveActivity(getPackageManager())!=null){
+                    startActivityForResult(chooser,1);
+                }
             }
         });
 
@@ -114,6 +95,9 @@ public class EditUser extends AppCompatActivity {
                 editor.putString("nomeUtente", String.valueOf(nomeUtente.getText()));
                 editor.putString("emailUtente", String.valueOf(emailUtente.getText()));
                 editor.putString("bioUtente", String.valueOf(bioUtente.getText()));
+                editor.putBoolean("contact_email", email_cb.isChecked());
+                editor.putBoolean("contact_whatsapp", whatsapp_cb.isChecked());
+                editor.putBoolean("contact_call", call_cb.isChecked());
                 editor.commit();
                 Intent intent= new Intent(getApplicationContext(),ShowUser.class);
                 startActivity(intent);
@@ -151,28 +135,10 @@ public class EditUser extends AppCompatActivity {
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
         switch (requestCode) {
-            case PICK_IMAGE:
-                if (resultCode == Activity.RESULT_OK) {
-                    if (data == null) {
-                        //Display an error
-                        return;
-                    }
-                    try {
-                        InputStream inputStream = getContentResolver().openInputStream(data.getData());
-                        mPhoto = BitmapFactory.decodeStream(inputStream);
-                        ((ImageView)findViewById(R.id.editImmagineUtente)).setImageBitmap(mPhoto);
-                    } catch (FileNotFoundException e) {
-                        Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                }
-                break;
-            case SNAP_PIC:
-                if (resultCode == RESULT_OK) {
-                    Bundle extras = data.getExtras();
-                    Bitmap imageBitmap = (Bitmap) extras.get("data");
-                    immagineUtente.setImageBitmap(imageBitmap);
-                }
-                break;
+            case 1:
+                //TODO
+            default:
+                //TODO
         }
     }
 }

@@ -44,6 +44,13 @@
                     android:layout_gravity="center_horizontal"
                     android:background="@drawable/imgprofilo"
                     android:contentDescription="TODO" />
+
+                <ImageButton
+                    android:id="@+id/edit_profile_image_bt"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical|center_horizontal"
+                    app:srcCompat="@android:drawable/ic_menu_camera" />
             </android.support.v7.widget.CardView>
 
             <EditText
