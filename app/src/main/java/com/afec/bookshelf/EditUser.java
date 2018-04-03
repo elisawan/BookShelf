@@ -28,6 +28,7 @@ import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.PopupMenu;
@@ -43,6 +44,7 @@ public class EditUser extends AppCompatActivity {
     EditText nomeUtente, emailUtente, bioUtente;
     Button b;
     CheckBox email_cb, whatsapp_cb, call_cb;
+    ImageButton ib;
     AlertDialog.Builder alert;
     SharedPreferences sharedPref;
     public static final int PICK_IMAGE = 1;
@@ -63,6 +65,7 @@ public class EditUser extends AppCompatActivity {
         emailUtente = (EditText) findViewById(R.id.editEmailUtente);
         bioUtente = (EditText) findViewById(R.id.editBioUtente);
         b = (Button) findViewById(R.id.button_edit_confirm);
+        ib = (ImageButton) findViewById(R.id.edit_profile_image_bt);
         email_cb = (CheckBox) findViewById(R.id.email_cb);
         whatsapp_cb = (CheckBox) findViewById(R.id.whatsapp_cb);
         call_cb = (CheckBox) findViewById(R.id.call_cb);
@@ -75,7 +78,7 @@ public class EditUser extends AppCompatActivity {
         whatsapp_cb.setChecked(sharedPref.getBoolean("contact_whatsapp",false));
         call_cb.setChecked(sharedPref.getBoolean("contact_call",false));
 
-        immagineUtente.setOnClickListener(new View.OnClickListener() {
+        ib.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 /*Intent intent = new Intent();
