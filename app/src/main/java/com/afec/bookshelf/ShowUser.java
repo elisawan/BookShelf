@@ -4,6 +4,8 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
@@ -36,6 +38,9 @@ public class ShowUser extends AppCompatActivity {
         Toolbar myToolbar = (Toolbar) findViewById(R.id.show_toolbar);
         setSupportActionBar(myToolbar);
 
+        //reception of the input data from Edit user (for the userPics)
+        Bundle extras = getIntent().getExtras();
+
         immagineUtente = (ImageView) findViewById(R.id.immagineUtente);
         nomeUtente = (TextView) findViewById(R.id.nomeUtente);
         emailUtente = (TextView) findViewById(R.id.emailUtente);
@@ -58,6 +63,20 @@ public class ShowUser extends AppCompatActivity {
             bioUtente.setText(bio);
         else
             bioUtente.setText("-");
+
+        if (extras != null){
+            //extraction of the bitmap Array
+            byte[] b = extras.getByteArray("userPic");
+            Bitmap bmp = BitmapFactory.decodeByteArray(b, 0, b.length);
+            //replacement of the bitmap array
+            ImageView image = (ImageView) findViewById(R.id.immagineUtente);
+            //print of the pics
+            image.setImageBitmap(bmp);
+        }
+        else{
+            //Do nothing
+        }
+
 
         //percepisce il tap lungo
         immagineUtente.setOnLongClickListener(new View.OnLongClickListener() {

@@ -1,3 +1,4 @@
+// EDIT USER JAVA FILE
 package com.afec.bookshelf;
 
 import android.annotation.SuppressLint;
@@ -34,21 +35,24 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 
 public class EditUser extends AppCompatActivity {
 
-    ImageView immagineUtente;
-    EditText nomeUtente, emailUtente, bioUtente;
-    Button b;
-    CheckBox email_cb, whatsapp_cb, call_cb;
-    ImageButton ib;
+    ImageView immagineUtente;                       //image of the user
+    EditText nomeUtente, emailUtente, bioUtente;    //data of the user
+    Button b;                                       //button 'validate'
+    CheckBox email_cb, whatsapp_cb, call_cb;        //Check Box of the contact of the user
+    ImageButton ib;                                 //Image button 'pics of the user'
     AlertDialog.Builder alert;
     SharedPreferences sharedPref;
+
     public static final int PICK_IMAGE = 1;
     public static final int SNAP_PIC = 2;
+
     private Uri mUri;
     private Bitmap mPhoto;
 
@@ -69,8 +73,8 @@ public class EditUser extends AppCompatActivity {
         email_cb = (CheckBox) findViewById(R.id.email_cb);
         whatsapp_cb = (CheckBox) findViewById(R.id.whatsapp_cb);
         call_cb = (CheckBox) findViewById(R.id.call_cb);
-        sharedPref = this.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
 
+        sharedPref = this.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
         nomeUtente.setText(sharedPref.getString("nomeUtente", null));
         emailUtente.setText(sharedPref.getString("emailUtente", null));
         bioUtente.setText(sharedPref.getString("bioUtente", null));
@@ -78,6 +82,7 @@ public class EditUser extends AppCompatActivity {
         whatsapp_cb.setChecked(sharedPref.getBoolean("contact_whatsapp",false));
         call_cb.setChecked(sharedPref.getBoolean("contact_call",false));
 
+        //IMAGE click listener
         ib.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -85,6 +90,7 @@ public class EditUser extends AppCompatActivity {
                 intent.setType("image/*");
                 intent.setAction(Intent.ACTION_GET_CONTENT);
                 startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);*/
+
                 PopupMenu popupMenu = new PopupMenu(EditUser.this, immagineUtente);
                 popupMenu.getMenuInflater().inflate(R.menu.picture_popup_menu, popupMenu.getMenu());
 
@@ -110,6 +116,7 @@ public class EditUser extends AppCompatActivity {
             }
         });
 
+        //Button click listener
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -121,7 +128,15 @@ public class EditUser extends AppCompatActivity {
                 editor.putBoolean("contact_whatsapp", whatsapp_cb.isChecked());
                 editor.putBoolean("contact_call", call_cb.isChecked());
                 editor.commit();
-                Intent intent= new Intent(getApplicationContext(),ShowUser.class);
+
+                //Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.imgprofilo);
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                mPhoto.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                byte[] b = baos.toByteArray();
+
+                Intent intent= new Intent(EditUser.this,ShowUser.class);
+                intent.putExtra("userPic", b);//////////////////////////////////////////////////////
+
                 startActivity(intent);
             }
         });
@@ -175,6 +190,7 @@ public class EditUser extends AppCompatActivity {
                         mPhoto = BitmapFactory.decodeStream(inputStream);
                         MediaStore.Images.Media.insertImage(getContentResolver(), mPhoto, "newProfileImage" , "Profile image for Bookshelf");
                         ((ImageView)findViewById(R.id.editImmagineUtente)).setImageBitmap(mPhoto);
+
                     } catch (FileNotFoundException e) {
                         Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
@@ -190,6 +206,7 @@ public class EditUser extends AppCompatActivity {
                     editor.putString(CurrImageUri.toString(), "imageUri");
                     editor.commit();
 
+                    // PASS THE IMAGE TO THE SHARED PREF
                     Bitmap imageBitmap = (Bitmap) extras.get("data");
                     MediaStore.Images.Media.insertImage(getContentResolver(), imageBitmap, "newProfileImage" , "Profile image for Bookshelf");
                     immagineUtente.setImageBitmap(imageBitmap);
