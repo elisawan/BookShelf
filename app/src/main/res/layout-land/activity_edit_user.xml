@@ -36,7 +36,14 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:background="@drawable/imgprofilo" />
+                android:background="@drawable/imgprofilo"
+                android:scaleType="centerCrop"/>
+            <ImageButton
+                android:id="@+id/edit_profile_image_bt"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|center_horizontal"
+                app:srcCompat="@android:drawable/ic_menu_camera" />
         </android.support.v7.widget.CardView>
 
         <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
@@ -82,6 +89,38 @@
                     android:ems="10"
                     android:hint="@string/biografia"
                     android:inputType="textMultiLine" />
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="15dp"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:text="@string/contact_methods" />
+
+                <CheckBox
+                    android:id="@+id/email_cb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:text="E-mail" />
+
+                <CheckBox
+                    android:id="@+id/whatsapp_cb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:text="WhatsApp" />
+
+                <CheckBox
+                    android:id="@+id/call_cb"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="30dp"
+                    android:layout_marginRight="30dp"
+                    android:text="Phone Call" />
 
                 <Button
                     android:id="@+id/button_edit_confirm"

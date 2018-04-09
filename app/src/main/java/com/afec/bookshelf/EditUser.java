@@ -1,17 +1,22 @@
 package com.afec.bookshelf;
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -43,10 +48,14 @@ public class EditUser extends AppCompatActivity {
     ImageView immagineUtente;
     EditText nomeUtente, emailUtente, bioUtente;
     Button b;
+    CheckBox email_cb, whatsapp_cb, call_cb;
     ImageButton ib;
     AlertDialog.Builder alert;
     SharedPreferences sharedPref;
-    CheckBox email_cb, whatsapp_cb, call_cb;
+    public static final int PICK_IMAGE = 1;
+    public static final int SNAP_PIC = 2;
+    private Uri mUri;
+    private Bitmap mPhoto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +64,10 @@ public class EditUser extends AppCompatActivity {
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.show_toolbar);
         setSupportActionBar(myToolbar);
+
+        if(ContextCompat.checkSelfPermission(EditUser.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(EditUser.this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
+        }
 
         immagineUtente = (ImageView) findViewById(R.id.editImmagineUtente);
         nomeUtente = (EditText) findViewById(R.id.editNomeUtente);
@@ -74,17 +87,45 @@ public class EditUser extends AppCompatActivity {
         whatsapp_cb.setChecked(sharedPref.getBoolean("contact_whatsapp",false));
         call_cb.setChecked(sharedPref.getBoolean("contact_call",false));
 
+        try{
+            Uri uri = Uri.parse(sharedPref.getString("imageUri", null));
+            Log.d("uri", uri.toString());
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+            immagineUtente.setImageBitmap(bitmap);
+        }catch (Exception e){
+            Log.d("ex",e.toString());
+        }
         ib.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent camera = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                Intent gallery = new Intent(Intent.ACTION_PICK);
-                gallery.setType("image/*");
-                Intent chooser = Intent.createChooser(gallery,"Profile image");
-                chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{camera});
-                if(chooser.resolveActivity(getPackageManager())!=null){
-                    startActivityForResult(chooser,1);
-                }
+                /*Intent intent = new Intent();
+                intent.setType("image/*");
+                intent.setAction(Intent.ACTION_GET_CONTENT);
+                startActivityForResult(Intent.createChooser(intent, "Select Picture"), 1);*/
+                PopupMenu popupMenu = new PopupMenu(EditUser.this, immagineUtente);
+                popupMenu.getMenuInflater().inflate(R.menu.picture_popup_menu, popupMenu.getMenu());
+
+                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                    @Override
+                    public boolean onMenuItemClick(MenuItem menuItem) {
+                        Toast.makeText(EditUser.this,"You Clicked : " + menuItem.getTitle(),Toast.LENGTH_SHORT).show();
+                        if(menuItem.getTitle().equals(getResources().getString(R.string.camera))){
+                            Uri mPhotoUri = getContentResolver().insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, new ContentValues());
+                            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                            takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT,mPhotoUri);
+                            if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
+                                startActivityForResult(takePictureIntent, SNAP_PIC);
+                            }
+                        }else{
+                            Intent intent = new Intent();
+                            intent.setType("image/*");
+                            intent.setAction(Intent.ACTION_GET_CONTENT);
+                            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+                        }
+                        return true;
+                    }
+                });
+                popupMenu.show();
             }
         });
 
@@ -100,7 +141,7 @@ public class EditUser extends AppCompatActivity {
                 editor.putBoolean("contact_call", call_cb.isChecked());
                 editor.commit();
                 Intent intent= new Intent(getApplicationContext(),ShowUser.class);
-                startActivityForResult(intent,1);
+                startActivity(intent);
             }
         });
     }
@@ -134,20 +175,52 @@ public class EditUser extends AppCompatActivity {
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
+        super.onActivityResult(requestCode, resultCode,data);
         switch (requestCode) {
-            case 1:
-                if (resultCode == RESULT_OK) {
-                    if(data.hasExtra("data")){
-                        Log.d("action","camera selected");
-                        immagineUtente.setImageBitmap((Bitmap) data.getExtras().get("data"));
-                    }else{
-                        Log.d("action","gallery selected");
-                        Uri uri = data.getData();
+            case PICK_IMAGE:
+                if (resultCode == Activity.RESULT_OK) {
+                    if (data == null) {
+                        //Display an error
+                        return;
+                    }
+                    try {
+                        InputStream inputStream = getContentResolver().openInputStream(data.getData());
 
+                        //Saving image uri in shared preferences
+                        Uri CurrImageUri = data.getData(); //percorso dell'immagine
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putString("imageUri",CurrImageUri.toString());
+                        editor.commit();
+
+                        mPhoto = BitmapFactory.decodeStream(inputStream);
+                        //MediaStore.Images.Media.insertImage(getContentResolver(), mPhoto, "newProfileImage" , "Profile image for Bookshelf");
+                        ((ImageView)findViewById(R.id.editImmagineUtente)).setImageBitmap(mPhoto);
+                    } catch (FileNotFoundException e) {
+                        Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
-            default:
-                //TODO
+                break;
+            case SNAP_PIC:
+                if (resultCode == RESULT_OK) {
+
+                    //Saving image uri in shared preferences
+                    Uri CurrImageUri = data.getData(); //percorso dell'immagine
+                    Log.d("uri", CurrImageUri.toString());
+                    InputStream imageStream = null;
+                    try{
+                        imageStream = getContentResolver().openInputStream(CurrImageUri);
+                        Bitmap imageBitmap = BitmapFactory.decodeStream(imageStream);
+                        SharedPreferences.Editor editor = sharedPref.edit();
+                        editor.putString("imageUri", CurrImageUri.toString());
+                        editor.commit();
+                        MediaStore.Images.Media.insertImage(getContentResolver(), imageBitmap, "newProfileImage" , "Profile image for Bookshelf");
+                        immagineUtente.setImageBitmap(imageBitmap);
+                    }catch(Exception e){
+                        Log.d("ex", e.toString());
+                    }
+
+                }
+                break;
         }
     }
 }

@@ -39,14 +39,11 @@
 
                 <ImageView
                     android:id="@+id/editImmagineUtente"
-                    android:layout_width="150dp"
-                    android:layout_height="150dp"
-                    android:layout_gravity="center_vertical|center_horizontal"
-                    android:adjustViewBounds="false"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
                     android:contentDescription="TODO"
-                    android:cropToPadding="false"
-                    android:forceHasOverlappingRendering="false"
-                    android:scaleType="fitCenter" />
+                    android:scaleType="centerCrop" />
 
                 <ImageButton
                     android:id="@+id/edit_profile_image_bt"
