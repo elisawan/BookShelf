@@ -5,6 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.afec.bookshelf.EditUser"
+    android:background="@color/colorPrimary"
     android:orientation="vertical">
 
 
@@ -12,7 +13,7 @@
         android:id="@+id/show_toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@color/colorPrimaryDark"
         android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
@@ -21,7 +22,7 @@
         android:layout_width="150dp"
         android:layout_height="150dp"
         android:layout_gravity="center"
-        android:layout_margin="30dp"
+        android:layout_marginTop="25dp"
         android:innerRadius="0dp"
         android:shape="ring"
         app:cardCornerRadius="75dp">
@@ -38,12 +39,13 @@
         android:id="@+id/nomeUtente"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="15dp"
+        android:layout_marginBottom="5dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:text="@string/nome_utente"
         android:textAlignment="center"
-        android:textColor="@android:color/black" />
+        android:textSize="25dp"
+        android:textColor="@color/colorText" />
 
     <TextView
         android:id="@+id/emailUtente"
@@ -75,11 +77,11 @@
         android:layout_gravity="center_horizontal"
         android:orientation="horizontal"
         android:layout_marginBottom="15dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp">
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="10dp">
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="185dp"
             android:layout_height="wrap_content"
             android:background="@android:drawable/editbox_background_normal"
             android:orientation="vertical">
@@ -101,11 +103,12 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
+                android:layout_gravity="center_horizontal"
                 android:text="Shared books" />
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
+            android:layout_width="185dp"
             android:layout_height="wrap_content"
             android:background="@android:drawable/editbox_background_normal"
             android:orientation="vertical">
@@ -127,6 +130,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
+                android:layout_gravity="center_horizontal"
                 android:text="Taken books" />
         </LinearLayout>
     </LinearLayout>
