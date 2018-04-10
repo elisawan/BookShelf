@@ -4,4 +4,10 @@
     <string name="email">メール</string>
     <string name="biografia">伝記</string>
     <string name="nome_utente">ユーザー名</string>
+    <string name="edit_profile">プロフィールを校訂する</string>
+    <string name="settings">設定</string>
+    <string name="user_profile_image">プロファイルの写真</string>
+    <string name="contact_methods">連絡先</string>
+    <string name="gallery">ギャラリー</string>
+    <string name="camera">カメラ</string>
 </resources>
