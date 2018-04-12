@@ -1,4 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">BookShelf</string>
+    <string name="nome_utente">Nom d\'utilisateur</string>
+    <string name="email">Courriel</string>
+    <string name="biografia">Biographie</string>
+    <string name="edit_profile">Modifier le profil</string>
+    <string name="settings">Règlages</string>
+    <string name="user_profile_image">Image utilisateur</string>
+    <string name="gallery">Gallerie</string>
+    <string name="camera">Camera</string>
+    <string name="contact_methods">Contacts</string>
 </resources>
