@@ -5,4 +5,9 @@
     <string name="email">Email</string>
     <string name="biografia">Biografia</string>
     <string name="user_profile_image">Immagine utente</string>
+    <string name="edit_profile">Modifica profilo</string>
+    <string name="settings">Impostazioni</string>
+    <string name="contact_methods">Contatti</string>
+    <string name="gallery">Galleria</string>
+    <string name="camera">Foto</string>
 </resources>
