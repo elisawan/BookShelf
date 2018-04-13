@@ -118,7 +118,7 @@ public class EditUser extends AppCompatActivity {
                     @Override
                     public boolean onMenuItemClick(MenuItem menuItem) {
                         Toast.makeText(EditUser.this,"You Clicked : " + menuItem.getTitle(),Toast.LENGTH_SHORT).show();
-                        if(menuItem.getTitle().equals("Camera")){
+                        if(menuItem.getTitle().equals(getString(R.string.camera))){
                             Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
                             // Ensure that there's a camera activity to handle the intent
                             if (takePictureIntent.resolveActivity(getPackageManager()) != null) {
