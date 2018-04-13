@@ -9,4 +9,9 @@
     <string name="contact_methods">Allow users to contact me on:</string>
     <string name="gallery">Gallery</string>
     <string name="camera">Camera</string>
+    <string name="save">Save</string>
+    <string name="phone_call">Phone call</string>
+    <string name="whatsapp">Whats App</string>
+    <string name="lent_books">Lent Books</string>
+    <string name="borrowed_books">Borrowed Books</string>
 </resources>

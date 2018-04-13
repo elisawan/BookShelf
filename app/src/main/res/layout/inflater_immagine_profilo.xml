@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,7 +10,8 @@
         android:id="@+id/inflated_imageview"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:contentDescription="@string/user_profile_image"
         app:srcCompat="@android:drawable/screen_background_light_transparent"
         tools:layout_editor_absoluteX="212dp"
         tools:layout_editor_absoluteY="84dp" />
-</android.support.constraint.ConstraintLayout>
+</LinearLayout>

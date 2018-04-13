@@ -10,4 +10,9 @@
     <string name="contact_methods">Contatti</string>
     <string name="gallery">Galleria</string>
     <string name="camera">Foto</string>
+    <string name="save">Salva</string>
+    <string name="phone_call">Telefono</string>
+    <string name="whatsapp">Whats App</string>
+    <string name="lent_books">Libri prestati</string>
+    <string name="borrowed_books">Libri presi in prestito</string>
 </resources>
