@@ -5,6 +5,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -55,20 +56,9 @@ public class ShowUser extends AppCompatActivity {
         String bio = sharedPref.getString("bioUtente", null);
         String immagineSalvata = sharedPref.getString("imageUri", null);
 
-
-
-
-        if(immagineSalvata!= null){
-            imageUri = Uri.parse(immagineSalvata);
-            Bitmap imageBitmap = null;
-            try {
-                imageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),imageUri);
-                immagineUtente.setImageBitmap(imageBitmap);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
+        if(immagineSalvata!= null && !immagineSalvata.isEmpty()){
+            Bitmap bitmap = BitmapFactory.decodeFile(immagineSalvata);
+            immagineUtente.setImageBitmap(bitmap);
         }
 
 
@@ -93,17 +83,6 @@ public class ShowUser extends AppCompatActivity {
                 return true;
             }
         });
-
-
-        try{
-            Uri uri = Uri.parse(sharedPref.getString("imageUri", null));
-            Log.d("uri", uri.toString());
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-            immagineUtente.setImageBitmap(bitmap);
-        }catch (Exception e){
-            Log.d("ex",e.toString());
-        }
-
     }
 
     @Override
