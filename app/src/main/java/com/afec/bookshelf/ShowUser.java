@@ -54,13 +54,20 @@ public class ShowUser extends AppCompatActivity {
         String nome = sharedPref.getString("nomeUtente", null);
         String email = sharedPref.getString("emailUtente", null);
         String bio = sharedPref.getString("bioUtente", null);
+
         String immagineSalvata = sharedPref.getString("imageUri", null);
-
-        if(immagineSalvata!= null && !immagineSalvata.isEmpty()){
-            Bitmap bitmap = BitmapFactory.decodeFile(immagineSalvata);
+        try{
+            Uri uri = Uri.parse(sharedPref.getString("imageUri", null));
+            Log.d("uri", uri.toString());
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
             immagineUtente.setImageBitmap(bitmap);
+        }catch (Exception e){
+            Log.d("ex",e.toString());
+            if(immagineSalvata!= null && !immagineSalvata.isEmpty()){
+                Bitmap bitmap = BitmapFactory.decodeFile(immagineSalvata);
+                immagineUtente.setImageBitmap(bitmap);
+            }
         }
-
 
         if(nome != null)
             nomeUtente.setText(nome);

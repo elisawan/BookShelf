@@ -12,6 +12,7 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.Image;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
@@ -42,8 +43,10 @@ import android.widget.Toast;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -92,6 +95,7 @@ public class EditUser extends AppCompatActivity {
         whatsapp_cb.setChecked(sharedPref.getBoolean("contact_whatsapp",false));
         call_cb.setChecked(sharedPref.getBoolean("contact_call",false));
 
+        String immagineSalvata = sharedPref.getString("imageUri", null);
         try{
             Uri uri = Uri.parse(sharedPref.getString("imageUri", null));
             Log.d("uri", uri.toString());
@@ -99,7 +103,12 @@ public class EditUser extends AppCompatActivity {
             immagineUtente.setImageBitmap(bitmap);
         }catch (Exception e){
             Log.d("ex",e.toString());
+            if(immagineSalvata!= null && !immagineSalvata.isEmpty()){
+                Bitmap bitmap = BitmapFactory.decodeFile(immagineSalvata);
+                immagineUtente.setImageBitmap(bitmap);
+            }
         }
+
         ib.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -194,23 +203,22 @@ public class EditUser extends AppCompatActivity {
         switch (requestCode) {
             case PICK_IMAGE:
                 if (resultCode == Activity.RESULT_OK) {
-                    if (data == null) {
-                        //Display an error
-                        return;
-                    }
-                    try {
+                    try{
+                        File outputFile = createImageFile();
                         InputStream inputStream = getContentResolver().openInputStream(data.getData());
-
-                        //Saving image uri in shared preferences
-                        Uri CurrImageUri = data.getData(); //percorso dell'immagine
+                        OutputStream outStream = new FileOutputStream(outputFile);
+                        byte[] buf = new byte[1024];
+                        int len;
+                        while((len=inputStream.read(buf))>0){
+                            outStream.write(buf,0,len);
+                        }
                         SharedPreferences.Editor editor = sharedPref.edit();
-                        editor.putString("imageUri",CurrImageUri.toString());
+                        editor.putString("imageUri", mCurrentPhotoPath);
                         editor.commit();
 
-                        mPhoto = BitmapFactory.decodeStream(inputStream);
-                        //MediaStore.Images.Media.insertImage(getContentResolver(), mPhoto, "newProfileImage" , "Profile image for Bookshelf");
-                        ((ImageView)findViewById(R.id.editImmagineUtente)).setImageBitmap(mPhoto);
-                    } catch (FileNotFoundException e) {
+                        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
+                        immagineUtente.setImageBitmap(bitmap);
+                    } catch (Exception e) {
                         Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 }
