@@ -30,6 +30,7 @@ import java.io.InputStream;
 public class ShowUser extends AppCompatActivity {
 
     ImageView immagineUtente;
+    Uri imageUri;
     TextView nomeUtente, emailUtente, bioUtente;
     RoundedBitmapDrawable dr;
     Dialog builder;
@@ -58,7 +59,7 @@ public class ShowUser extends AppCompatActivity {
 
 
         if(immagineSalvata!= null){
-            Uri imageUri = Uri.parse(immagineSalvata);
+            imageUri = Uri.parse(immagineSalvata);
             Bitmap imageBitmap = null;
             try {
                 imageBitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(),imageUri);
@@ -134,7 +135,7 @@ public class ShowUser extends AppCompatActivity {
     public void publicationQuickView(){
         View view = getLayoutInflater().inflate( R.layout.inflater_immagine_profilo, null);
         ImageView profileImage = (ImageView) view.findViewById(R.id.inflated_imageview);
-        Picasso.with(this).load(R.drawable.imgprofilo).noPlaceholder().into(profileImage);
+        Picasso.with(this).load(imageUri).noPlaceholder().into(profileImage);
         builder = new Dialog(this);
         builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
         builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

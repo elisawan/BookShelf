@@ -205,7 +205,7 @@ public class EditUser extends AppCompatActivity {
 
                     //Saving image uri in shared preferences
                     Uri CurrImageUri = data.getData(); //percorso dell'immagine
-                    Log.d("uri", CurrImageUri.toString());
+                    //Log.d("uri", CurrImageUri.toString());
                     InputStream imageStream = null;
                     try{
                         imageStream = getContentResolver().openInputStream(CurrImageUri);
