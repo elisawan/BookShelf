@@ -1,6 +1,7 @@
 package com.afec.bookshelf;
 
 import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
