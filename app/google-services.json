@@ -1,0 +1,63 @@
+{
+  "project_info": {
+    "project_number": "818300749463",
+    "firebase_url": "https://bookhook-b0c0e.firebaseio.com",
+    "project_id": "bookhook-b0c0e",
+    "storage_bucket": "bookhook-b0c0e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:818300749463:android:0934344b52e67dd0",
+        "android_client_info": {
+          "package_name": "com.afec.bookshelf"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "818300749463-qm0bqdc9u6lsqhnmhgff1virudtbfkmn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.afec.bookshelf",
+            "certificate_hash": "d21381172a1413f22d1591e0f6923face61ec450"
+          }
+        },
+        {
+          "client_id": "818300749463-58rsgjgodvtfugdpa4lpe7mqt4c289hs.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.afec.bookshelf",
+            "certificate_hash": "bdcbb4d1debc8dacd391fcc68307fff45981c0fe"
+          }
+        },
+        {
+          "client_id": "818300749463-c01qkbnjou6bpmkmv7aaiio5vt5do0rk.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDqsRqz7Bso1BUgq7I7HW8KNcy9w8SNB20"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "818300749463-c01qkbnjou6bpmkmv7aaiio5vt5do0rk.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
