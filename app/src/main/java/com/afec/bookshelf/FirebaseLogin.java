@@ -28,6 +28,9 @@ public class FirebaseLogin extends AppCompatActivity {
         FirebaseAuth auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
             // already signed in
+            Intent intent = new Intent(getBaseContext(), ShowUser.class);
+            startActivity(intent);
+            finish();
         } else {
             // not signed in
 
