@@ -21,6 +21,7 @@
 
         <activity android:name=".EditUser"></activity>
         <activity android:name=".ShowUser"></activity>
+        <activity android:name=".AddBook"></activity>
         <provider
             android:name="android.support.v4.content.FileProvider"
             android:authorities="com.afec.bookshelf.fileprovider"

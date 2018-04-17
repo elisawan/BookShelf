@@ -14,4 +14,11 @@
     <string name="whatsapp">Whats App</string>
     <string name="lent_books">Lent Books</string>
     <string name="borrowed_books">Borrowed Books</string>
+    <string name="title_activity_add_book">AddBook</string>
+    <string-array name="book_conditions">
+        <item>Like new</item>
+        <item>Very good</item>
+        <item>Good</item>
+        <item>Acceptable</item>
+    </string-array>
 </resources>
