@@ -18,7 +18,12 @@
         </activity>
         <activity android:name=".EditUser" />
         <activity android:name=".ShowUser" />
-        <activity android:name=".AddBook" />
+        <activity android:name=".AddBook">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -30,12 +35,6 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".isbn_scanner">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>
