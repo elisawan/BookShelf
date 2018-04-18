@@ -25,11 +25,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
-import org.w3c.dom.Text;
-
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
-
-import static java.lang.System.in;
 
 public class AddBook extends AppCompatActivity implements ZXingScannerView.ResultHandler{
 
@@ -41,7 +37,7 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
 
     //Web Call
 
-    String url = "https://www.googleapis.com/books/v1/volumes?q=isbn:9788854181595";
+    String url = "https://www.googleapis.com/books/v1/volumes?q=isbn:";
 
 
     @Override
@@ -66,22 +62,18 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
         status_bar = (TextView) findViewById(R.id.textView5);
         location_bar = (TextView) findViewById(R.id.location_bar);
 
-
-        isbnHttpRequest();
         Bundle b = getIntent().getExtras();
         if(b != null) {
             String isbn = b.getString("isbn", null);
             if (isbn != null) {
                 ISBN_reader.setText(isbn);
+                url = url+isbn;
+                isbnHttpRequest();
             }
         }
-
-
     }
-
-
-
-    public void isbnHttpRequest(){
+    
+    public void isbnHttpRequest() {
         RequestQueue queue = Volley.newRequestQueue(this);
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
@@ -89,17 +81,18 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
                     @Override
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
-                       Log.e("Response","Response is: "+ response.substring(0,500));
+                        Log.e("Response", "Response is: " + response.substring(0, 500));
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-               Log.e("Response error", "That didn't work!");
+                Log.e("Response error", "That didn't work!");
             }
         });
 
-// Add the request to the RequestQueue.
+        // Add the request to the RequestQueue.
         queue.add(stringRequest);
+    }
     public void isbn_scan(View v) {
         scannerView = new ZXingScannerView(getApplicationContext());
         setContentView(scannerView);
