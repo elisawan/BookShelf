@@ -7,6 +7,7 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.JsonReader;
 import android.view.View;
 import android.util.Log;
 import android.widget.Button;
@@ -24,6 +25,12 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -66,13 +73,13 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
         if(b != null) {
             String isbn = b.getString("isbn", null);
             if (isbn != null) {
-                ISBN_reader.setText(isbn);
+                ISBN_show.setText(isbn);
                 url = url+isbn;
                 isbnHttpRequest();
             }
         }
     }
-    
+
     public void isbnHttpRequest() {
         RequestQueue queue = Volley.newRequestQueue(this);
         // Request a string response from the provided URL.
@@ -82,6 +89,12 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
                         Log.e("Response", "Response is: " + response.substring(0, 500));
+                        InputStream stream = new ByteArrayInputStream(response.getBytes());
+                        try {
+                            readBookDetails(stream);
+                        } catch (IOException e) {
+
+                        }
                     }
                 }, new Response.ErrorListener() {
             @Override
@@ -119,5 +132,66 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
         startActivity(intent);
     }
 
+    public void setBookImage(String url){
 
+    }
+
+    public void readBookDetails (InputStream is) throws IOException{
+        String name;
+        JsonReader jr = new JsonReader(new InputStreamReader(is, "UTF-8"));
+        jr.beginObject();
+        while(jr.hasNext()){
+            name = jr.nextName();
+            Log.d("name",name);
+            if(name.equals("items")){
+                Log.d("id","items");
+                jr.beginArray();
+                jr.beginObject();
+                while(jr.hasNext()){
+                    name = jr.nextName();
+                    Log.d("name",name);
+                    if(name.equals("volumeInfo")){
+                        jr.beginObject();
+                        while(jr.hasNext()) {
+                            name = jr.nextName();
+                            Log.d("name", name);
+                            if (name.equals("title")) {
+                                book_title.setText(jr.nextString());
+                            } else if (name.equals("authors")) {
+                                jr.beginArray();
+                                String author = "";
+                                while (jr.hasNext()) {
+                                    author = author + jr.nextString();
+                                }
+                                jr.endArray();
+                                book_author.setText(author);
+                            } else if(name.equals("imageLinks")){
+                                jr.beginObject();
+                                while(jr.hasNext()){
+                                    name = jr.nextName();
+                                    Log.d("name", name);
+                                    if(name.equals("thumbnail")){
+                                        setBookImage(jr.nextString());
+                                    }else{
+                                        jr.skipValue();
+                                    }
+                                }
+                                jr.endObject();
+                            } else {
+                                jr.skipValue();
+                            }
+                        }
+                        jr.endObject();
+                    }else{
+                        jr.skipValue();
+                    }
+                }
+                jr.endObject();
+                jr.endArray();
+            }else{
+                jr.skipValue();
+            }
+        }
+        jr.endObject();
+    }
 }
