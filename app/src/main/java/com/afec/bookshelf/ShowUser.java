@@ -95,13 +95,16 @@ public class ShowUser extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.action_settings:
                 // User chose the "Settings" item, show the app settings UI...
+                intent = new Intent(getBaseContext(), AddBook.class);
+                startActivity(intent);
                 return true;
 
             case R.id.action_edit:
-                Intent intent = new Intent(getBaseContext(), EditUser.class);
+                intent = new Intent(getBaseContext(), EditUser.class);
                 startActivity(intent);
                 return true;
 
