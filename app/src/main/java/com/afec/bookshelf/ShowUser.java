@@ -1,10 +1,12 @@
 package com.afec.bookshelf;
 
 import android.app.Dialog;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
@@ -30,6 +32,7 @@ import java.io.InputStream;
 public class ShowUser extends AppCompatActivity {
 
     ImageView immagineUtente;
+    Uri imageUri;
     TextView nomeUtente, emailUtente, bioUtente;
     RoundedBitmapDrawable dr;
     Dialog builder;
@@ -53,6 +56,20 @@ public class ShowUser extends AppCompatActivity {
         String email = sharedPref.getString("emailUtente", null);
         String bio = sharedPref.getString("bioUtente", null);
 
+        String immagineSalvata = sharedPref.getString("imageUri", null);
+        try{
+            Uri uri = Uri.parse(sharedPref.getString("imageUri", null));
+            Log.d("uri", uri.toString());
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+            immagineUtente.setImageBitmap(bitmap);
+        }catch (Exception e){
+            Log.d("ex",e.toString());
+            if(immagineSalvata!= null && !immagineSalvata.isEmpty()){
+                Bitmap bitmap = BitmapFactory.decodeFile(immagineSalvata);
+                immagineUtente.setImageBitmap(bitmap);
+            }
+        }
+
         if(nome != null)
             nomeUtente.setText(nome);
         else
@@ -74,17 +91,6 @@ public class ShowUser extends AppCompatActivity {
                 return true;
             }
         });
-
-
-        try{
-            Uri uri = Uri.parse(sharedPref.getString("imageUri", null));
-            Log.d("uri", uri.toString());
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
-            immagineUtente.setImageBitmap(bitmap);
-        }catch (Exception e){
-            Log.d("ex",e.toString());
-        }
-
     }
 
     @Override
@@ -116,7 +122,7 @@ public class ShowUser extends AppCompatActivity {
     public void publicationQuickView(){
         View view = getLayoutInflater().inflate( R.layout.inflater_immagine_profilo, null);
         ImageView profileImage = (ImageView) view.findViewById(R.id.inflated_imageview);
-        Picasso.with(this).load(R.drawable.imgprofilo).noPlaceholder().into(profileImage);
+        Picasso.with(this).load(imageUri).noPlaceholder().into(profileImage);
         builder = new Dialog(this);
         builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
         builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));

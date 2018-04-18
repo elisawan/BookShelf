@@ -13,7 +13,6 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
@@ -44,7 +43,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"
-                    android:contentDescription="TODO"
+                    android:contentDescription="@string/user_profile_image"
                     android:scaleType="centerCrop" />
 
                 <ImageButton
@@ -52,6 +51,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_vertical|center_horizontal"
+                    android:contentDescription="@string/user_profile_image"
                     app:srcCompat="@android:drawable/ic_menu_camera" />
             </android.support.v7.widget.CardView>
 
@@ -111,7 +111,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
-                android:text="E-mail" />
+                android:text="@string/email" />
 
             <CheckBox
                 android:id="@+id/whatsapp_cb"
@@ -119,7 +119,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
-                android:text="WhatsApp" />
+                android:text="@string/whatsapp" />
 
             <CheckBox
                 android:id="@+id/call_cb"
@@ -127,16 +127,18 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
-                android:text="Phone Call" />
+                android:text="@string/phone_call" />
 
             <Button
                 android:id="@+id/button_edit_confirm"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
+                android:layout_marginBottom="10dp"
+                android:layout_marginEnd="30dp"
                 android:layout_marginRight="30dp"
                 android:background="@android:drawable/btn_default"
-                android:text="save" />
+                android:text="@string/save" />
 
         </LinearLayout>
 </ScrollView>

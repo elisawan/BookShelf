@@ -14,7 +14,6 @@
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
         android:background="?attr/colorPrimary"
-        android:elevation="4dp"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
@@ -37,7 +36,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
-                android:background="@drawable/imgprofilo" />
+                android:contentDescription="@string/user_profile_image"
+                android:scaleType="centerCrop"/>
 
 
         </android.support.v7.widget.CardView>
@@ -114,9 +114,9 @@
                         android:id="@+id/shared_book"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Shared books"
                         android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"/>
+                        android:layout_marginRight="20dp"
+                        android:text="@string/lent_books" />
                 </LinearLayout>
 
                 <LinearLayout
@@ -140,9 +140,9 @@
                         android:id="@+id/taken_book"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="Taken books"
                         android:layout_marginLeft="20dp"
-                        android:layout_marginRight="20dp"/>
+                        android:layout_marginRight="20dp"
+                        android:text="@string/borrowed_books" />
                 </LinearLayout>
             </LinearLayout>
 
