@@ -14,15 +14,15 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
         <activity android:name=".FirebaseLogin">
-
-        </activity>
-        <activity android:name=".EditUser" />
-        <activity android:name=".ShowUser" />
-        <activity android:name=".AddBook">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
+        </activity>
+        <activity android:name=".EditUser" />
+        <activity android:name=".ShowUser" />
+        <activity android:name=".AddBook">
+
         </activity>
 
         <provider

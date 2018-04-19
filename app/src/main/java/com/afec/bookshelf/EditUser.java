@@ -76,6 +76,9 @@ public class EditUser extends AppCompatActivity {
         if(ContextCompat.checkSelfPermission(EditUser.this, Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(EditUser.this, new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
         }
+        if(ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.CAMERA},2);
+        }
 
         immagineUtente = (ImageView) findViewById(R.id.editImmagineUtente);
         nomeUtente = (EditText) findViewById(R.id.editNomeUtente);

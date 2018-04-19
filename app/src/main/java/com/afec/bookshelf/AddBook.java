@@ -25,6 +25,7 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -40,6 +41,7 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
     EditText ISBN_reader, edit_location;
     Button ISBN_scan_button, Locate_button, confirm_button ;
     TextView ISBN_show, book_title, book_author, status_bar, location_bar;
+
     ZXingScannerView scannerView;
 
     //Web Call
@@ -133,7 +135,9 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
     }
 
     public void setBookImage(String url){
-
+        Picasso.with(this).load(url).noPlaceholder()
+                .resize(300, 550)
+                .into(ib);
     }
 
     public void readBookDetails (InputStream is) throws IOException{
@@ -146,47 +150,49 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
             if(name.equals("items")){
                 Log.d("id","items");
                 jr.beginArray();
-                jr.beginObject();
                 while(jr.hasNext()){
-                    name = jr.nextName();
-                    Log.d("name",name);
-                    if(name.equals("volumeInfo")){
-                        jr.beginObject();
-                        while(jr.hasNext()) {
-                            name = jr.nextName();
-                            Log.d("name", name);
-                            if (name.equals("title")) {
-                                book_title.setText(jr.nextString());
-                            } else if (name.equals("authors")) {
-                                jr.beginArray();
-                                String author = "";
-                                while (jr.hasNext()) {
-                                    author = author + jr.nextString();
-                                }
-                                jr.endArray();
-                                book_author.setText(author);
-                            } else if(name.equals("imageLinks")){
-                                jr.beginObject();
-                                while(jr.hasNext()){
-                                    name = jr.nextName();
-                                    Log.d("name", name);
-                                    if(name.equals("thumbnail")){
-                                        setBookImage(jr.nextString());
-                                    }else{
-                                        jr.skipValue();
+                    jr.beginObject();
+                    while(jr.hasNext()){
+                        name = jr.nextName();
+                        Log.d("name",name);
+                        if(name.equals("volumeInfo")){
+                            jr.beginObject();
+                            while(jr.hasNext()) {
+                                name = jr.nextName();
+                                Log.d("name", name);
+                                if (name.equals("title")) {
+                                    book_title.setText(jr.nextString());
+                                } else if (name.equals("authors")) {
+                                    jr.beginArray();
+                                    String author = "";
+                                    while (jr.hasNext()) {
+                                        author = author + jr.nextString();
                                     }
+                                    jr.endArray();
+                                    book_author.setText(author);
+                                } else if(name.equals("imageLinks")){
+                                    jr.beginObject();
+                                    while(jr.hasNext()){
+                                        name = jr.nextName();
+                                        Log.d("name", name);
+                                        if(name.equals("thumbnail")){
+                                            setBookImage(jr.nextString());
+                                        }else{
+                                            jr.skipValue();
+                                        }
+                                    }
+                                    jr.endObject();
+                                } else {
+                                    jr.skipValue();
                                 }
-                                jr.endObject();
-                            } else {
-                                jr.skipValue();
                             }
+                            jr.endObject();
+                        }else{
+                            jr.skipValue();
                         }
-                        jr.endObject();
-                    }else{
-                        jr.skipValue();
                     }
+                    jr.endObject();
                 }
-                jr.endObject();
                 jr.endArray();
             }else{
                 jr.skipValue();
