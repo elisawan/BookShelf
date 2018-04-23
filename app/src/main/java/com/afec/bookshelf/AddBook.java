@@ -1,8 +1,16 @@
 package com.afec.bookshelf;
 
 import android.*;
+import android.Manifest;
+import android.annotation.SuppressLint;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationManager;
+import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +22,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +45,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
+import java.util.Locale;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
@@ -46,6 +57,7 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
     Button ISBN_scan_button, Locate_button, confirm_button ;
     TextView ISBN_show, book_title, book_author, status_bar, location_bar;
     Book newBook;
+    Spinner statusSpinner;
 
     ZXingScannerView scannerView;
 
@@ -63,6 +75,10 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
             ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.CAMERA},2);
         }
 
+        if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION},2);
+        }
+
 
         ib = (ImageButton) findViewById(R.id.ib);
         ISBN_reader = (EditText) findViewById(R.id.ISBN_reader);
@@ -70,6 +86,7 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
         ISBN_scan_button = (Button)  findViewById(R.id.ISBN_scan_button);
         Locate_button = (Button)  findViewById(R.id.Locate_button);
         confirm_button = (Button) findViewById(R.id.confirm_button);
+        statusSpinner = (Spinner) findViewById(R.id.status_spinner);
 
         ISBN_show = (TextView) findViewById(R.id.textView4);
         book_title = (TextView) findViewById(R.id.textView2);
@@ -78,6 +95,22 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
         location_bar = (TextView) findViewById(R.id.location_bar);
 
         newBook = new Book();
+
+        confirm_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(newBook!=null) {
+                    newBook.setStatus((int)statusSpinner.getSelectedItemId());
+                    addToDatabase();
+                }else {
+                    Snackbar mySnackbar = Snackbar.make(findViewById(R.id.confirm_button),
+                            "Nessun libro selezionato", Snackbar.LENGTH_SHORT);
+                    mySnackbar.show();
+                }
+
+            }
+        });
+
 
         Bundle b = getIntent().getExtras();
         if(b != null) {
@@ -99,12 +132,11 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
                     @Override
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
-                        Log.e("Response", "Response is: " + response.substring(0, 500));
+                        //Log.e("Response", "Response is: " + response.substring(0, 500));
                         InputStream stream = new ByteArrayInputStream(response.getBytes());
                         try {
                             readBookDetails(stream);
                             setViews();
-                            addToDatabase(newBook);
                         } catch (IOException e) {
 
                         }
@@ -145,8 +177,8 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
         startActivity(intent);
     }
 
-    public void setBookImage(String url){
-        Picasso.with(this).load(url).noPlaceholder()
+    public void setBookImage(){
+        Picasso.with(this).load(newBook.getThumbnailUrl()).noPlaceholder()
                 .resize(300, 550)
                 .into(ib);
     }
@@ -191,7 +223,8 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
                                         name = jr.nextName();
                                         Log.d("name", name);
                                         if(name.equals("thumbnail")){
-                                            setBookImage(jr.nextString());
+                                            newBook.setThumbnailUrl(jr.nextString());
+                                            setBookImage();
                                         }else{
                                             jr.skipValue();
                                         }
@@ -222,15 +255,46 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
     public void setViews(){
         book_author.setText(newBook.getAuthor());
         book_title.setText(newBook.getTitle());
+        location_bar.setText(newBook.getLocation());
     }
 
-    public void addToDatabase(Book book){
+    public void addToDatabase(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         String uid = user.getUid();
-        DatabaseReference ref = database.getReference("server/saving-data/fireblog");
-        DatabaseReference usersRef = ref.child("users").child(uid);
+        DatabaseReference ref = database.getReference("server/users");
+        DatabaseReference usersRef = ref.child(uid).child(newBook.getIsbn());
         usersRef.setValue(newBook);
 
     }
+
+    public void getAddress(){
+        Geocoder geoCoder = new Geocoder(this, Locale.getDefault()); //it is Geocoder
+        StringBuilder builder = new StringBuilder();
+        String streetAddress;
+
+        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+        @SuppressLint("MissingPermission") Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        double longitude = location.getLongitude();
+        double latitude = location.getLatitude();
+
+
+        try {
+            List<Address> address = geoCoder.getFromLocation(latitude, longitude, 1);
+            int maxLines = address.get(0).getMaxAddressLineIndex();
+            for (int i=0; i<maxLines; i++) {
+                String addressStr = address.get(0).getAddressLine(i);
+                builder.append(addressStr);
+                builder.append(" ");
+            }
+
+            String finalAddress = builder.toString(); //This is the complete address.
+            newBook.setLocation(finalAddress);
+
+        } catch (IOException e) {}
+        catch (NullPointerException e) {}
+
+
+    }
+
 }
