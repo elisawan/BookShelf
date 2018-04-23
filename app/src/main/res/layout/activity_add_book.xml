@@ -4,54 +4,61 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:gravity="center"
     android:orientation="vertical"
     tools:context=".AddBook">
 
-    <ImageButton
-        android:id="@+id/ib"
-        android:layout_width="102dp"
-        android:layout_height="155dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_camera" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="10dp"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/ISBN_scan_button"
-        android:layout_width="172dp"
-        android:layout_height="60dp"
-        android:layout_marginBottom="8dp"
-        android:layout_marginEnd="24dp"
-        android:layout_marginTop="16dp"
-        android:text="Scan"
-        app:layout_constraintBottom_toTopOf="@+id/ISBN_reader"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:onClick="isbn_scan"/>
+        <ImageButton
+            android:id="@+id/ib"
+            android:layout_width="250dp"
+            android:layout_height="200dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:layout_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@android:drawable/ic_menu_camera" />
 
-    <EditText
-        android:id="@+id/ISBN_reader"
-        android:layout_width="206dp"
-        android:layout_height="41dp"
-        android:layout_marginEnd="24dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="ISBN number"
-        app:layout_constraintEnd_toEndOf="parent"
-        tools:layout_editor_absoluteY="106dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="20dip"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:orientation="vertical">
 
-    <Button
-        android:id="@+id/confirm_button"
-        android:layout_width="117dp"
-        android:layout_height="58dp"
-        android:layout_marginBottom="16dp"
-        android:layout_marginEnd="16dp"
-        android:layout_marginTop="8dp"
-        android:text="Confirm"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/edit_location" />
+            <Button
+                android:id="@+id/ISBN_scan_button"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:layout_marginBottom="8dp"
+                android:layout_marginEnd="24dp"
+                android:layout_marginTop="16dp"
+                android:onClick="isbn_scan"
+                android:text="Scan"
+                app:layout_constraintBottom_toTopOf="@+id/ISBN_reader"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <EditText
+                android:id="@+id/ISBN_reader"
+                android:layout_width="match_parent"
+                android:layout_height="41dp"
+                android:layout_marginEnd="24dp"
+                android:ems="10"
+                android:inputType="textPersonName"
+                android:text="ISBN number"
+                app:layout_constraintEnd_toEndOf="parent"
+                tools:layout_editor_absoluteY="106dp" />
+
+        </LinearLayout>
+    </LinearLayout>
 
     <TextView
         android:id="@+id/textView2"
@@ -98,50 +105,52 @@
         android:layout_marginEnd="16dp"
         android:layout_marginStart="16dp"
         android:text="Location"
+        android:textAlignment="center"
         app:layout_constraintEnd_toStartOf="@+id/Locate_button"
         app:layout_constraintHorizontal_bias="0.567"
         app:layout_constraintStart_toStartOf="parent"
         tools:layout_editor_absoluteY="419dp" />
 
-    <Button
-        android:id="@+id/Locate_button"
-        android:layout_width="77dp"
-        android:layout_height="56dp"
-        android:layout_marginEnd="16dp"
-        android:text="Locate"
-        app:layout_constraintEnd_toStartOf="@+id/edit_location"
-        tools:layout_editor_absoluteY="395dp" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15dip"
+        android:layout_marginRight="15dip"
+        android:orientation="horizontal">
 
-    <EditText
-        android:id="@+id/edit_location"
-        android:layout_width="89dp"
-        android:layout_height="55dp"
+        <TextView
+            android:id="@+id/textView5"
+            android:layout_width="71dp"
+            android:layout_height="31dp"
+            android:layout_marginStart="16dp"
+            android:layout_weight="1"
+            android:text="Status"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:layout_editor_absoluteY="332dp" />
+
+        <Spinner
+            android:id="@+id/spinner3"
+            android:layout_width="257dp"
+            android:layout_height="31dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_weight="1"
+            android:entries="@array/book_conditions"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toEndOf="@+id/textView6"
+            tools:layout_editor_absoluteY="332dp" />
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/confirm_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
         android:layout_marginEnd="16dp"
         android:layout_marginTop="8dp"
-        android:ems="10"
-        android:inputType="textPersonName"
-        android:text="Manual"
+        android:text="Confirm"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/spinner3" />
-
-    <TextView
-        android:id="@+id/textView5"
-        android:layout_width="71dp"
-        android:layout_height="31dp"
-        android:layout_marginStart="16dp"
-        android:text="Status"
-        app:layout_constraintStart_toStartOf="parent"
-        tools:layout_editor_absoluteY="332dp" />
-
-    <Spinner
-        android:id="@+id/spinner3"
-        android:layout_width="257dp"
-        android:layout_height="31dp"
-        android:layout_marginEnd="8dp"
-        android:layout_marginStart="8dp"
-        android:entries="@array/book_conditions"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
-        app:layout_constraintStart_toEndOf="@+id/textView6"
-        tools:layout_editor_absoluteY="332dp" />
+        app:layout_constraintTop_toBottomOf="@+id/edit_location" />
 </LinearLayout>

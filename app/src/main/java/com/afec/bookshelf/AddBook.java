@@ -17,6 +17,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
 import com.google.zxing.Result;
 
 import com.android.volley.Request;
@@ -41,6 +45,7 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
     EditText ISBN_reader, edit_location;
     Button ISBN_scan_button, Locate_button, confirm_button ;
     TextView ISBN_show, book_title, book_author, status_bar, location_bar;
+    Book newBook;
 
     ZXingScannerView scannerView;
 
@@ -58,6 +63,7 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
             ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.CAMERA},2);
         }
 
+
         ib = (ImageButton) findViewById(R.id.ib);
         ISBN_reader = (EditText) findViewById(R.id.ISBN_reader);
         edit_location = (EditText) findViewById(R.id.edit_location);
@@ -71,11 +77,14 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
         status_bar = (TextView) findViewById(R.id.textView5);
         location_bar = (TextView) findViewById(R.id.location_bar);
 
+        newBook = new Book();
+
         Bundle b = getIntent().getExtras();
         if(b != null) {
             String isbn = b.getString("isbn", null);
             if (isbn != null) {
                 ISBN_show.setText(isbn);
+                newBook.setIsbn(isbn);
                 url = url+isbn;
                 isbnHttpRequest();
             }
@@ -94,6 +103,8 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
                         InputStream stream = new ByteArrayInputStream(response.getBytes());
                         try {
                             readBookDetails(stream);
+                            setViews();
+                            addToDatabase(newBook);
                         } catch (IOException e) {
 
                         }
@@ -142,6 +153,7 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
 
     public void readBookDetails (InputStream is) throws IOException{
         String name;
+
         JsonReader jr = new JsonReader(new InputStreamReader(is, "UTF-8"));
         jr.beginObject();
         while(jr.hasNext()){
@@ -161,7 +173,9 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
                                 name = jr.nextName();
                                 Log.d("name", name);
                                 if (name.equals("title")) {
-                                    book_title.setText(jr.nextString());
+
+                                    //book_title.setText(jr.nextString());
+                                    newBook.setTitle(jr.nextString());
                                 } else if (name.equals("authors")) {
                                     jr.beginArray();
                                     String author = "";
@@ -169,7 +183,8 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
                                         author = author + jr.nextString();
                                     }
                                     jr.endArray();
-                                    book_author.setText(author);
+                                    //book_author.setText(author);
+                                    newBook.setAuthor(author);
                                 } else if(name.equals("imageLinks")){
                                     jr.beginObject();
                                     while(jr.hasNext()){
@@ -199,5 +214,23 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
             }
         }
         jr.endObject();
+
+
+
+    }
+
+    public void setViews(){
+        book_author.setText(newBook.getAuthor());
+        book_title.setText(newBook.getTitle());
+    }
+
+    public void addToDatabase(Book book){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        String uid = user.getUid();
+        DatabaseReference ref = database.getReference("server/saving-data/fireblog");
+        DatabaseReference usersRef = ref.child("users").child(uid);
+        usersRef.setValue(newBook);
+
     }
 }

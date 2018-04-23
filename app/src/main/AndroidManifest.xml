@@ -21,7 +21,8 @@
         </activity>
         <activity android:name=".EditUser" />
         <activity android:name=".ShowUser" />
-        <activity android:name=".AddBook">
+        <activity android:name=".AddBook"/>
+        <activity android:name=".ListViewActivity">
 
         </activity>
 
