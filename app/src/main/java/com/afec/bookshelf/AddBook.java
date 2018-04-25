@@ -111,6 +111,7 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
                             "Nessun libro selezionato", Snackbar.LENGTH_SHORT);
                     mySnackbar.show();
                 }
+                //TODO: add book instance to Firebase (location, status)
                 Intent intent = new Intent(getApplicationContext(),BookList.class);
                 startActivity(intent);
             }
@@ -259,10 +260,12 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
     public void addToDatabase(){
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        Log.d("user", user.toString());
         String uid = user.getUid();
-        DatabaseReference ref = database.getReference("server/users");
-        DatabaseReference usersRef = ref.child(uid).child(newBook.getIsbn());
-        usersRef.setValue(newBook);
+        //TODO: check if book is already in the database
+        DatabaseReference booksRef = database.getReference("books");
+        DatabaseReference bookRef = booksRef.child(newBook.getIsbn());
+        bookRef.setValue(newBook);
     }
 
     public void getAddress(){
