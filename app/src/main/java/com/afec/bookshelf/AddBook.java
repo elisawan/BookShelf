@@ -16,6 +16,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.JsonReader;
+import android.view.Menu;
 import android.view.View;
 import android.util.Log;
 import android.widget.Button;
@@ -25,6 +26,7 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.support.v7.widget.Toolbar;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -50,7 +52,7 @@ import java.util.Locale;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
-public class AddBook extends AppCompatActivity implements ZXingScannerView.ResultHandler{
+public class AddBook extends BaseActivity implements ZXingScannerView.ResultHandler{
 
     ImageButton ib;
     EditText ISBN_reader, edit_location;
@@ -58,7 +60,7 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
     TextView ISBN_show, book_title, book_author, status_bar, location_bar;
     Book newBook;
     Spinner statusSpinner;
-
+    Toolbar myToolbar;
     ZXingScannerView scannerView;
 
     //Web Call
@@ -92,6 +94,9 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
         book_author = (TextView) findViewById(R.id.textView3);
         status_bar = (TextView) findViewById(R.id.textView5);
         location_bar = (TextView) findViewById(R.id.location_bar);
+
+        myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
 
         newBook = new Book();
 
@@ -284,8 +289,13 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
 
         } catch (IOException e) {}
         catch (NullPointerException e) {}
+    }
 
-
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar, menu);
+        menu.removeItem(R.id.action_add_book);
+        return true;
     }
 
 }

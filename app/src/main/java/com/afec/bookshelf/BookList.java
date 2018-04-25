@@ -1,11 +1,14 @@
 package com.afec.bookshelf;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
@@ -18,7 +21,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BookList extends AppCompatActivity {
+public class BookList extends BaseActivity {
 
     GridView gv;
     List<Book> myBooks;
@@ -28,7 +31,7 @@ public class BookList extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_book_list);
 
-        myToolbar = (Toolbar) findViewById(R.id.show_toolbar);
+        myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
         myBooks = new ArrayList<Book>();
@@ -50,8 +53,6 @@ public class BookList extends AppCompatActivity {
         myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
         myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
         myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
-
-
 
         gv = findViewById(R.id.book_list_grid);
         gv.setAdapter(new BaseAdapter() {
@@ -90,5 +91,12 @@ public class BookList extends AppCompatActivity {
         });
 
     }
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar, menu);
+        menu.removeItem(R.id.action_edit_profile);
+        return true;
+    }
+
 
 }

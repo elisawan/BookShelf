@@ -29,7 +29,7 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ShowUser extends AppCompatActivity {
+public class ShowUser extends BaseActivity {
 
     ImageView immagineUtente;
     Uri imageUri;
@@ -43,7 +43,7 @@ public class ShowUser extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_user);
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.show_toolbar);
+        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
         immagineUtente = (ImageView) findViewById(R.id.immagineUtente);
@@ -93,32 +93,11 @@ public class ShowUser extends AppCompatActivity {
         });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        Intent intent;
-        switch (item.getItemId()) {
-            case R.id.action_settings:
-                // User chose the "Settings" item, show the app settings UI...
-                intent = new Intent(getBaseContext(), AddBook.class);
-                startActivity(intent);
-                return true;
-
-            case R.id.action_edit:
-                intent = new Intent(getBaseContext(), EditUser.class);
-                startActivity(intent);
-                return true;
-
-            default:
-                // If we got here, the user's action was not recognized.
-                // Invoke the superclass to handle it.
-                return super.onOptionsItemSelected(item);
-        }
-    }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.show_user_menu, menu);
+        getMenuInflater().inflate(R.menu.toolbar, menu);
+        menu.removeItem(R.id.action_show_profile);
         return true;
     }
 

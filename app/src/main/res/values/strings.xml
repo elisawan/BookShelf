@@ -27,4 +27,8 @@
         <item>Good</item>
         <item>Acceptable</item>
     </string-array>
+    <string name="add_book">Add Book</string>
+    <string name="show_profile">Show profile</string>
+    <string name="home">Home</string>
+    <string name="my_books">My Books</string>
 </resources>

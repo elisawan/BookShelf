@@ -24,7 +24,7 @@
         <activity android:name=".EditUser" />
         <activity android:name=".ShowUser" />
         <activity android:name=".AddBook" />
-        <activity android:name=".ListViewActivity"></activity>
+        <activity android:name=".ListViewActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -36,7 +36,9 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".BookList"></activity>
+        <activity android:name=".BookList" />
+        <activity android:name=".MainActivity" />
+        <activity android:name=".BaseActivity"></activity>
     </application>
 
 </manifest>
