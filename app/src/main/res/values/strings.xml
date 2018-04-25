@@ -15,6 +15,12 @@
     <string name="lent_books">Lent Books</string>
     <string name="borrowed_books">Borrowed Books</string>
     <string name="title_activity_add_book">AddBook</string>
+    <string name="book_title">Book title</string>
+    <string name="myBooks">My books</string>
+    <string name="book_author">Book author</string>
+    <string name="author_unknown">Unknown author</string>
+    <string name="title_unknown">Unknown Title</string>
+    <string name="book_image_preview">book_image_preview</string>
     <string-array name="book_conditions">
         <item>Like new</item>
         <item>Very good</item>

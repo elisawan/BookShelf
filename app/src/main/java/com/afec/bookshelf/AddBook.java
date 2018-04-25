@@ -79,7 +79,6 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION},2);
         }
 
-
         ib = (ImageButton) findViewById(R.id.ib);
         ISBN_reader = (EditText) findViewById(R.id.ISBN_reader);
         edit_location = (EditText) findViewById(R.id.edit_location);
@@ -107,7 +106,8 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
                             "Nessun libro selezionato", Snackbar.LENGTH_SHORT);
                     mySnackbar.show();
                 }
-
+                Intent intent = new Intent(getApplicationContext(),BookList.class);
+                startActivity(intent);
             }
         });
 
@@ -132,7 +132,7 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
                     @Override
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
-                        //Log.e("Response", "Response is: " + response.substring(0, 500));
+                        Log.d("Response", "Response is: " + response.substring(0, 500));
                         InputStream stream = new ByteArrayInputStream(response.getBytes());
                         try {
                             readBookDetails(stream);
@@ -185,7 +185,6 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
 
     public void readBookDetails (InputStream is) throws IOException{
         String name;
-
         JsonReader jr = new JsonReader(new InputStreamReader(is, "UTF-8"));
         jr.beginObject();
         while(jr.hasNext()){
@@ -205,8 +204,6 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
                                 name = jr.nextName();
                                 Log.d("name", name);
                                 if (name.equals("title")) {
-
-                                    //book_title.setText(jr.nextString());
                                     newBook.setTitle(jr.nextString());
                                 } else if (name.equals("authors")) {
                                     jr.beginArray();
@@ -215,7 +212,6 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
                                         author = author + jr.nextString();
                                     }
                                     jr.endArray();
-                                    //book_author.setText(author);
                                     newBook.setAuthor(author);
                                 } else if(name.equals("imageLinks")){
                                     jr.beginObject();
@@ -224,7 +220,6 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
                                         Log.d("name", name);
                                         if(name.equals("thumbnail")){
                                             newBook.setThumbnailUrl(jr.nextString());
-                                            setBookImage();
                                         }else{
                                             jr.skipValue();
                                         }
@@ -247,15 +242,13 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
             }
         }
         jr.endObject();
-
-
-
     }
 
     public void setViews(){
         book_author.setText(newBook.getAuthor());
         book_title.setText(newBook.getTitle());
         location_bar.setText(newBook.getLocation());
+        setBookImage();
     }
 
     public void addToDatabase(){
@@ -265,7 +258,6 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
         DatabaseReference ref = database.getReference("server/users");
         DatabaseReference usersRef = ref.child(uid).child(newBook.getIsbn());
         usersRef.setValue(newBook);
-
     }
 
     public void getAddress(){
@@ -277,7 +269,6 @@ public class AddBook extends AppCompatActivity implements ZXingScannerView.Resul
         @SuppressLint("MissingPermission") Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         double longitude = location.getLongitude();
         double latitude = location.getLatitude();
-
 
         try {
             List<Address> address = geoCoder.getFromLocation(latitude, longitude, 1);
