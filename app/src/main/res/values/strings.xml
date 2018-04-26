@@ -22,6 +22,7 @@
     <string name="title_unknown">Unknown Title</string>
     <string name="book_image_preview">book_image_preview</string>
     <string-array name="book_conditions">
+        <item>Not set</item>
         <item>Like new</item>
         <item>Very good</item>
         <item>Good</item>
