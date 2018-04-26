@@ -28,10 +28,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
+import com.afec.bookshelf.Models.BookInstance;
+import com.google.firebase.FirebaseError;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.zxing.Result;
 
 import com.android.volley.Request;
@@ -138,10 +143,11 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
                     @Override
                     public void onResponse(String response) {
                         // Display the first 500 characters of the response string.
-                        Log.d("Response", "Response is: " + response.substring(0, 500));
+                        //Log.d("Response", "Response is: " + response.substring(0, 500));
                         InputStream stream = new ByteArrayInputStream(response.getBytes());
                         try {
                             readBookDetails(stream);
+                            getAddress();
                             setViews();
                         } catch (IOException e) {
 
@@ -253,7 +259,6 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
     public void setViews(){
         book_author.setText(newBook.getAuthor());
         book_title.setText(newBook.getTitle());
-        location_bar.setText(newBook.getLocation());
         setBookImage();
     }
 
@@ -262,10 +267,36 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         Log.d("user", user.toString());
         String uid = user.getUid();
-        //TODO: check if book is already in the database
-        DatabaseReference booksRef = database.getReference("books");
-        DatabaseReference bookRef = booksRef.child(newBook.getIsbn());
+
+        //Inserimento in books
+        DatabaseReference bookRef = database.getReference("books")
+                .child(newBook.getIsbn());
         bookRef.setValue(newBook);
+
+        //Inserimento in book_instances
+        DatabaseReference bookInstanceRef = database.getReference("book_instances");
+        bookInstanceRef.push().setValue(new BookInstance(newBook.getIsbn(),newBook.getLocation(), user.getUid(), newBook.getStatus()));
+
+        //Aggiornamento inserimento libro
+        final DatabaseReference userRef = database.getReference("users").child(user.getUid()).child("addedBooks");
+        userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+
+                long value =(long) dataSnapshot.getValue();
+                value = value + 1;
+                userRef.setValue(value);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("db error report: ", databaseError.getDetails());
+            }
+
+
+        });
+
+
     }
 
     public void getAddress(){
@@ -278,20 +309,9 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         double longitude = location.getLongitude();
         double latitude = location.getLatitude();
 
-        try {
-            List<Address> address = geoCoder.getFromLocation(latitude, longitude, 1);
-            int maxLines = address.get(0).getMaxAddressLineIndex();
-            for (int i=0; i<maxLines; i++) {
-                String addressStr = address.get(0).getAddressLine(i);
-                builder.append(addressStr);
-                builder.append(" ");
-            }
+        newBook.setLocation(latitude, longitude);
 
-            String finalAddress = builder.toString(); //This is the complete address.
-            newBook.setLocation(finalAddress);
 
-        } catch (IOException e) {}
-        catch (NullPointerException e) {}
     }
 
     @Override
@@ -301,4 +321,8 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         return true;
     }
 
+
+
 }
+
+

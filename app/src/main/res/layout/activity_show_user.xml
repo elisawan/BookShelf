@@ -79,8 +79,8 @@
         android:layout_marginRight="20dp">
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
             android:background="@android:drawable/editbox_background_normal"
             android:orientation="vertical">
 
@@ -91,7 +91,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:text="97"
+                android:text="-"
                 android:textColor="@android:color/black"
                 android:textSize="30sp" />
 
@@ -105,8 +105,8 @@
         </LinearLayout>
 
         <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="130dp"
+            android:layout_height="match_parent"
             android:background="@android:drawable/editbox_background_normal"
             android:orientation="vertical">
 
@@ -117,7 +117,7 @@
                 android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:text="203"
+                android:text="-"
                 android:textColor="@android:color/black"
                 android:textSize="30sp" />
 
@@ -127,7 +127,8 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
-                android:text="@string/borrowed_books" />
+                android:text="@string/borrowed_books"
+                android:textAlignment="center" />
         </LinearLayout>
     </LinearLayout>
 
