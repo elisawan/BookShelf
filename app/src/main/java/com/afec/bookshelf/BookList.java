@@ -17,6 +17,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afec.bookshelf.Models.BookInstance;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -55,27 +56,29 @@ public class BookList extends BaseActivity {
         db = FirebaseDatabase.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
+        // get list of my books
         myBooksRef = db.getReference("users").child(currentUser.getUid()).child("myBooks");
-
-        String bookId = myBooksRef.getKey();
-        DatabaseReference bookInstancesRef = db.getReference("book_instances").child(bookId);
-        bookInstancesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        myBooksRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                String isbn = dataSnapshot.getValue().toString();
-                final DatabaseReference booksRef = db.getReference("books").child(isbn);
-                booksRef.addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        Book b = (Book) dataSnapshot.getValue(Book.class);
-                        myBooks.add(b);
-                    }
+                for(DataSnapshot child : dataSnapshot.getChildren()){
+                    // get book instance
+                    BookInstance bi = child.getValue(BookInstance.class);
+                    // get book
+                    DatabaseReference bookRef = db.getReference("books").child(bi.getIsbn());
+                    bookRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Book b = dataSnapshot.getValue(Book.class);
+                            myBooks.add(b);
+                        }
 
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-                    }
-                });
+                        }
+                    });
+                }
             }
 
             @Override
