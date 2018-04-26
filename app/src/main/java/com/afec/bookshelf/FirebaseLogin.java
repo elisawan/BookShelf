@@ -95,16 +95,16 @@ public class FirebaseLogin extends AppCompatActivity {
                 // Sign in failed
                 if (response == null) {
                     // User pressed back button
-                    Toast.makeText(getApplicationContext(),"Operazione annullata",Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(),"Operation aborted",Toast.LENGTH_LONG);
                     return;
                 }
 
                 if (response.getError().getErrorCode() == ErrorCodes.NO_NETWORK) {
-                    Toast.makeText(getApplicationContext(),"Nessuna connessione a internet",Toast.LENGTH_LONG);
+                    Toast.makeText(getApplicationContext(),"No internet connection",Toast.LENGTH_LONG);
                     return;
                 }
 
-                Toast.makeText(getApplicationContext(),"Errore sconosciuto", Toast.LENGTH_LONG);
+                Toast.makeText(getApplicationContext(),"Unknown error", Toast.LENGTH_LONG);
                 Log.e("Sign-in error: ", response.getError().toString());
             }
         }
