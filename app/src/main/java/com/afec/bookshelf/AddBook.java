@@ -69,6 +69,7 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
     Spinner statusSpinner;
     Toolbar myToolbar;
     ZXingScannerView scannerView;
+    String isbn;
 
     //Web Call
 
@@ -127,12 +128,14 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
 
         Bundle b = getIntent().getExtras();
         if(b != null) {
-            String isbn = b.getString("isbn", null);
-            if (isbn != null) {
-                ISBN_show.setText(isbn);
-                newBook.setIsbn(isbn);
+            isbn = b.getString("isbn", null);
+            if (isbn != null && isbn.length()==13) {
                 url = url+isbn;
                 isbnHttpRequest();
+            }
+            else
+            {
+                Toast.makeText(AddBook.this,"No valid ISBN ",Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -140,19 +143,17 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
                 if (actionId == EditorInfo.IME_ACTION_SEND) {
-                    String isbn = ISBN_reader.getText().toString();
+                    isbn = ISBN_reader.getText().toString();
                     if (isbn != null && isbn.length()==13) {
-                        ISBN_show.setText(isbn);
-                        newBook.setIsbn(isbn);
                         url = url+isbn;
                         isbnHttpRequest();
+                        return true;
                     }
                     else
                     {
-                        Toast.makeText(AddBook.this,"ISBN must be 13 char long",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(AddBook.this,"ISBN must be 13 characters long",Toast.LENGTH_SHORT).show();
                         return false;
                     }
-                    return true;
                 }
                 return false;
             }
@@ -171,16 +172,18 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
                         //Log.d("Response", "Response is: " + response.substring(0, 500));
                         InputStream stream = new ByteArrayInputStream(response.getBytes());
                         readBookDetails(stream);
+                        ISBN_show.setText(isbn);
+                        newBook.setIsbn(isbn);
                         setViews();
-                        } catch (IOException e) {
-
+                        } catch (Exception e) {
+                            Toast.makeText(AddBook.this,"ISBN doesn't exists",Toast.LENGTH_SHORT).show();
                         }
                     }
                 }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 //Log.e("Response error", "That didn't work!");
-
+                Toast.makeText(AddBook.this,"Network error",Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -221,17 +224,17 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
 
     public void readBookDetails (InputStream is) throws IOException{
         String name;
-        if(is==null)
-        {
-            throw new NullPointerException();
-        }
+        boolean correct=false;
+
         JsonReader jr = new JsonReader(new InputStreamReader(is, "UTF-8"));
+
         jr.beginObject();
         while(jr.hasNext()){
             name = jr.nextName();
             Log.d("name",name);
             if(name.equals("items")){
                 Log.d("id","items");
+                correct=true;
                 jr.beginArray();
                 while(jr.hasNext()){
                     jr.beginObject();
@@ -282,6 +285,8 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
             }
         }
         jr.endObject();
+        if(correct==false)
+            throw new NullPointerException();
     }
 
     public void setViews(){

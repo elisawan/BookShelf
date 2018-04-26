@@ -137,9 +137,6 @@ public class ShowUser extends BaseActivity {
 
     public void config(){
 
-
-
-
         //Books Given/Taken
         user = FirebaseAuth.getInstance().getCurrentUser();
         user.getUid();
@@ -148,9 +145,10 @@ public class ShowUser extends BaseActivity {
         userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                long value =(long) dataSnapshot.getValue();
-                sharedBookCount .setText(String.valueOf(value));
-
+                if(dataSnapshot.exists()) {
+                    long value = (long) dataSnapshot.getValue();
+                    sharedBookCount.setText(String.valueOf(value));
+                }
 
             }
 
@@ -166,9 +164,10 @@ public class ShowUser extends BaseActivity {
         userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                long value =(long) dataSnapshot.getValue();
-                takenBookCount.setText(String.valueOf(value));
-
+                if(dataSnapshot.exists()) {
+                    long value = (long) dataSnapshot.getValue();
+                    takenBookCount.setText(String.valueOf(value));
+                }
             }
 
             @Override
@@ -183,8 +182,10 @@ public class ShowUser extends BaseActivity {
         userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                long value =(long) dataSnapshot.getValue();
-                ratingBar.setRating(value);
+                if(dataSnapshot.exists()){
+                    long value =(long) dataSnapshot.getValue();
+                    ratingBar.setRating(value);
+                }
 
             }
 
