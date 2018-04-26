@@ -16,6 +16,13 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
@@ -26,6 +33,10 @@ public class BookList extends BaseActivity {
     GridView gv;
     List<Book> myBooks;
     Toolbar myToolbar;
+    FirebaseDatabase db;
+    FirebaseUser currentUser;
+    DatabaseReference myBooksRef;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -35,24 +46,38 @@ public class BookList extends BaseActivity {
         setSupportActionBar(myToolbar);
 
         myBooks = new ArrayList<Book>();
-        myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
-        myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
-        myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
-        myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
-        myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
-        myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
-        myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
-        myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
-        myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
-        myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
-        myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
-        myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
-        myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
-        myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
-        myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
-        myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
-        myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
-        myBooks.add(new Book( "android", "123456789", "Malnati", "Torino"));
+
+        db = FirebaseDatabase.getInstance();
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
+        myBooksRef = db.getReference("users").child(currentUser.getUid()).child("myBooks");
+        
+        String bookId = myBooksRef.getKey();
+        DatabaseReference bookInstancesRef = db.getReference("book_instances").child(bookId);
+        bookInstancesRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                String isbn = dataSnapshot.getValue().toString();
+                final DatabaseReference booksRef = db.getReference("books").child(isbn);
+                booksRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        Book b = (Book) dataSnapshot.getValue(Book.class);
+                        myBooks.add(b);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
 
         gv = findViewById(R.id.book_list_grid);
         gv.setAdapter(new BaseAdapter() {
