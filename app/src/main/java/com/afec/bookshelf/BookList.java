@@ -2,6 +2,7 @@ package com.afec.bookshelf;
 
 import android.content.Context;
 import android.content.Intent;
+import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
@@ -45,13 +46,17 @@ public class BookList extends BaseActivity {
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
+        Location fakeLocation = new Location("");
+        fakeLocation.setLatitude(7.2342);
+        fakeLocation.setLongitude(45.234);
+
         myBooks = new ArrayList<Book>();
 
         db = FirebaseDatabase.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         myBooksRef = db.getReference("users").child(currentUser.getUid()).child("myBooks");
-        
+
         String bookId = myBooksRef.getKey();
         DatabaseReference bookInstancesRef = db.getReference("book_instances").child(bookId);
         bookInstancesRef.addListenerForSingleValueEvent(new ValueEventListener() {

@@ -1,6 +1,7 @@
 package com.afec.bookshelf;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,8 +23,16 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -33,10 +42,15 @@ public class ShowUser extends BaseActivity {
 
     ImageView immagineUtente;
     Uri imageUri;
-    TextView nomeUtente, emailUtente, bioUtente;
+    TextView nomeUtente, emailUtente, bioUtente, sharedBookCount, takenBookCount;
     RoundedBitmapDrawable dr;
+    RatingBar ratingBar;
     Dialog builder;
     SharedPreferences sharedPref;
+    private FirebaseUser user;
+    FirebaseDatabase database;
+    ProgressDialog dialog;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +64,15 @@ public class ShowUser extends BaseActivity {
         nomeUtente = (TextView) findViewById(R.id.nomeUtente);
         emailUtente = (TextView) findViewById(R.id.emailUtente);
         bioUtente = (TextView) findViewById(R.id.bioUtente);
+
+        sharedBookCount = (TextView) findViewById(R.id.shared_book_count);
+        takenBookCount = (TextView) findViewById(R.id.taken_book_count);
+        ratingBar = (RatingBar) findViewById(R.id.ratingUser);
+
+        //Mettere tutte le inizializzazioni qui in config
+
+        config();
+
 
         sharedPref = this.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
         String nome = sharedPref.getString("nomeUtente", null);
@@ -111,4 +134,71 @@ public class ShowUser extends BaseActivity {
         builder.setContentView(view);
         builder.show();
     }
+
+    public void config(){
+
+
+
+
+        //Books Given/Taken
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        user.getUid();
+        database = FirebaseDatabase.getInstance();
+        DatabaseReference userRef = database.getReference("users").child(user.getUid()).child("lentBooks");
+        userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                long value =(long) dataSnapshot.getValue();
+                sharedBookCount .setText(String.valueOf(value));
+
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("db error report: ", databaseError.getDetails());
+            }
+
+
+        });
+
+        userRef = database.getReference("users").child(user.getUid()).child("borrowedBooks");
+        userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                long value =(long) dataSnapshot.getValue();
+                takenBookCount.setText(String.valueOf(value));
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("db error report: ", databaseError.getDetails());
+            }
+
+
+        });
+
+        userRef = database.getReference("users").child(user.getUid()).child("rating");
+        userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                long value =(long) dataSnapshot.getValue();
+                ratingBar.setRating(value);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("db error report: ", databaseError.getDetails());
+            }
+
+
+        });
+
+
+    }
+
+
+
 }

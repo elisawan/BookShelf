@@ -59,10 +59,11 @@
                 android:layout_height="41dp"
                 android:layout_marginEnd="24dp"
                 android:ems="10"
-                android:inputType="textPersonName"
-                android:text="ISBN number"
+                android:inputType="number"
+                android:hint="ISBN number"
                 app:layout_constraintEnd_toEndOf="parent"
-                tools:layout_editor_absoluteY="106dp" />
+                tools:layout_editor_absoluteY="106dp"
+                android:imeOptions="actionSend" />
 
         </LinearLayout>
     </LinearLayout>
