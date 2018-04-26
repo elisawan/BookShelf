@@ -1,6 +1,7 @@
 package com.afec.bookshelf;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
@@ -22,6 +23,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.ImageView;
+import android.widget.RatingBar;
 import android.widget.TextView;
 
 import com.google.firebase.auth.FirebaseAuth;
@@ -42,10 +44,12 @@ public class ShowUser extends BaseActivity {
     Uri imageUri;
     TextView nomeUtente, emailUtente, bioUtente, sharedBookCount, takenBookCount;
     RoundedBitmapDrawable dr;
+    RatingBar ratingBar;
     Dialog builder;
     SharedPreferences sharedPref;
     private FirebaseUser user;
     FirebaseDatabase database;
+    ProgressDialog dialog;
 
 
     @Override
@@ -63,8 +67,10 @@ public class ShowUser extends BaseActivity {
 
         sharedBookCount = (TextView) findViewById(R.id.shared_book_count);
         takenBookCount = (TextView) findViewById(R.id.taken_book_count);
+        ratingBar = (RatingBar) findViewById(R.id.ratingUser);
 
         //Mettere tutte le inizializzazioni qui in config
+
         config();
 
 
@@ -131,6 +137,9 @@ public class ShowUser extends BaseActivity {
 
     public void config(){
 
+
+
+
         //Books Given/Taken
         user = FirebaseAuth.getInstance().getCurrentUser();
         user.getUid();
@@ -169,6 +178,27 @@ public class ShowUser extends BaseActivity {
 
 
         });
+
+        userRef = database.getReference("users").child(user.getUid()).child("rating");
+        userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                long value =(long) dataSnapshot.getValue();
+                ratingBar.setRating(value);
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("db error report: ", databaseError.getDetails());
+            }
+
+
+        });
+
+
     }
+
+
 
 }
