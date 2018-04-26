@@ -310,13 +310,13 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         DatabaseReference bookInstanceRef = database.getReference("book_instances");
         bookInstanceRef.push().setValue(new BookInstance(newBook.getIsbn(),newBook.getLocation(), user.getUid(), newBook.getStatus()));
 
-        //Aggiornamento inserimento libro
+        /*//Aggiornamento inserimento libro
         final DatabaseReference userRef = database.getReference("users").child(user.getUid()).child("addedBooks");
         userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
 
-                long value =(long) dataSnapshot.getValue();
+                long value =(long) dataSnapshot.getValue(Long.class);
                 value = value + 1;
                 userRef.setValue(value);
             }
@@ -327,7 +327,7 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
             }
 
 
-        });
+        });*/
 
 
     }

@@ -47,6 +47,8 @@ public class BookList extends BaseActivity {
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
+        gv = findViewById(R.id.book_list_grid);
+
         Location fakeLocation = new Location("");
         fakeLocation.setLatitude(7.2342);
         fakeLocation.setLongitude(45.234);
@@ -57,28 +59,67 @@ public class BookList extends BaseActivity {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         // get list of my books
-        myBooksRef = db.getReference("users").child(currentUser.getUid()).child("myBooks");
-        myBooksRef.addListenerForSingleValueEvent(new ValueEventListener() {
+        myBooksRef = db.getReference("users").child("id").child("myBooks");
+        myBooksRef.addValueEventListener(new ValueEventListener() {
+
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot child : dataSnapshot.getChildren()){
-                    // get book instance
-                    BookInstance bi = child.getValue(BookInstance.class);
+                    // get book id
+                    Log.d("child",child.toString());
+                    String isbn = child.getValue(String.class);
+                    Log.d("isbn",isbn);
                     // get book
-                    DatabaseReference bookRef = db.getReference("books").child(bi.getIsbn());
-                    bookRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    DatabaseReference bookRef = db.getReference("books").child(isbn);
+                    bookRef.addValueEventListener(new ValueEventListener() {
+
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
+                            Log.d("data",dataSnapshot.toString());
                             Book b = dataSnapshot.getValue(Book.class);
+                            Log.d("book",b.toString());
                             myBooks.add(b);
+                            // show on view
+                            gv.setAdapter(new BaseAdapter() {
+
+                                @Override
+                                public int getCount() {
+                                    return myBooks.size();
+                                }
+
+                                @Override
+                                public Object getItem(int position) {
+                                    return myBooks.get(position);
+                                }
+
+                                @Override
+                                public long getItemId(int position) {
+                                    return position;
+                                }
+
+                                @Override
+                                public View getView(int position, View convertView, ViewGroup parent) {
+                                    if (convertView==null) {
+                                        convertView = getLayoutInflater().inflate(R.layout.book_preview, parent,false);
+                                    }
+                                    ImageView iv = (ImageView) convertView.findViewById(R.id.book_image_preview);
+                                    Picasso.with(getApplicationContext()).load(myBooks.get(position).getThumbnailUrl()).noPlaceholder()
+                                            .resize(300,400)
+                                            .into(iv);
+                                    TextView title_tv =(TextView) convertView.findViewById(R.id.book_title_preview);
+                                    title_tv.setText(myBooks.get(position).getTitle());
+                                    return convertView;
+                                }
+                            });
                         }
 
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
-
                         }
                     });
                 }
+
+
             }
 
             @Override
@@ -86,50 +127,12 @@ public class BookList extends BaseActivity {
 
             }
         });
-
-        gv = findViewById(R.id.book_list_grid);
-        gv.setAdapter(new BaseAdapter() {
-            @Override
-            public int getCount() {
-                return myBooks.size();
-            }
-
-            @Override
-            public Object getItem(int position) {
-                return myBooks.get(position);
-            }
-
-            @Override
-            public long getItemId(int position) {
-                return position;
-            }
-
-            @Override
-            public View getView(int position, View convertView, ViewGroup parent) {
-                if (convertView==null) {
-                    convertView = getLayoutInflater().inflate(R.layout.book_preview, parent,false);
-                }
-                ImageView iv = (ImageView) convertView.findViewById(R.id.book_image_preview);
-                myBooks.get(position).setThumbnailUrl("http://books.google.com/books/content?id=BlfqRgAACAAJ&printsec=frontcover&img=1&zoom=1&imgtk=AFLRE713W4vHhhKaoyzSnhZBzvgRoEYirqmfzR5iJ6Y7wjbRtCILro3DqXUEsAIkvUVMunOJBgJG1wgCI_ls7amybyAAZJB2Go5jF88JIGJrLcXjnjF-fdmXTy_iPU87qgTOvGDqnz_S&source=gbs_api");
-                Picasso.with(getApplicationContext()).load(myBooks.get(position).getThumbnailUrl()).noPlaceholder()
-                        .resize(300,400)
-                        .into(iv);
-                TextView title_tv =(TextView) convertView.findViewById(R.id.book_title_preview);
-                myBooks.get(position).setTitle("La divina commedia");
-                title_tv.setText(myBooks.get(position).getTitle());
-
-                Log.d("isbn",myBooks.get(position).getIsbn() );
-                return convertView;
-            }
-        });
-
     }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar, menu);
         menu.removeItem(R.id.action_edit_profile);
         return true;
     }
-
-
 }
