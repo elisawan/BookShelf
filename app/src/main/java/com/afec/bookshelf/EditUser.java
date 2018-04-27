@@ -16,6 +16,7 @@ import android.media.Image;
 import android.net.Uri;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.content.FileProvider;
@@ -41,6 +42,22 @@ import android.widget.ListView;
 import android.widget.PopupMenu;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.OnProgressListener;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -64,6 +81,7 @@ public class EditUser extends BaseActivity {
     private Uri mUri;
     private Bitmap mPhoto;
     String mCurrentPhotoPath;
+    Bitmap bitmap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,6 +183,9 @@ public class EditUser extends BaseActivity {
                 editor.putBoolean("contact_whatsapp", whatsapp_cb.isChecked());
                 editor.putBoolean("contact_call", call_cb.isChecked());
                 editor.commit();
+
+                updateFirebase(String.valueOf(bioUtente.getText()), String.valueOf(nomeUtente.getText()));
+
                 Intent intent= new Intent(getApplicationContext(),ShowUser.class);
                 startActivity(intent);
             }
@@ -198,7 +219,7 @@ public class EditUser extends BaseActivity {
                         editor.putString("imageUri", mCurrentPhotoPath);
                         editor.commit();
 
-                        Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
+                        bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
                         immagineUtente.setImageBitmap(bitmap);
                     } catch (Exception e) {
                         Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
@@ -210,7 +231,7 @@ public class EditUser extends BaseActivity {
                     SharedPreferences.Editor editor = sharedPref.edit();
                     editor.putString("imageUri",mCurrentPhotoPath);
                     editor.commit();
-                    Bitmap bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
+                    bitmap = BitmapFactory.decodeFile(mCurrentPhotoPath);
                     immagineUtente.setImageBitmap(bitmap);
                 }
                 break;
@@ -232,6 +253,54 @@ public class EditUser extends BaseActivity {
         // Save a file: path for use with ACTION_VIEW intents
         mCurrentPhotoPath = image.getAbsolutePath();
         return image;
+    }
+
+
+    public void updateFirebase(String biografia, String username){
+        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+
+
+
+        DatabaseReference userRef = database.getReference("users")
+                .child(user.getUid())
+                .child("biography");
+
+        if(!biografia.isEmpty())
+            userRef.setValue(biografia);
+
+        if(!username.isEmpty())
+        userRef.getParent().child("username")
+                .setValue(username);
+
+        Bitmap emptyBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
+        if (!bitmap.sameAs(emptyBitmap)) {
+            // myBitmap is not empty/blank
+
+            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference(user.getUid()+"/images");
+            mStorageRef.putFile(Uri.parse(mCurrentPhotoPath))
+                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                            Toast.makeText(EditUser.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnFailureListener(new OnFailureListener() {
+                        @Override
+                        public void onFailure(@NonNull Exception e) {
+                            Toast.makeText(EditUser.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                        }
+                    })
+                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                        @Override
+                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                                    .getTotalByteCount());
+                        }
+                    });
+
+        }
+
     }
 
 }

@@ -1,8 +1,7 @@
 package com.afec.bookshelf.Models;
 
-/**
- * Created by acer on 26/04/2018.
- */
+
+import android.graphics.Bitmap;
 
 public class User {
     private String uid;
@@ -12,6 +11,7 @@ public class User {
     private int lentBooks;
     private float rating;
     private String username;
+    private Bitmap userPic;
 
     public User(String uid, int addedBooks, String biography, int borrowedBooks, int lentBooks, float rating, String username) {
         this.uid = uid;
