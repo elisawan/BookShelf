@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     tools:context="com.afec.bookshelf.EditUser"
     android:orientation="vertical">
 
@@ -12,7 +13,7 @@
         android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="?attr/actionBarSize"
-        android:background="?attr/colorPrimary"
+        android:background="@color/colorPrimaryDark"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
@@ -70,43 +71,26 @@
         android:rating="0" />
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
-        android:orientation="horizontal"
         android:layout_marginBottom="15dp"
         android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp">
+        android:layout_marginRight="20dp"
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:layout_width="130dp"
-            android:layout_height="match_parent"
-            android:background="@android:drawable/editbox_background_normal"
+        <!--android:background="@android:drawable/editbox_background_normal"--><![CDATA[
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/shared_book_count"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:text="-"
-                android:textColor="@android:color/black"
-                android:textSize="30sp" />
 
-            <TextView
-                android:id="@+id/shared_book"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:layout_marginRight="20dp"
-                android:text="@string/lent_books" />
-        </LinearLayout>
+
+
+        ]]>
 
         <LinearLayout
-            android:layout_width="130dp"
+            android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:layout_weight="1"
             android:background="@android:drawable/editbox_background_normal"
             android:orientation="vertical">
 
@@ -123,12 +107,41 @@
 
             <TextView
                 android:id="@+id/taken_book"
-                android:layout_width="wrap_content"
+                android:layout_width="134dp"
                 android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="20dp"
                 android:text="@string/borrowed_books"
                 android:textAlignment="center" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="@android:drawable/editbox_background_normal"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/shared_book_count"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_horizontal"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:text="-"
+                android:textColor="@android:color/black"
+                android:textSize="30sp" />
+
+            <TextView
+                android:id="@+id/shared_book"
+                android:layout_gravity="center_horizontal"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="20dp"
+                android:text="@string/lent_books" />
         </LinearLayout>
     </LinearLayout>
 
@@ -142,7 +155,6 @@
         android:text="@string/biografia"
         android:textAlignment="center"
         android:textColor="@android:color/black" />
-
 
 </LinearLayout>
 

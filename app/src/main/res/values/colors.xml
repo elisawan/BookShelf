@@ -1,6 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#EFECCA</color>
+    <color name="colorPrimaryDark">#046380</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="colorNuanceDark">#A7A37E</color>
+    <color name="colorNuanceLite">#E6E2AF</color>
 </resources>
+
+<!--
+Colors :
+#Background     : #EFECCA
+#Button         : #046380
+#Text           : #002F2F
+#Nuance Dark    : #A7A37E
+#Nuance lite    : #E6E2AF
+-->
