@@ -261,20 +261,15 @@ public class EditUser extends BaseActivity {
         FirebaseDatabase database = FirebaseDatabase.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
 
-
-
         DatabaseReference userRef = database.getReference("users")
                 .child(user.getUid())
                 .child("biography");
 
-        if(!biografia.isEmpty())
-            userRef.setValue(biografia);
+        if(!biografia.isEmpty()) userRef.setValue(biografia);
 
-        if(!username.isEmpty())
-        userRef.getParent().child("username")
-                .setValue(username);
+        if(!username.isEmpty()) userRef.getParent().child("username").setValue(username);
 
-        Bitmap emptyBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
+        /*Bitmap emptyBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
         if (!bitmap.sameAs(emptyBitmap)) {
             // myBitmap is not empty/blank
 
@@ -300,8 +295,29 @@ public class EditUser extends BaseActivity {
                         }
                     });
 
+        }*/
+        if(image != null){
+            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference(user.getUid()+"/profilePic.png");
+            mStorageRef.putFile(Uri.fromFile(image))
+                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                        Toast.makeText(EditUser.this, "Uploaded", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Toast.makeText(EditUser.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
+                    @Override
+                    public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
+                        double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
+                                .getTotalByteCount());
+                    }
+                });
         }
-
     }
-
 }
