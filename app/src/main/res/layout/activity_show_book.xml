@@ -31,7 +31,7 @@
 
 
             <ImageView
-                android:id="@+id/imageView"
+                android:id="@+id/book_image"
                 android:layout_width="245dp"
                 android:layout_height="180dp"
                 android:layout_weight="1"

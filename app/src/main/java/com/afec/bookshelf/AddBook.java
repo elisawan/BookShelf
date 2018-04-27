@@ -53,7 +53,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -71,6 +73,7 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
     ZXingScannerView scannerView;
     String isbn;
     Location location;
+    long status;
 
     //Web Call
 
@@ -112,8 +115,8 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
             @Override
             public void onClick(View view) {
                 if(newBook!=null){
-                    newBook.setStatus((int)statusSpinner.getSelectedItemId());
-                    if(newBook.getStatus()==0){
+                    status = statusSpinner.getSelectedItemId();
+                    if(status==0){
                         Toast.makeText(AddBook.this,"Condition of the book is mandatory",Toast.LENGTH_SHORT).show();
                     }
                     else {
@@ -179,8 +182,11 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
                             ISBN_show.setText(isbn);
                             newBook.setIsbn(isbn);
                             setViews();
-                        } catch (Exception e) {
+                        } catch (bookNotFound e) {
                             Toast.makeText(AddBook.this,"ISBN doesn't exists",Toast.LENGTH_SHORT).show();
+                            newBook = null;
+                        }catch (IOException e){
+                            Log.e("error", e.getMessage());
                             newBook = null;
                         }
                     }
@@ -227,18 +233,19 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
                 .into(ib);
     }
 
-    public void readBookDetails (InputStream is) throws Exception{
+    public void readBookDetails (InputStream is) throws bookNotFound, IOException{
         String name;
-
-        JsonReader jr = new JsonReader(new InputStreamReader(is, "UTF-8"));
+        JsonReader jr = new JsonReader(new InputStreamReader(is));
 
         jr.beginObject();
         while(jr.hasNext()){
             name = jr.nextName();
             Log.d("name",name);
             if(name.equals("totalItems")){
-                if(jr.nextInt()==0){
-                    throw new Exception();
+                Long count = jr.nextLong();
+                Log.e("count",count.toString());
+                if(count==0){
+                    throw new bookNotFound();
                 }
             }else if(name.equals("items")){
                 Log.d("id","items");
@@ -255,17 +262,18 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
                                 Log.d("name", name);
                                 if (name.equals("title")) {
                                     newBook.setTitle(jr.nextString());
-                                } else if(name.equals("publishedDate")){
+                                }else if(name.equals("publisher")){
+                                    newBook.setPublisher(jr.nextString());
+                                }
+                                else if(name.equals("publishedDate")){
                                     newBook.setEditionYear(jr.nextString());
                                 }
                                 else if (name.equals("authors")) {
                                     jr.beginArray();
-                                    String author = "";
                                     while (jr.hasNext()) {
-                                        author = author + jr.nextString();
+                                        newBook.setAuthor(jr.nextString());
                                     }
                                     jr.endArray();
-                                    newBook.setAuthor(author);
                                 } else if(name.equals("imageLinks")){
                                     jr.beginObject();
                                     while(jr.hasNext()){
@@ -298,7 +306,8 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
     }
 
     public void setViews(){
-        book_author.setText(newBook.getAuthor());
+
+        book_author.setText(newBook.getAllAuthors());
         book_title.setText(newBook.getTitle());
         setBookImage();
     }
@@ -317,7 +326,7 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         //Inserimento in book_instances
         DatabaseReference bookInstanceRef = database.getReference("book_instances");
         String bookId = bookInstanceRef.push().getKey();
-        bookInstanceRef.child(bookId).setValue(new BookInstance(newBook.getIsbn(),location, user.getUid(), newBook.getStatus()));
+        bookInstanceRef.child(bookId).setValue(new BookInstance(newBook.getIsbn(),location, user.getUid(), (int)status));
 
         //Aggiornamento inserimento libro: update addedBooks count
         final DatabaseReference userRef = database.getReference("users").child(user.getUid()).child("addedBooks");
@@ -359,4 +368,6 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         return true;
     }
 }
+
+class bookNotFound extends Exception{}
 

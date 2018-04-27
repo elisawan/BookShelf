@@ -52,11 +52,6 @@ public class BookList extends BaseActivity {
         setSupportActionBar(myToolbar);
 
         gv = findViewById(R.id.book_list_grid);
-
-        Location fakeLocation = new Location("");
-        fakeLocation.setLatitude(7.2342);
-        fakeLocation.setLongitude(45.234);
-
         myBooks = new ArrayList<Book>();
 
         db = FirebaseDatabase.getInstance();
