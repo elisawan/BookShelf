@@ -58,7 +58,7 @@ public class ShowBook extends BaseActivity {
 
     private ListView mListView;
     private Toolbar myToolbar;
-    private TextView tv_title, tv_author, tv_publisher, tv_ed_year, tv_isbn;
+    private TextView tv_title, tv_author, tv_publisher, tv_ed_year, tv_isbn, tv_desc;
     private ImageView iv_book;
 
     @Override
@@ -99,6 +99,9 @@ public class ShowBook extends BaseActivity {
                         tv_publisher.setText(b.getPublisher());
                     }
                     tv_isbn.setText(b.getIsbn());
+
+                    Picasso.with(ShowBook.this).load(b.getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
+                            .into(iv_book);
                 }
 
                 @Override

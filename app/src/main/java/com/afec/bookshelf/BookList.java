@@ -104,10 +104,6 @@ public class BookList extends BaseActivity {
                                         convertView = getLayoutInflater().inflate(R.layout.book_preview, parent,false);
                                     }
                                     ImageView iv = (ImageView) convertView.findViewById(R.id.book_image_preview);
-                                    Display d = getWindowManager().getDefaultDisplay();
-                                    Point p = new Point();
-                                    int w = p.x;
-                                    int h = p.y;
                                     Picasso.with(getApplicationContext()).load(myBooks.get(position).getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
                                             .into(iv);
                                     TextView title_tv =(TextView) convertView.findViewById(R.id.book_title_preview);

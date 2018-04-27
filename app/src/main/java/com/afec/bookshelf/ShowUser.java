@@ -149,15 +149,12 @@ public class ShowUser extends BaseActivity {
                     long value = (long) dataSnapshot.getValue();
                     sharedBookCount.setText(String.valueOf(value));
                 }
-
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.e("db error report: ", databaseError.getDetails());
             }
-
-
         });
 
         userRef = database.getReference("users").child(user.getUid()).child("borrowedBooks");
@@ -174,8 +171,6 @@ public class ShowUser extends BaseActivity {
             public void onCancelled(DatabaseError databaseError) {
                 Log.e("db error report: ", databaseError.getDetails());
             }
-
-
         });
 
         userRef = database.getReference("users").child(user.getUid()).child("rating");
@@ -186,18 +181,29 @@ public class ShowUser extends BaseActivity {
                     long value =(long) dataSnapshot.getValue();
                     ratingBar.setRating(value);
                 }
-
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.e("db error report: ", databaseError.getDetails());
             }
-
-
         });
 
+        userRef = database.getReference("users").child(user.getUid()).child("username");
+        userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    String userName = dataSnapshot.getValue(String.class);
+                    nomeUtente.setText(String.valueOf(userName));
+                }
+            }
 
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("db error report: ", databaseError.getDetails());
+            }
+        });
     }
 
 

@@ -63,7 +63,7 @@ import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class AddBook extends BaseActivity implements ZXingScannerView.ResultHandler{
 
-    ImageButton ib;
+    ImageView ib;
     EditText ISBN_reader, edit_location;
     Button ISBN_scan_button, Locate_button, confirm_button ;
     TextView ISBN_show, book_title, book_author, status_bar, location_bar;
@@ -93,7 +93,7 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION},2);
         }
 
-        ib = (ImageButton) findViewById(R.id.ib);
+        ib = (ImageView) findViewById(R.id.ib);
         final EditText ISBN_reader = (EditText) findViewById(R.id.ISBN_reader);
         edit_location = (EditText) findViewById(R.id.edit_location);
         ISBN_scan_button = (Button)  findViewById(R.id.ISBN_scan_button);
@@ -225,11 +225,11 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         b.putString("isbn",isbn);
         intent.putExtras(b);
         startActivity(intent);
+        finish();
     }
 
     public void setBookImage(){
-        Picasso.with(this).load(newBook.getThumbnailUrl()).noPlaceholder()
-                .resize(300, 550)
+        Picasso.with(this).load(newBook.getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
                 .into(ib);
     }
 
