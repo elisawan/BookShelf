@@ -269,33 +269,6 @@ public class EditUser extends BaseActivity {
 
         if(!username.isEmpty()) userRef.getParent().child("username").setValue(username);
 
-        /*Bitmap emptyBitmap = Bitmap.createBitmap(bitmap.getWidth(), bitmap.getHeight(), bitmap.getConfig());
-        if (!bitmap.sameAs(emptyBitmap)) {
-            // myBitmap is not empty/blank
-
-            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference(user.getUid()+"/profilePic.png");
-            mStorageRef.putFile(Uri.fromFile(image))
-                    .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                            Toast.makeText(EditUser.this, "Uploaded", Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnFailureListener(new OnFailureListener() {
-                        @Override
-                        public void onFailure(@NonNull Exception e) {
-                            Toast.makeText(EditUser.this, "Failed "+e.getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    })
-                    .addOnProgressListener(new OnProgressListener<UploadTask.TaskSnapshot>() {
-                        @Override
-                        public void onProgress(UploadTask.TaskSnapshot taskSnapshot) {
-                            double progress = (100.0*taskSnapshot.getBytesTransferred()/taskSnapshot
-                                    .getTotalByteCount());
-                        }
-                    });
-
-        }*/
         if(image != null){
             StorageReference mStorageRef = FirebaseStorage.getInstance().getReference(user.getUid()+"/profilePic.png");
             mStorageRef.putFile(Uri.fromFile(image))

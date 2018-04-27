@@ -70,11 +70,9 @@ public class ShowUser extends BaseActivity {
         ratingBar = (RatingBar) findViewById(R.id.ratingUser);
 
         //Mettere tutte le inizializzazioni qui in config
-
         config();
 
-
-        sharedPref = this.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
+        /*sharedPref = this.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
         String nome = sharedPref.getString("nomeUtente", null);
         String email = sharedPref.getString("emailUtente", null);
         String bio = sharedPref.getString("bioUtente", null);
@@ -104,7 +102,8 @@ public class ShowUser extends BaseActivity {
         if(bio != null)
             bioUtente.setText(bio);
         else
-            bioUtente.setText("-");
+            bioUtente.setText("-");*/
+
 
         //percepisce il tap lungo
         immagineUtente.setOnLongClickListener(new View.OnLongClickListener() {
@@ -137,11 +136,12 @@ public class ShowUser extends BaseActivity {
 
     public void config(){
 
-        //Books Given/Taken
         user = FirebaseAuth.getInstance().getCurrentUser();
         user.getUid();
         database = FirebaseDatabase.getInstance();
-        DatabaseReference userRef = database.getReference("users").child(user.getUid()).child("lentBooks");
+        DatabaseReference userRef;
+
+        userRef= database.getReference("users").child(user.getUid()).child("lentBooks");
         userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -157,7 +157,7 @@ public class ShowUser extends BaseActivity {
             }
         });
 
-        userRef = database.getReference("users").child(user.getUid()).child("borrowedBooks");
+        userRef= database.getReference("users").child(user.getUid()).child("borrowedBooks");
         userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
