@@ -141,8 +141,6 @@ public class EditUser extends BaseActivity {
                                     startActivityForResult(takePictureIntent, SNAP_PIC);
                                 }
                             }
-
-
                         }else{
                             Intent intent = new Intent();
                             intent.setType("image/*");

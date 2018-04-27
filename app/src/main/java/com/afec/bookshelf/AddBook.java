@@ -119,13 +119,12 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
                     else {
                         getAddress();
                         addToDatabase();
+                        Intent intent = new Intent(getApplicationContext(),BookList.class);
+                        startActivity(intent);
                     }
                 }else {
                     Toast.makeText(AddBook.this,"Scan a book first!",Toast.LENGTH_SHORT).show();
                 }
-                //TODO: add book instance to Firebase (location, status)
-                Intent intent = new Intent(getApplicationContext(),BookList.class);
-                startActivity(intent);
             }
         });
 
@@ -228,9 +227,8 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
                 .into(ib);
     }
 
-    public void readBookDetails (InputStream is) throws IOException{
+    public void readBookDetails (InputStream is) throws Exception{
         String name;
-        boolean correct=false;
 
         JsonReader jr = new JsonReader(new InputStreamReader(is, "UTF-8"));
 
@@ -238,9 +236,12 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         while(jr.hasNext()){
             name = jr.nextName();
             Log.d("name",name);
-            if(name.equals("items")){
+            if(name.equals("totalItems")){
+                if(jr.nextInt()==0){
+                    throw new Exception();
+                }
+            }else if(name.equals("items")){
                 Log.d("id","items");
-                correct=true;
                 jr.beginArray();
                 while(jr.hasNext()){
                     jr.beginObject();
@@ -254,7 +255,10 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
                                 Log.d("name", name);
                                 if (name.equals("title")) {
                                     newBook.setTitle(jr.nextString());
-                                } else if (name.equals("authors")) {
+                                } else if(name.equals("publishedDate")){
+                                    newBook.setEditionYear(jr.nextString());
+                                }
+                                else if (name.equals("authors")) {
                                     jr.beginArray();
                                     String author = "";
                                     while (jr.hasNext()) {
@@ -291,8 +295,6 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
             }
         }
         jr.endObject();
-        if(correct==false)
-            throw new NullPointerException();
     }
 
     public void setViews(){
@@ -343,13 +345,11 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         StringBuilder builder = new StringBuilder();
         String streetAddress;
 
-        if(ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.CAMERA},2);
+        if(ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION},2);
         }
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        double longitude = location.getLongitude();
-        double latitude = location.getLatitude();
     }
 
     @Override

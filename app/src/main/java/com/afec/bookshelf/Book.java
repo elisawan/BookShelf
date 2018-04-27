@@ -8,6 +8,8 @@ public class Book {
     private String author;
     private int status;
     private String thumbnailUrl;
+    private String publisher;
+    private String editionYear;
 
     public static final int likeNew = 0;
     public static final int veryGood = 1;
@@ -25,12 +27,12 @@ public class Book {
     public void setTitle(String name){this.title = name;}
     public void setIsbn(String isbn){this.isbn = isbn;}
     public void setAuthor(String author){this.author = author;}
-
     public void setStatus(int status){this.status = status;}
     public void setThumbnailUrl(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
     }
-
+    public void setEditionYear(String editionYear) {this.editionYear = editionYear;}
+    public void setPublisher(String publisher) {this.publisher = publisher;}
 
     public String getTitle() {
         return title;
@@ -45,6 +47,7 @@ public class Book {
     public String getThumbnailUrl() {
         return thumbnailUrl;
     }
-
+    public String getEditionYear() {return editionYear;}
+    public String getPublisher() {return publisher;}
 
 }
