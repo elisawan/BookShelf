@@ -12,7 +12,7 @@
     <android.support.v7.widget.Toolbar
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="?attr/colorPrimary"
+        android:background="@color/colorPrimaryDark"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         android:id="@+id/toolbar"/>
@@ -21,6 +21,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:background="@color/colorPrimary"
         android:visibility="visible">
 
         <LinearLayout
@@ -50,6 +51,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="7dp"
                     android:layout_weight="1"
+                    android:maxLines="2"
+                    android:ellipsize="end"
                     android:text="Title"
                     android:textSize="20sp"
                     android:textStyle="bold" />
@@ -60,6 +63,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="7dp"
                     android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:singleLine="true"
                     android:text="Autor" />
 
                 <TextView
@@ -68,6 +73,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="7dp"
                     android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:singleLine="true"
                     android:text="Edition Year" />
 
                 <TextView
@@ -76,6 +83,8 @@
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="7dp"
                     android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:singleLine="true"
                     android:text="Publisher" />
 
                 <TextView
@@ -83,6 +92,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
+                    android:ellipsize="end"
+                    android:singleLine="true"
                     android:text="ISBN" />
             </LinearLayout>
 
