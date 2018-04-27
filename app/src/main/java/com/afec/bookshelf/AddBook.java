@@ -70,6 +70,7 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
     Toolbar myToolbar;
     ZXingScannerView scannerView;
     String isbn;
+    Location bookLocation;
 
     //Web Call
 
@@ -107,16 +108,21 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         setSupportActionBar(myToolbar);
 
 
+
         confirm_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(newBook!=null) {
+                if(newBook!=null){
                     newBook.setStatus((int)statusSpinner.getSelectedItemId());
-                    addToDatabase();
+                    if(newBook.getStatus()==0){
+                        Toast.makeText(AddBook.this,"Condition of the book is mandatory",Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        getAddress();
+                        addToDatabase();
+                    }
                 }else {
-                    Snackbar mySnackbar = Snackbar.make(findViewById(R.id.confirm_button),
-                            "Nessun libro selezionato", Snackbar.LENGTH_SHORT);
-                    mySnackbar.show();
+                    Toast.makeText(AddBook.this,"Scan a book first!",Toast.LENGTH_SHORT).show();
                 }
                 //TODO: add book instance to Firebase (location, status)
                 Intent intent = new Intent(getApplicationContext(),BookList.class);
@@ -167,14 +173,14 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
                     @Override
                     public void onResponse(String response) {
                         try {
-                            // Display the first 500 characters of the response string.
-                            //Log.d("Response", "Response is: " + response.substring(0, 500));
-                            InputStream stream = new ByteArrayInputStream(response.getBytes());
-                            newBook = new Book();
-                            readBookDetails(stream);
-                            ISBN_show.setText(isbn);
-                            newBook.setIsbn(isbn);
-                            setViews();
+                        // Display the first 500 characters of the response string.
+                        //Log.d("Response", "Response is: " + response.substring(0, 500));
+                        InputStream stream = new ByteArrayInputStream(response.getBytes());
+                        newBook = new Book();
+                        readBookDetails(stream);
+                        ISBN_show.setText(isbn);
+                        newBook.setIsbn(isbn);
+                        setViews();
                         } catch (Exception e) {
                             Toast.makeText(AddBook.this,"ISBN doesn't exists",Toast.LENGTH_SHORT).show();
                             newBook = null;
@@ -339,11 +345,24 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         String streetAddress;
 
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        @SuppressLint("MissingPermission") Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        double longitude = location.getLongitude();
-        double latitude = location.getLatitude();
+        //@SuppressLint("MissingPermission") Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
-        newBook.setLocation(latitude, longitude);
+        String locationProvider = LocationManager.NETWORK_PROVIDER;
+        // Or use LocationManager.GPS_PROVIDER
+
+        @SuppressLint("MissingPermission") Location location = lm.getLastKnownLocation(locationProvider);
+
+        if (location != null){
+            double longitude = location.getLongitude();
+            double latitude = location.getLatitude();
+
+            newBook.setLocation(latitude, longitude);
+        }
+        else {
+            Toast.makeText(AddBook.this,"Unable to find your location",Toast.LENGTH_SHORT).show();
+        }
+
+
     }
 
     @Override
@@ -352,5 +371,6 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         menu.removeItem(R.id.action_add_book);
         return true;
     }
+
 }
 

@@ -6,12 +6,18 @@ import android.location.Location;
 
 public class BookInstance {
 
-
-
     String isbn;
     String owner;
     Location location;
     int status;
+
+    public void BookInstance(){
+        this.isbn = null;
+        this.owner = null;
+        this.location.setLatitude(0);
+        this.location.setLongitude(0);
+        this.status=0;
+    }
 
     public BookInstance(String isbn, Location location, String owner, int status) {
         this.isbn = isbn;
