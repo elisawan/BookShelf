@@ -106,7 +106,6 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         myToolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
 
-        newBook = new Book();
 
         confirm_button.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,15 +167,17 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
                     @Override
                     public void onResponse(String response) {
                         try {
-                        // Display the first 500 characters of the response string.
-                        //Log.d("Response", "Response is: " + response.substring(0, 500));
-                        InputStream stream = new ByteArrayInputStream(response.getBytes());
-                        readBookDetails(stream);
-                        ISBN_show.setText(isbn);
-                        newBook.setIsbn(isbn);
-                        setViews();
+                            // Display the first 500 characters of the response string.
+                            //Log.d("Response", "Response is: " + response.substring(0, 500));
+                            InputStream stream = new ByteArrayInputStream(response.getBytes());
+                            newBook = new Book();
+                            readBookDetails(stream);
+                            ISBN_show.setText(isbn);
+                            newBook.setIsbn(isbn);
+                            setViews();
                         } catch (Exception e) {
                             Toast.makeText(AddBook.this,"ISBN doesn't exists",Toast.LENGTH_SHORT).show();
+                            newBook = null;
                         }
                     }
                 }, new Response.ErrorListener() {
@@ -308,9 +309,10 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
 
         //Inserimento in book_instances
         DatabaseReference bookInstanceRef = database.getReference("book_instances");
-        bookInstanceRef.push().setValue(new BookInstance(newBook.getIsbn(),newBook.getLocation(), user.getUid(), newBook.getStatus()));
+        String bookId = bookInstanceRef.push().getKey();
+        bookInstanceRef.child(bookId).setValue(new BookInstance(newBook.getIsbn(),newBook.getLocation(), user.getUid(), newBook.getStatus()));
 
-        /*//Aggiornamento inserimento libro
+        //Aggiornamento inserimento libro: update addedBooks count
         final DatabaseReference userRef = database.getReference("users").child(user.getUid()).child("addedBooks");
         userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
             @Override
@@ -325,11 +327,10 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
             public void onCancelled(DatabaseError databaseError) {
                 Log.e("db error report: ", databaseError.getDetails());
             }
+        });
 
-
-        });*/
-
-
+        //Aggiornamento lista myBooks
+        database.getReference("users").child(user.getUid()).child("myBooks").child(bookId).setValue(newBook.getIsbn());
     }
 
     public void getAddress(){
@@ -343,8 +344,6 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         double latitude = location.getLatitude();
 
         newBook.setLocation(latitude, longitude);
-
-
     }
 
     @Override
@@ -353,6 +352,5 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         menu.removeItem(R.id.action_add_book);
         return true;
     }
-
 }
 
