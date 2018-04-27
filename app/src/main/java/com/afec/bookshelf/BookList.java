@@ -108,6 +108,8 @@ public class BookList extends BaseActivity {
                                             .into(iv);
                                     TextView title_tv =(TextView) convertView.findViewById(R.id.book_title_preview);
                                     title_tv.setText(myBooks.get(position).getTitle());
+                                    TextView author_tv = (TextView) convertView.findViewById(R.id.book_autor_preview);
+                                    author_tv.setText(myBooks.get(position).getAllAuthors());
                                     return convertView;
                                 }
                             });

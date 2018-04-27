@@ -62,7 +62,7 @@ public class Book {
             return null;
         }
         for(String a : authors){
-            all = all+a;
+            all = all+", "+a;
         }
         return all;
     }
