@@ -56,6 +56,8 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 
@@ -74,6 +76,7 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
     String isbn;
     Location location;
     long status;
+    String currentDateTime;
 
     //Web Call
 
@@ -120,6 +123,8 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
                         Toast.makeText(AddBook.this,"Condition of the book is mandatory",Toast.LENGTH_SHORT).show();
                     }
                     else {
+                        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                        currentDateTime = dateFormat.format(new Date());
                         getAddress();
                         addToDatabase();
                         Intent intent = new Intent(getApplicationContext(),BookList.class);
@@ -326,7 +331,7 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         //Inserimento in book_instances
         DatabaseReference bookInstanceRef = database.getReference("book_instances");
         String bookId = bookInstanceRef.push().getKey();
-        bookInstanceRef.child(bookId).setValue(new BookInstance(newBook.getIsbn(),location, user.getUid(), (int)status));
+        bookInstanceRef.child(bookId).setValue(new BookInstance(newBook.getIsbn(),location, user.getUid(), (int) status, currentDateTime));
 
         //Aggiornamento inserimento libro: update addedBooks count
         final DatabaseReference userRef = database.getReference("users").child(user.getUid()).child("addedBooks");
@@ -355,7 +360,7 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         String streetAddress;
 
         if(ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION},2);
+            ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION},1);
         }
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
