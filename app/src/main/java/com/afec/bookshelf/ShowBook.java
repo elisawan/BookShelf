@@ -59,7 +59,7 @@ public class ShowBook extends BaseActivity {
     private ListView mListView;
     private Toolbar myToolbar;
     private TextView tv_title, tv_author, tv_publisher, tv_ed_year, tv_isbn;
-    private FirebaseUser currUser;
+    private ImageView iv_book;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +75,7 @@ public class ShowBook extends BaseActivity {
         tv_isbn = (TextView) findViewById(R.id.book_isbn);
         tv_publisher = (TextView) findViewById(R.id.book_publisher);
         tv_title = (TextView) findViewById(R.id.book_title);
+        iv_book = (ImageView) findViewById(R.id.book_image);
 
         Bundle b = getIntent().getExtras();
         if(b == null){
@@ -90,9 +91,13 @@ public class ShowBook extends BaseActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     Book b = dataSnapshot.getValue(Book.class);
                     tv_title.setText(b.getTitle());
-                    tv_author.setText(b.getAuthor());
-                    //tv_ed_year.setText();
-                    //tv_publisher.setText();
+                    tv_author.setText(b.getAllAuthors());
+                    tv_ed_year.setText(b.getEditionYear());
+                    if(b.getPublisher()==null){
+                        tv_publisher.setText(R.string.unknown);
+                    }else {
+                        tv_publisher.setText(b.getPublisher());
+                    }
                     tv_isbn.setText(b.getIsbn());
                 }
 

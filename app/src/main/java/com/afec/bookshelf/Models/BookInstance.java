@@ -10,6 +10,7 @@ public class BookInstance {
     String owner;
     Location location;
     int status;
+    String currentDateTime;
 
     public void BookInstance(){
         this.isbn = null;
@@ -17,13 +18,15 @@ public class BookInstance {
         this.location.setLatitude(0);
         this.location.setLongitude(0);
         this.status=0;
+        this.currentDateTime=null;
     }
 
-    public BookInstance(String isbn, Location location, String owner, int status) {
+    public BookInstance(String isbn, Location location, String owner, int status, String date) {
         this.isbn = isbn;
         this.owner = owner;
         this.location = location;
         this.status=status;
+        this.currentDateTime=date;
     }
 
     public String getIsbn() {
@@ -34,12 +37,22 @@ public class BookInstance {
         this.isbn = isbn;
     }
 
+
     public Location getLocation() {
         return location;
     }
 
     public void setLocation(Location location) {
         this.location = location;
+    }
+
+
+    public String getCurrentDateTime() {
+        return currentDateTime;
+    }
+
+    public void setTime(String date) {
+        this.currentDateTime=date;
     }
 
 
@@ -59,6 +72,8 @@ public class BookInstance {
     public void setStatus(int status) {
         this.status = status;
     }
+
+
 
 
 
