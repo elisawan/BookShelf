@@ -24,7 +24,7 @@
         <activity android:name=".EditUser" />
         <activity android:name=".ShowUser" />
         <activity android:name=".AddBook" />
-        <activity android:name=".ListViewActivity" />
+        <activity android:name=".ShowBook" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"

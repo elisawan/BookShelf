@@ -63,12 +63,20 @@
                     android:text="Autor" />
 
                 <TextView
-                    android:id="@+id/book_date_publication"
+                    android:id="@+id/book_year_edition"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="7dp"
                     android:layout_weight="1"
-                    android:text="Date" />
+                    android:text="Edition Year" />
+
+                <TextView
+                    android:id="@+id/book_publisher"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="7dp"
+                    android:layout_weight="1"
+                    android:text="Publisher" />
 
                 <TextView
                     android:id="@+id/book_isbn"

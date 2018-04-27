@@ -70,6 +70,7 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
     Toolbar myToolbar;
     ZXingScannerView scannerView;
     String isbn;
+    Location location;
 
     //Web Call
 
@@ -310,7 +311,7 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         //Inserimento in book_instances
         DatabaseReference bookInstanceRef = database.getReference("book_instances");
         String bookId = bookInstanceRef.push().getKey();
-        bookInstanceRef.child(bookId).setValue(new BookInstance(newBook.getIsbn(),newBook.getLocation(), user.getUid(), newBook.getStatus()));
+        bookInstanceRef.child(bookId).setValue(new BookInstance(newBook.getIsbn(),location, user.getUid(), newBook.getStatus()));
 
         //Aggiornamento inserimento libro: update addedBooks count
         final DatabaseReference userRef = database.getReference("users").child(user.getUid()).child("addedBooks");
@@ -338,12 +339,13 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         StringBuilder builder = new StringBuilder();
         String streetAddress;
 
+        if(ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.CAMERA},2);
+        }
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        @SuppressLint("MissingPermission") Location location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         double longitude = location.getLongitude();
         double latitude = location.getLatitude();
-
-        newBook.setLocation(latitude, longitude);
     }
 
     @Override
