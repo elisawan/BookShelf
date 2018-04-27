@@ -2,16 +2,20 @@ package com.afec.bookshelf;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Point;
 import android.location.Location;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
@@ -59,7 +63,9 @@ public class BookList extends BaseActivity {
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         // get list of my books
-        myBooksRef = db.getReference("users").child("id").child("myBooks");
+        myBooksRef = db.getReference("users").child(currentUser.getUid()).child("myBooks");
+        //myBooksRef = db.getReference("users").child("id").child("myBooks");
+
         myBooksRef.addValueEventListener(new ValueEventListener() {
 
             @Override
@@ -103,8 +109,11 @@ public class BookList extends BaseActivity {
                                         convertView = getLayoutInflater().inflate(R.layout.book_preview, parent,false);
                                     }
                                     ImageView iv = (ImageView) convertView.findViewById(R.id.book_image_preview);
-                                    Picasso.with(getApplicationContext()).load(myBooks.get(position).getThumbnailUrl()).noPlaceholder()
-                                            .resize(300,400)
+                                    Display d = getWindowManager().getDefaultDisplay();
+                                    Point p = new Point();
+                                    int w = p.x;
+                                    int h = p.y;
+                                    Picasso.with(getApplicationContext()).load(myBooks.get(position).getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
                                             .into(iv);
                                     TextView title_tv =(TextView) convertView.findViewById(R.id.book_title_preview);
                                     title_tv.setText(myBooks.get(position).getTitle());
@@ -118,13 +127,19 @@ public class BookList extends BaseActivity {
                         }
                     });
                 }
-
-
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
+            }
+        });
+
+        gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Intent intent = new Intent(getApplicationContext(), ListViewActivity.class);
+                startActivity(intent);
             }
         });
     }
