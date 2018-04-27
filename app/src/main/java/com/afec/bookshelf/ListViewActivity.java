@@ -6,8 +6,10 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.util.JsonReader;
 import android.util.Log;
+import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -44,14 +46,19 @@ import java.util.List;
 
 import static java.security.AccessController.getContext;
 
-public class ListViewActivity extends AppCompatActivity {
+public class ListViewActivity extends BaseActivity {
 
     private ListView mListView;
+    private Toolbar myToolbar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_list_view);
+
+        myToolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(myToolbar);
+
         mListView = (ListView) findViewById(R.id.list_of_owner);
 
         List<Owner> owners = genererOwner();
@@ -83,6 +90,12 @@ public class ListViewActivity extends AppCompatActivity {
         owners.add(new Owner(Color.RED, "Mathieu", "Heuuu...","12 km"));
         owners.add(new Owner(Color.GRAY, "Domenico", "Non so... Haa si! perfetto!!","13 km"));
         return owners;
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.toolbar, menu);
+        return true;
     }
 }
 
