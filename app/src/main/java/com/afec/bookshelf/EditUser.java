@@ -82,6 +82,7 @@ public class EditUser extends BaseActivity {
     private Bitmap mPhoto;
     String mCurrentPhotoPath;
     Bitmap bitmap;
+    File image;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -244,7 +245,7 @@ public class EditUser extends BaseActivity {
         String timeStamp = new SimpleDateFormat("yyyyMMdd_HHmmss").format(new Date());
         String imageFileName = "JPEG_" + timeStamp + "_";
         File storageDir = getExternalFilesDir(Environment.DIRECTORY_PICTURES);
-        File image = File.createTempFile(
+        image = File.createTempFile(
                 imageFileName,  /* prefix */
                 ".jpg",         /* suffix */
                 storageDir      /* directory */
@@ -277,8 +278,8 @@ public class EditUser extends BaseActivity {
         if (!bitmap.sameAs(emptyBitmap)) {
             // myBitmap is not empty/blank
 
-            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference(user.getUid()+"/images");
-            mStorageRef.putFile(Uri.parse(mCurrentPhotoPath))
+            StorageReference mStorageRef = FirebaseStorage.getInstance().getReference(user.getUid()+"/profilePic.png");
+            mStorageRef.putFile(Uri.fromFile(image))
                     .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                         @Override
                         public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
