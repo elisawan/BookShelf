@@ -138,7 +138,10 @@ public class BookList extends BaseActivity {
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getApplicationContext(), ListViewActivity.class);
+                Intent intent = new Intent(getApplicationContext(), ShowBook.class);
+                Bundle b = new Bundle();
+                b.putString("isbn", myBooks.get(position).getIsbn());
+                intent.putExtras(b);
                 startActivity(intent);
             }
         });

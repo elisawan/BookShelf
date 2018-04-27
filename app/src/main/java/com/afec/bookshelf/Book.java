@@ -6,7 +6,6 @@ public class Book {
     private String title;
     private String isbn;
     private String author;
-    private Location location;
     private int status;
     private String thumbnailUrl;
 
@@ -17,21 +16,16 @@ public class Book {
 
     public Book(){}
 
-    public Book(String name, String isbn, String author, Location location) {
+    public Book(String name, String isbn, String author) {
         this.title = name;
         this.isbn = isbn;
         this.author = author;
-        this.location = location;
     }
 
     public void setTitle(String name){this.title = name;}
     public void setIsbn(String isbn){this.isbn = isbn;}
     public void setAuthor(String author){this.author = author;}
-    public void setLocation(double latitude, double longitude){
-        this.location = new Location("");
-        this.location.setLatitude(latitude);
-        this.location.setLongitude(longitude);
-    }
+
     public void setStatus(int status){this.status = status;}
     public void setThumbnailUrl(String thumbnailUrl) {
         this.thumbnailUrl = thumbnailUrl;
@@ -48,9 +42,6 @@ public class Book {
         return author;
     }
     public int getStatus(){return status; }
-    public Location getLocation() {
-        return location;
-    }
     public String getThumbnailUrl() {
         return thumbnailUrl;
     }
