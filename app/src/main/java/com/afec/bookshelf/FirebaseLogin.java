@@ -35,6 +35,29 @@ public class FirebaseLogin extends AppCompatActivity {
         auth = FirebaseAuth.getInstance();
         if (auth.getCurrentUser() != null) {
             // already signed in
+
+            FirebaseDatabase database = FirebaseDatabase.getInstance();
+            user = auth.getCurrentUser();
+
+            final DatabaseReference userRef = database.getReference("users");
+            userRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot snapshot) {
+                    if (!snapshot.child(user.getUid()).exists()) {
+                        userRef.child(user.getUid())
+                                .setValue(new User(user.getUid(),0, null, 0,0,0, user.getDisplayName()));
+                    }else{
+
+                    }
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+
+                }
+            });
+
+
             Intent intent = new Intent(getBaseContext(), ShowUser.class);
             startActivity(intent);
             finish();
