@@ -38,6 +38,7 @@ public class BookList extends BaseActivity {
 
     GridView gv;
     List<Book> myBooks;
+    List<String> myBooksInstances;
     Toolbar myToolbar;
     FirebaseDatabase db;
     FirebaseUser currentUser;
@@ -53,6 +54,7 @@ public class BookList extends BaseActivity {
 
         gv = findViewById(R.id.book_list_grid);
         myBooks = new ArrayList<Book>();
+        myBooksInstances = new ArrayList<String>();
 
         db = FirebaseDatabase.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -80,6 +82,7 @@ public class BookList extends BaseActivity {
                             Book b = dataSnapshot.getValue(Book.class);
                             Log.d("book",b.toString());
                             myBooks.add(b);
+                            //myBooksInstances.add(dataSnapshot.getValue().toString());
                             // show on view
                             gv.setAdapter(new BaseAdapter() {
 
@@ -131,9 +134,11 @@ public class BookList extends BaseActivity {
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //Intent intent = new Intent(getApplicationContext(), MyBookActivity.class);
                 Intent intent = new Intent(getApplicationContext(), ShowBook.class);
                 Bundle b = new Bundle();
                 b.putString("isbn", myBooks.get(position).getIsbn());
+                b.putString("istance", myBooksInstances.get(position));
                 intent.putExtras(b);
                 startActivity(intent);
             }

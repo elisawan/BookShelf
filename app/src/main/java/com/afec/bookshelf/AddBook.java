@@ -331,7 +331,7 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         //Inserimento in book_instances
         DatabaseReference bookInstanceRef = database.getReference("book_instances");
         String bookId = bookInstanceRef.push().getKey();
-        bookInstanceRef.child(bookId).setValue(new BookInstance(newBook.getIsbn(),location, user.getUid(), (int) status, currentDateTime));
+        bookInstanceRef.child(bookId).setValue(new BookInstance(newBook.getIsbn(),location, user.getUid(), (int) status, currentDateTime, true));
 
         //Aggiornamento inserimento libro: update addedBooks count
         final DatabaseReference userRef = database.getReference("users").child(user.getUid()).child("addedBooks");
