@@ -13,12 +13,16 @@ import com.algolia.search.saas.Index;
 
 public class BaseActivity extends AppCompatActivity {
 
-    Client client = new Client("BDPR8QJ6ZZ", "0f52ad691623ea9e72a2515aebb880c7");
-    Index index = client.getIndex("bookShelf");
+    Client client;
+    Index index;
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar, menu);
+
+        client = new Client("BDPR8QJ6ZZ", "0f52ad691623ea9e72a2515aebb880c7");
+        index = client.getIndex("bookShelf");
+
         return true;
     }
 
