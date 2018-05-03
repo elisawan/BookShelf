@@ -8,7 +8,13 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 
+import com.algolia.search.saas.Client;
+import com.algolia.search.saas.Index;
+
 public class BaseActivity extends AppCompatActivity {
+
+    Client client = new Client("BDPR8QJ6ZZ", "0f52ad691623ea9e72a2515aebb880c7");
+    Index index = client.getIndex("bookShelf");
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
