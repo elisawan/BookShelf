@@ -83,8 +83,8 @@ public class MyBookActivity extends Fragment {
             toBookList();
         }
 
-        String isbn = b.getString("isbn", null);
-        instance= b.getString("istance");
+        String isbn = b.getString("isbn");
+        instance= b.getString("instance");
 
         if (isbn != null && isbn.length()==13) {
             DatabaseReference bookRef = FirebaseDatabase.getInstance().getReference("books").child(isbn);
