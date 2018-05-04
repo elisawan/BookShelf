@@ -14,19 +14,34 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.TextView;
 
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
 
 public class MainActivity extends AppCompatActivity{
 
     Toolbar myToolbar;
     private DrawerLayout mDrawerLayout;
     FirebaseDatabase db;
+    private FirebaseUser user;
+    DatabaseReference userRef;
+
+    TextView username, email;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +53,17 @@ public class MainActivity extends AppCompatActivity{
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
+
+        View header = ((NavigationView)findViewById(R.id.nav_view)).getHeaderView(0);
+
+        username= (TextView) header.findViewById(R.id.sidebar_username);
+        email = (TextView) header.findViewById(R.id.sidebar_mail);
+
+        db = FirebaseDatabase.getInstance();
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        user.getUid();
+
+        email.setText(user.getEmail());
 
 
         mDrawerLayout = findViewById(R.id.main_layout);
@@ -70,6 +96,24 @@ public class MainActivity extends AppCompatActivity{
                         return true;
                     }
                 });
+
+        userRef = db.getReference("users").child(user.getUid()).child("username");
+        userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    String userName = dataSnapshot.getValue(String.class);
+                    username.setText(String.valueOf(userName));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("db error report: ", databaseError.getDetails());
+            }
+        });
+
+
     }
 
     @Override
@@ -102,7 +146,6 @@ public class MainActivity extends AppCompatActivity{
     }
 
     private void Logout(){
-        db = FirebaseDatabase.getInstance();
 
         //Display dialog box
         AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
@@ -142,3 +185,5 @@ public class MainActivity extends AppCompatActivity{
 
     }
 }
+
+
