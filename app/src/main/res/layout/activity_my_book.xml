@@ -168,13 +168,12 @@
                     android:layout_gravity="center"
                     android:layout_marginRight="10dp"
                     android:text=""
-                    />
+                    tools:maxWidth="30dp" />
 
                 <Button
                     android:id="@+id/editLocationButton"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="right"
                     android:text="Edit" />
 
 
@@ -219,8 +218,7 @@
         android:layout_marginLeft="20dp"
         android:layout_gravity="left"
         android:layout_marginTop="7dp"
-        android:text="Delete"
-        android:onClick="RemoveBook"/>
+        android:text="Delete" />
 
 
 </LinearLayout>

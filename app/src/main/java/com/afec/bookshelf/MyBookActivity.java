@@ -1,11 +1,14 @@
 package com.afec.bookshelf;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -84,7 +87,7 @@ public class MyBookActivity extends Fragment {
         }
 
         String isbn = b.getString("isbn", null);
-        instance= b.getString("istance");
+        instance= b.getString("instance");
 
         if (isbn != null && isbn.length()==13) {
             DatabaseReference bookRef = FirebaseDatabase.getInstance().getReference("books").child(isbn);
@@ -140,16 +143,40 @@ public class MyBookActivity extends Fragment {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        //Display dialog box
+                        AlertDialog.Builder builder1 = new AlertDialog.Builder(getContext());
 
-                        //First remove the book in mybooks of the user
-                        item = db.getReference("users").child(currentUser.getUid()).child("myBooks").child(instance);
-                        item.setValue(null);
+                        builder1.setMessage(R.string.Delete_permission);
+                        builder1.setCancelable(true);
 
-                        //Then remove it from book_instances
-                        item = db.getReference("book_instances").child(instance);
-                        item.setValue(null);
+                        builder1.setPositiveButton(
+                                R.string.Affirmative,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        //First remove the book in mybooks of the user
+                                        item = db.getReference("users").child(currentUser.getUid()).child("myBooks").child(instance);
+                                        item.setValue(null);
 
-                        toBookList();
+                                        //Then remove it from book_instances
+                                        item = db.getReference("book_instances").child(instance);
+                                        item.setValue(null);
+                                        dialog.cancel();
+                                        toBookList();
+                                    }
+                                });
+
+                        builder1.setNegativeButton(
+                                R.string.Negative,
+                                new DialogInterface.OnClickListener() {
+                                    public void onClick(DialogInterface dialog, int id) {
+                                        dialog.cancel();
+                                        toBookList();
+                                    }
+                                });
+
+                        AlertDialog alert11 = builder1.create();
+                        alert11.show();
+
                     }
                 }
         );
@@ -182,4 +209,9 @@ public class MyBookActivity extends Fragment {
         transaction.commit();
     }
 
+
+
+
 }
+
+

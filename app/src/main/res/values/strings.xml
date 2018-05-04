@@ -34,4 +34,9 @@
     <string name="my_books">My Books</string>
     <string name="unknown">Unknown</string>
     <string name="profile">Profile</string>
+    <string name="Affirmative">Yes</string>
+    <string name="Negative">No</string>
+    <string name="Logout_permission">Are you sure you want to logout?</string>
+    <string name="Delete_permission">Are you sure you want to delete it?</string>
+    
 </resources>

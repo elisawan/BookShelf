@@ -1,5 +1,9 @@
 package com.afec.bookshelf;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,10 +17,16 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class MainActivity extends AppCompatActivity{
 
     Toolbar myToolbar;
     private DrawerLayout mDrawerLayout;
+    FirebaseDatabase db;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,6 +62,10 @@ public class MainActivity extends AppCompatActivity{
                             case R.id.action_my_books_list:
                                 myStartFragment(new BookList());
                                 break;
+
+                            case R.id.action_logout:
+                                Logout();
+                                break;
                         }
                         return true;
                     }
@@ -84,6 +98,47 @@ public class MainActivity extends AppCompatActivity{
         transaction.addToBackStack(null);
         // Commit the transaction
         transaction.commit();
+
+    }
+
+    private void Logout(){
+        db = FirebaseDatabase.getInstance();
+
+        //Display dialog box
+        AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
+
+        builder1.setMessage(R.string.Logout_permission);
+        builder1.setCancelable(true);
+
+        builder1.setPositiveButton(
+                R.string.Affirmative,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        AuthUI.getInstance()
+                                .signOut(MainActivity.this)
+                                .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                    public void onComplete(@NonNull Task<Void> task) {
+                                        // user is now signed out
+                                        Intent intent = new Intent(MainActivity.this, FirebaseLogin.class);
+                                        startActivity(intent);
+                                    }
+                                });
+                        dialog.cancel();
+
+                    }
+                });
+
+        builder1.setNegativeButton(
+                R.string.Negative,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alert11 = builder1.create();
+        alert11.show();
 
     }
 }

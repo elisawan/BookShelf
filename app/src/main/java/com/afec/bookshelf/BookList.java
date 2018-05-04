@@ -130,10 +130,10 @@ public class BookList extends Fragment {
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Fragment newFragment = new Fragment();
+                Fragment newFragment = new MyBookActivity();
                 Bundle b = new Bundle();
                 b.putString("isbn", myBooks.get(position).getIsbn());
-                b.putString("instance", myBooksInstances.get(position).toString());
+                b.putString("instance", myBooksInstances.get(position));
                 newFragment.setArguments(b);
                 myStartFragment(newFragment);
             }
