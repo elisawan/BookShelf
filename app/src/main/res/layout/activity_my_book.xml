@@ -219,7 +219,8 @@
         android:layout_marginLeft="20dp"
         android:layout_gravity="left"
         android:layout_marginTop="7dp"
-        android:text="Delete" />
+        android:text="Delete"
+        android:onClick="RemoveBook"/>
 
 
 </LinearLayout>

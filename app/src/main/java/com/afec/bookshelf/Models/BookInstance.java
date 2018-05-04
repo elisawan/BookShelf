@@ -1,27 +1,28 @@
 package com.afec.bookshelf.Models;
 
+import android.content.Context;
 import android.location.Location;
+import android.location.LocationManager;
 
 public class BookInstance {
 
     private String isbn;
     private String owner;
-    private Location location;
+    private MyLocation location;
     private int status;
     private String currentDateTime;
     private boolean availability;
 
-    public void BookInstance(){
+    public BookInstance(){
         this.isbn = null;
         this.owner = null;
-        this.location.setLatitude(0);
-        this.location.setLongitude(0);
+        this.location = new MyLocation();
         this.status=0;
         this.currentDateTime=null;
         this.availability=false;
     }
 
-    public BookInstance(String isbn, Location location, String owner, int status, String date, boolean availability) {
+    public BookInstance(String isbn, MyLocation location, String owner, int status, String date, boolean availability) {
         this.isbn = isbn;
         this.owner = owner;
         this.location = location;
@@ -38,10 +39,10 @@ public class BookInstance {
     }
 
 
-    public Location getLocation() {
+    public MyLocation getLocation() {
         return location;
     }
-    public void setLocation(Location location) {
+    public void setLocation(MyLocation location) {
         this.location = location;
     }
 
