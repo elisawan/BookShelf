@@ -130,8 +130,15 @@ public class AddBook extends Fragment {
                         currentDateTime = dateFormat.format(new Date());
                         getAddress();
                         addToDatabase();
-                        Intent intent = new Intent(getContext(),BookList.class);
-                        startActivity(intent);
+                        Fragment newFragment = new BookList();
+                        // Create new fragment and transaction
+                        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                        // Replace whatever is in the fragment_container view with this fragment,
+                        // and add the transaction to the back stack
+                        transaction.replace(R.id.content_frame, newFragment);
+                        transaction.addToBackStack(null);
+                        // Commit the transaction
+                        transaction.commit();
                     }
                 }else {
                     Toast.makeText(getActivity(),"Scan a book first!",Toast.LENGTH_SHORT).show();
@@ -342,7 +349,7 @@ public class AddBook extends Fragment {
         if(ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(getActivity(), new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION},1);
         }
-        LocationManager lm= (LocationManager) getSystemService(LOCATION_SERVICE);
+        LocationManager lm= (LocationManager) getActivity().getSystemService(getContext().LOCATION_SERVICE);
 
         lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLocationListener);
 
@@ -380,13 +387,6 @@ public class AddBook extends Fragment {
 
         }
     };
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar, menu);
-        menu.removeItem(R.id.action_add_book);
-        return true;
-    }
 }
 
 class bookNotFound extends Exception{}
