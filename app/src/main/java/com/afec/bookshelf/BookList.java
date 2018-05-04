@@ -1,9 +1,16 @@
 package com.afec.bookshelf;
 
+import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +33,7 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
-public class BookList extends BaseActivity {
+public class BookList extends Fragment {
 
     GridView gv;
     List<Book> myBooks;
@@ -36,15 +43,12 @@ public class BookList extends BaseActivity {
     FirebaseUser currentUser;
     DatabaseReference myBooksRef, bookInstance;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_book_list);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.activity_book_list, container, false);
 
-        myToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
-
-        gv = findViewById(R.id.book_list_grid);
+        gv = v.findViewById(R.id.book_list_grid);
         myBooks = new ArrayList<Book>();
         myBooksInstances = new ArrayList<String>();
 
@@ -101,7 +105,7 @@ public class BookList extends BaseActivity {
                                         convertView = getLayoutInflater().inflate(R.layout.book_preview, parent,false);
                                     }
                                     ImageView iv = (ImageView) convertView.findViewById(R.id.book_image_preview);
-                                    Picasso.with(getApplicationContext()).load(myBooks.get(position).getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
+                                    Picasso.with(getContext()).load(myBooks.get(position).getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
                                             .into(iv);
                                     TextView title_tv =(TextView) convertView.findViewById(R.id.book_title_preview);
                                     title_tv.setText(myBooks.get(position).getTitle());
@@ -111,14 +115,12 @@ public class BookList extends BaseActivity {
                                 }
                             });
                         }
-
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
                         }
                     });
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
@@ -128,21 +130,26 @@ public class BookList extends BaseActivity {
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Intent intent = new Intent(getApplicationContext(), MyBookActivity.class);
-                //Intent intent = new Intent(getApplicationContext(), ShowBook.class);
+                Fragment newFragment = new Fragment();
                 Bundle b = new Bundle();
                 b.putString("isbn", myBooks.get(position).getIsbn());
-                b.putString("istance", myBooksInstances.get(position));
-                intent.putExtras(b);
-                startActivity(intent);
+                b.putString("instance", myBooksInstances.get(position).toString());
+                newFragment.setArguments(b);
+                myStartFragment(newFragment);
             }
         });
+        return v;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar, menu);
-        menu.removeItem(R.id.action_edit_profile);
-        return true;
+    public void myStartFragment(Fragment newFragment){
+        // Create new fragment and transaction
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack
+        transaction.replace(R.id.content_frame, newFragment);
+        transaction.addToBackStack(null);
+        // Commit the transaction
+        transaction.commit();
+
     }
 }

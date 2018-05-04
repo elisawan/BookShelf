@@ -3,14 +3,21 @@ package com.afec.bookshelf;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -30,7 +37,7 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-public class MyBookActivity extends BaseActivity {
+public class MyBookActivity extends Fragment {
 
     private Toolbar myToolbar;
     private TextView tv_title, tv_author, tv_publisher, tv_ed_year, tv_isbn, L;
@@ -48,39 +55,32 @@ public class MyBookActivity extends BaseActivity {
     Location location;
 
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_my_book);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.activity_my_book, container, false);
 
-        myToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
-
-        tv_author = (TextView) findViewById(R.id.book_autor);
-        tv_ed_year = (TextView) findViewById(R.id.book_year_edition);
-        tv_isbn = (TextView) findViewById(R.id.book_isbn);
-        tv_publisher = (TextView) findViewById(R.id.book_publisher);
-        tv_title = (TextView) findViewById(R.id.book_title);
-        iv_book = (ImageView) findViewById(R.id.book_image);
-        S = (Spinner) findViewById(R.id.status_spinner);
+        tv_author = (TextView) v.findViewById(R.id.book_autor);
+        tv_ed_year = (TextView) v.findViewById(R.id.book_year_edition);
+        tv_isbn = (TextView) v.findViewById(R.id.book_isbn);
+        tv_publisher = (TextView) v.findViewById(R.id.book_publisher);
+        tv_title = (TextView) v.findViewById(R.id.book_title);
+        iv_book = (ImageView) v.findViewById(R.id.book_image);
+        S = (Spinner) v.findViewById(R.id.status_spinner);
         status = 0;
-        locButton = (Button) findViewById(R.id.editLocationButton);
-        delButton = (Button) findViewById(R.id.DeleteButton);
-        L= (TextView) findViewById(R.id.location);
-        avCheckbox = (CheckBox) findViewById(R.id.availableCheckbox);
+        locButton = (Button) v.findViewById(R.id.editLocationButton);
+        delButton = (Button) v.findViewById(R.id.DeleteButton);
+        L= (TextView) v.findViewById(R.id.location);
+        avCheckbox = (CheckBox) v.findViewById(R.id.availableCheckbox);
         loc=null;
-
 
         db = FirebaseDatabase.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-
-
-        Bundle b = getIntent().getExtras();
+        Bundle b = this.getArguments();
         if(b == null){
-            Toast.makeText(MyBookActivity.this,"ISBN not valid",Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(getApplicationContext(), BookList.class);
-            startActivity(intent);
+            Toast.makeText(getContext(),"ISBN not valid",Toast.LENGTH_SHORT).show();
+            toBookList();
         }
 
         String isbn = b.getString("isbn", null);
@@ -104,7 +104,7 @@ public class MyBookActivity extends BaseActivity {
                     }
                     tv_isbn.setText(b.getIsbn());
 
-                    Picasso.with(MyBookActivity.this).load(b.getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
+                    Picasso.with(getActivity()).load(b.getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
                             .into(iv_book);
                 }
 
@@ -133,7 +133,7 @@ public class MyBookActivity extends BaseActivity {
         }
         else
         {
-            Toast.makeText(MyBookActivity.this,"Book not found",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(),"Book not found",Toast.LENGTH_SHORT).show();
         }
 
         delButton.setOnClickListener(
@@ -149,9 +149,7 @@ public class MyBookActivity extends BaseActivity {
                         item = db.getReference("book_instances").child(instance);
                         item.setValue(null);
 
-                        //Go back to BookList activity
-                        Intent intent = new Intent(getApplicationContext(),BookList.class);
-                        startActivity(intent);
+                        toBookList();
                     }
                 }
         );
@@ -160,25 +158,28 @@ public class MyBookActivity extends BaseActivity {
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-
-                        if(ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
-                            ActivityCompat.requestPermissions(MyBookActivity.this, new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION},1);
+                        if(ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+                            ActivityCompat.requestPermissions(getActivity(), new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION},1);
                         }
-                        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-                        location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                        LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                        location = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
 
                         item = db.getReference("users").child(currentUser.getUid()).child("myBooks").child(instance).child("location");
                         item.setValue(location);
                     }
                 }
         );
-
+        return v;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar, menu);
-        return true;
+    private void toBookList(){
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack
+        transaction.replace(R.id.content_frame, new BookList());
+        transaction.addToBackStack(null);
+        // Commit the transaction
+        transaction.commit();
     }
 
 }

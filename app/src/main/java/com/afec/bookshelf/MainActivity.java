@@ -13,7 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 
-public class MainActivity extends BaseActivity {
+public class MainActivity extends AppCompatActivity{
 
     Toolbar myToolbar;
     private DrawerLayout mDrawerLayout;
@@ -44,24 +44,18 @@ public class MainActivity extends BaseActivity {
 
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
-                        // Create new fragment and transaction
-                        Fragment newFragment = new ShowUser();
-                        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
-
-                        // Replace whatever is in the fragment_container view with this fragment,
-                        // and add the transaction to the back stack
-                        transaction.replace(R.id.content_frame, newFragment);
-                        transaction.addToBackStack(null);
-
-                        // Commit the transaction
-                        transaction.commit();
-
+                        int id = menuItem.getItemId();
+                        switch (id){
+                            case R.id.action_show_profile:
+                                myStartFragment(new ShowUser());
+                                break;
+                            case R.id.action_my_books_list:
+                                myStartFragment(new BookList());
+                                break;
+                        }
                         return true;
                     }
                 });
-
-
-
     }
 
     @Override
@@ -74,11 +68,22 @@ public class MainActivity extends BaseActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.toolbar, menu);
         menu.removeItem(R.id.action_home);
         return true;
+    }
+
+    public void myStartFragment(Fragment newFragment){
+        // Create new fragment and transaction
+        FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack
+        transaction.replace(R.id.content_frame, newFragment);
+        transaction.addToBackStack(null);
+        // Commit the transaction
+        transaction.commit();
+
     }
 }
