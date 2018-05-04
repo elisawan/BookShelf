@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Geocoder;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -88,6 +89,8 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
             ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION},2);
         }
 
+
+
         ib = (ImageView) findViewById(R.id.ib);
         final EditText ISBN_reader = (EditText) findViewById(R.id.ISBN_reader);
         edit_location = (EditText) findViewById(R.id.edit_location);
@@ -162,6 +165,8 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
             }
         });
     }
+
+
 
     public void isbnHttpRequest() {
         RequestQueue queue = Volley.newRequestQueue(this);
@@ -354,11 +359,44 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         if(ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION},1);
         }
-        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
-        location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        myLocation.setLatitude(location.getLatitude());
-        myLocation.setLongitude(location.getLongitude());
+        LocationManager lm= (LocationManager) getSystemService(LOCATION_SERVICE);
+
+        lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLocationListener);
+
+        myLocation= new MyLocation();
+
+        location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        if(location==null) {
+            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,0,0, this.mLocationListener);
+            location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        }
+        else{
+            myLocation.setLatitude(location.getLatitude());
+            myLocation.setLongitude(location.getLongitude());
+        }
     }
+
+    private final LocationListener mLocationListener = new LocationListener() {
+        @Override
+        public void onLocationChanged(final Location location) {
+            //your code here
+        }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+
+        }
+
+        @Override
+        public void onProviderEnabled(String provider) {
+
+        }
+
+        @Override
+        public void onProviderDisabled(String provider) {
+
+        }
+    };
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

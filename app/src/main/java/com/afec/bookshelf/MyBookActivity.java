@@ -119,7 +119,7 @@ public class MyBookActivity extends BaseActivity {
                 public void onDataChange(DataSnapshot dataSnapshot) {
                     BookInstance bi = dataSnapshot.getValue(BookInstance.class);
                     status=bi.getStatus();
-                    //S.setIndex(status) ?
+                    S.setSelection(status);
                     loc=bi.getLocation().toString();
                     L.setText(loc);
                     avCheckbox.setChecked(bi.getAvailability());
