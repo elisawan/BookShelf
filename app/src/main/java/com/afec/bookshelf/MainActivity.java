@@ -12,6 +12,9 @@ import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+
+import me.dm7.barcodescanner.zxing.ZXingScannerView;
 
 public class MainActivity extends AppCompatActivity{
 
@@ -41,7 +44,6 @@ public class MainActivity extends AppCompatActivity{
                         menuItem.setChecked(true);
                         // close drawer when item is tapped
                         mDrawerLayout.closeDrawers();
-
                         // Add code here to update the UI based on the item selected
                         // For example, swap UI fragments here
                         int id = menuItem.getItemId();
@@ -84,6 +86,8 @@ public class MainActivity extends AppCompatActivity{
         transaction.addToBackStack(null);
         // Commit the transaction
         transaction.commit();
-
     }
+
+
+
 }

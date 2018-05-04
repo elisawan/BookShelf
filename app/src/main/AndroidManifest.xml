@@ -30,7 +30,6 @@
             </intent-filter>
         </activity>
         <activity android:name=".EditUser" />
-        <activity android:name=".AddBook" />
         <activity android:name=".ShowBook" />
 
         <provider
@@ -43,10 +42,8 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".BookList" />
         <activity android:name=".MainActivity" />
         <activity android:name=".BaseActivity" />
-        <activity android:name=".MyBookActivity"></activity>
     </application>
 
 </manifest>
