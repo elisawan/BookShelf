@@ -1,6 +1,6 @@
 package com.afec.bookshelf.MyJsonParser;
 
-import com.afec.bookshelf.Book;
+import com.afec.bookshelf.Models.Book;
 
 import org.json.JSONObject;
 
