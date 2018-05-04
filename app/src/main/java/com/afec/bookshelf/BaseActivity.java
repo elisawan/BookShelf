@@ -35,11 +35,6 @@ public class BaseActivity extends AppCompatActivity {
                 startActivity(intent);
                 return true;
 
-            case R.id.action_show_profile:
-                intent = new Intent(getBaseContext(), ShowUser.class);
-                startActivity(intent);
-                return true;
-
             case R.id.action_edit_profile:
                 intent = new Intent(getBaseContext(), EditUser.class);
                 startActivity(intent);

@@ -58,7 +58,7 @@ public class FirebaseLogin extends AppCompatActivity {
             });
 
 
-            Intent intent = new Intent(getBaseContext(), ShowUser.class);
+            Intent intent = new Intent(getBaseContext(), MainActivity.class);
             startActivity(intent);
             finish();
         } else {

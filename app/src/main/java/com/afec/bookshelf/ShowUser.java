@@ -12,15 +12,20 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawable;
 import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RatingBar;
@@ -38,7 +43,7 @@ import com.squareup.picasso.Picasso;
 import java.io.IOException;
 import java.io.InputStream;
 
-public class ShowUser extends BaseActivity {
+public class ShowUser extends Fragment {
 
     ImageView immagineUtente;
     Uri imageUri;
@@ -51,28 +56,25 @@ public class ShowUser extends BaseActivity {
     FirebaseDatabase database;
     ProgressDialog dialog;
 
-
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_user);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        Toolbar myToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
+        View v = inflater.inflate(R.layout.activity_show_user, container, false);
 
-        immagineUtente = (ImageView) findViewById(R.id.immagineUtente);
-        nomeUtente = (TextView) findViewById(R.id.nomeUtente);
-        emailUtente = (TextView) findViewById(R.id.emailUtente);
-        bioUtente = (TextView) findViewById(R.id.bioUtente);
+        immagineUtente = (ImageView) v.findViewById(R.id.immagineUtente);
+        nomeUtente = (TextView) v.findViewById(R.id.nomeUtente);
+        emailUtente = (TextView) v.findViewById(R.id.emailUtente);
+        bioUtente = (TextView) v.findViewById(R.id.bioUtente);
 
-        sharedBookCount = (TextView) findViewById(R.id.shared_book_count);
-        takenBookCount = (TextView) findViewById(R.id.taken_book_count);
-        ratingBar = (RatingBar) findViewById(R.id.ratingUser);
+        sharedBookCount = (TextView) v.findViewById(R.id.shared_book_count);
+        takenBookCount = (TextView) v.findViewById(R.id.taken_book_count);
+        ratingBar = (RatingBar) v.findViewById(R.id.ratingUser);
 
         //Mettere tutte le inizializzazioni qui in config
         config();
-
-        /*sharedPref = this.getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
+    /*
+        sharedPref = getContext().getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
         String nome = sharedPref.getString("nomeUtente", null);
         String email = sharedPref.getString("emailUtente", null);
         String bio = sharedPref.getString("bioUtente", null);
@@ -81,7 +83,7 @@ public class ShowUser extends BaseActivity {
         try{
             Uri uri = Uri.parse(sharedPref.getString("imageUri", null));
             Log.d("uri", uri.toString());
-            Bitmap bitmap = MediaStore.Images.Media.getBitmap(this.getContentResolver(), uri);
+            Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContext().getContentResolver(), uri);
             immagineUtente.setImageBitmap(bitmap);
         }catch (Exception e){
             Log.d("ex",e.toString());
@@ -102,9 +104,9 @@ public class ShowUser extends BaseActivity {
         if(bio != null)
             bioUtente.setText(bio);
         else
-            bioUtente.setText("-");*/
+            bioUtente.setText("-");
 
-
+*/
         //percepisce il tap lungo
         immagineUtente.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
@@ -113,21 +115,15 @@ public class ShowUser extends BaseActivity {
                 return true;
             }
         });
+        return v;
     }
 
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar, menu);
-        menu.removeItem(R.id.action_show_profile);
-        return true;
-    }
 
     public void publicationQuickView(){
         View view = getLayoutInflater().inflate( R.layout.inflater_immagine_profilo, null);
         ImageView profileImage = (ImageView) view.findViewById(R.id.inflated_imageview);
-        Picasso.with(this).load(imageUri).noPlaceholder().into(profileImage);
-        builder = new Dialog(this);
+        Picasso.with(getContext()).load(imageUri).noPlaceholder().into(profileImage);
+        builder = new Dialog(getContext());
         builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
         builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         builder.setContentView(view);
@@ -205,7 +201,5 @@ public class ShowUser extends BaseActivity {
             }
         });
     }
-
-
 
 }
