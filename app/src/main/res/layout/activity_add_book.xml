@@ -8,14 +8,6 @@
     android:background="@color/colorPrimary"
     tools:context=".AddBook">
 
-    <android.support.v7.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="match_parent"
-        android:layout_height="?attr/actionBarSize"
-        android:background="@color/colorPrimaryDark"
-        android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
-
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -145,7 +137,6 @@
                 android:layout_height="match_parent"
                 android:layout_margin="7dp"
                 android:layout_weight="1"
-                android:onClick="isbn_scan"
                 android:text="Scan"
                 app:layout_constraintBottom_toTopOf="@+id/ISBN_reader"
                 app:layout_constraintEnd_toEndOf="parent"

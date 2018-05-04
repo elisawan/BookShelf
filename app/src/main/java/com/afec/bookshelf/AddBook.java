@@ -8,14 +8,20 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.util.JsonReader;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.View;
 import android.util.Log;
+import android.view.ViewGroup;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
@@ -23,7 +29,6 @@ import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.support.v7.widget.Toolbar;
 
 import com.afec.bookshelf.Models.Book;
 import com.afec.bookshelf.Models.BookInstance;
@@ -35,7 +40,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.google.zxing.Result;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -53,9 +57,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
-import me.dm7.barcodescanner.zxing.ZXingScannerView;
-
-public class AddBook extends BaseActivity implements ZXingScannerView.ResultHandler{
+public class AddBook extends Fragment {
 
     ImageView ib;
     EditText ISBN_reader, edit_location;
@@ -63,8 +65,6 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
     TextView ISBN_show, book_title, book_author, status_bar, location_bar;
     Book newBook;
     Spinner statusSpinner;
-    Toolbar myToolbar;
-    ZXingScannerView scannerView;
     String isbn;
     Location location;
     MyLocation myLocation;
@@ -75,64 +75,72 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
 
     String url = "https://www.googleapis.com/books/v1/volumes?q=isbn:";
 
-
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_book);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        if(ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.CAMERA},2);
+        View v = inflater.inflate(R.layout.activity_add_book, container, false);
+
+        if(ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.CAMERA)!= PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(getActivity(), new String[] {android.Manifest.permission.CAMERA},2);
         }
 
-        if(ContextCompat.checkSelfPermission(getApplicationContext(), Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[] {Manifest.permission.ACCESS_FINE_LOCATION},2);
+        if(ContextCompat.checkSelfPermission(getContext(), Manifest.permission.ACCESS_FINE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.ACCESS_FINE_LOCATION},2);
         }
 
+        ib = (ImageView) v.findViewById(R.id.ib);
+        final EditText ISBN_reader = (EditText) v.findViewById(R.id.ISBN_reader);
+        edit_location = (EditText) v.findViewById(R.id.edit_location);
+        ISBN_scan_button = (Button)  v.findViewById(R.id.ISBN_scan_button);
+        Locate_button = (Button)  v.findViewById(R.id.Locate_button);
+        confirm_button = (Button) v.findViewById(R.id.confirm_button);
+        statusSpinner = (Spinner) v.findViewById(R.id.status_spinner);
 
+        ISBN_show = (TextView) v.findViewById(R.id.textView4);
+        book_title = (TextView) v.findViewById(R.id.textView2);
+        book_author = (TextView) v.findViewById(R.id.textView3);
+        status_bar = (TextView) v.findViewById(R.id.textView5);
+        location_bar = (TextView) v.findViewById(R.id.location_bar);
 
-        ib = (ImageView) findViewById(R.id.ib);
-        final EditText ISBN_reader = (EditText) findViewById(R.id.ISBN_reader);
-        edit_location = (EditText) findViewById(R.id.edit_location);
-        ISBN_scan_button = (Button)  findViewById(R.id.ISBN_scan_button);
-        Locate_button = (Button)  findViewById(R.id.Locate_button);
-        confirm_button = (Button) findViewById(R.id.confirm_button);
-        statusSpinner = (Spinner) findViewById(R.id.status_spinner);
-
-        ISBN_show = (TextView) findViewById(R.id.textView4);
-        book_title = (TextView) findViewById(R.id.textView2);
-        book_author = (TextView) findViewById(R.id.textView3);
-        status_bar = (TextView) findViewById(R.id.textView5);
-        location_bar = (TextView) findViewById(R.id.location_bar);
-
-        myToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
-
-
+        ISBN_scan_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Fragment newFragment = new IsbnScanner();
+                // Create new fragment and transaction
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                // Replace whatever is in the fragment_container view with this fragment,
+                // and add the transaction to the back stack
+                transaction.replace(R.id.content_frame, newFragment);
+                transaction.addToBackStack(null);
+                // Commit the transaction
+                transaction.commit();
+            }
+        });
         confirm_button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(newBook!=null){
                     status = statusSpinner.getSelectedItemId();
                     if(status==0){
-                        Toast.makeText(AddBook.this,"Condition of the book is mandatory",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),"Condition of the book is mandatory",Toast.LENGTH_SHORT).show();
                     }
                     else {
                         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         currentDateTime = dateFormat.format(new Date());
                         getAddress();
                         addToDatabase();
-                        Intent intent = new Intent(getApplicationContext(),BookList.class);
+                        Intent intent = new Intent(getContext(),BookList.class);
                         startActivity(intent);
                     }
                 }else {
-                    Toast.makeText(AddBook.this,"Scan a book first!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),"Scan a book first!",Toast.LENGTH_SHORT).show();
                 }
             }
         });
 
 
-        Bundle b = getIntent().getExtras();
+        Bundle b = getArguments();
         if(b != null) {
             isbn = b.getString("isbn", null);
             if (isbn != null && isbn.length()==13) {
@@ -141,7 +149,7 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
             }
             else
             {
-                Toast.makeText(AddBook.this,"No valid ISBN ",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"No valid ISBN ",Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -157,19 +165,20 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
                     }
                     else
                     {
-                        Toast.makeText(AddBook.this,"ISBN must be 13 characters long",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),"ISBN must be 13 characters long",Toast.LENGTH_SHORT).show();
                         return false;
                     }
                 }
                 return false;
             }
         });
+        return v;
     }
 
 
 
     public void isbnHttpRequest() {
-        RequestQueue queue = Volley.newRequestQueue(this);
+        RequestQueue queue = Volley.newRequestQueue(getActivity());
         // Request a string response from the provided URL.
         StringRequest stringRequest = new StringRequest(Request.Method.GET, url,
                 new Response.Listener<String>() {
@@ -185,7 +194,7 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
                             newBook.setIsbn(isbn);
                             setViews();
                         } catch (bookNotFound e) {
-                            Toast.makeText(AddBook.this,"ISBN doesn't exists",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(),"ISBN doesn't exists",Toast.LENGTH_SHORT).show();
                             newBook = null;
                         }catch (IOException e){
                             Log.e("error", e.getMessage());
@@ -196,42 +205,16 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
             @Override
             public void onErrorResponse(VolleyError error) {
                 //Log.e("Response error", "That didn't work!");
-                Toast.makeText(AddBook.this,"Network error",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),"Network error",Toast.LENGTH_SHORT).show();
             }
         });
 
         // Add the request to the RequestQueue.
         queue.add(stringRequest);
     }
-    public void isbn_scan(View v) {
-        scannerView = new ZXingScannerView(getApplicationContext());
-        setContentView(scannerView);
-        scannerView.setResultHandler(this);
-        scannerView.startCamera();
-    }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if(scannerView != null)
-            scannerView.stopCamera();
-    }
-
-    @Override
-    public void handleResult(Result result) {
-        String isbn = result.getText();
-        //scannerView.resumeCameraPreview(this);
-        scannerView.stopCamera();
-        Intent intent = new Intent(getApplicationContext(),AddBook.class);
-        Bundle b = new Bundle();
-        b.putString("isbn",isbn);
-        intent.putExtras(b);
-        startActivity(intent);
-        finish();
-    }
 
     public void setBookImage(){
-        Picasso.with(this).load(newBook.getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
+        Picasso.with(getActivity()).load(newBook.getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
                 .into(ib);
     }
 
@@ -352,12 +335,12 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
     }
 
     public void getAddress(){
-        Geocoder geoCoder = new Geocoder(this, Locale.getDefault()); //it is Geocoder
+        Geocoder geoCoder = new Geocoder(getActivity(), Locale.getDefault()); //it is Geocoder
         StringBuilder builder = new StringBuilder();
         String streetAddress;
 
-        if(ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION},1);
+        if(ContextCompat.checkSelfPermission(getContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions(getActivity(), new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION},1);
         }
         LocationManager lm= (LocationManager) getSystemService(LOCATION_SERVICE);
 

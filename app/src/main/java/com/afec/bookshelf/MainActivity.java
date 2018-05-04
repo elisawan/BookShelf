@@ -142,7 +142,6 @@ public class MainActivity extends AppCompatActivity{
         transaction.addToBackStack(null);
         // Commit the transaction
         transaction.commit();
-
     }
 
     private void Logout(){

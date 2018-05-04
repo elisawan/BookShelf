@@ -86,7 +86,7 @@ public class MyBookActivity extends Fragment {
             toBookList();
         }
 
-        String isbn = b.getString("isbn", null);
+        String isbn = b.getString("isbn");
         instance= b.getString("instance");
 
         if (isbn != null && isbn.length()==13) {
