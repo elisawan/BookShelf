@@ -23,13 +23,35 @@ public class Book {
         this.authors = new ArrayList<String>();
     }
 
-    public Book(String name, String isbn, List<String> authors) {
+    public Book(String title, String isbn, List<String> authors) {
         super();
         this.authors = authors;
-        this.title = name;
+        this.title = title;
         this.isbn = isbn;
         this.publisher = null;
         this.editionYear = null;
+    }
+
+    public Book(String title, String isbn, List<String> authors, String thumbnailUrl, String publisher, String editionYear) {
+        super();
+        this.authors = authors;
+        this.title = title;
+        this.isbn = isbn;
+        this.publisher = publisher;
+        this.editionYear = editionYear;
+        this.thumbnailUrl = thumbnailUrl;
+    }
+    public Book(String title, String isbn, String authors, String thumbnailUrl, String publisher, String editionYear) {
+        super();
+        List<String> list = new ArrayList<String>();
+        for(String s : authors.split(",")){
+           list.add(s);
+        }
+        this.title = title;
+        this.isbn = isbn;
+        this.publisher = publisher;
+        this.editionYear = editionYear;
+        this.thumbnailUrl = thumbnailUrl;
     }
 
     public void setTitle(String name){this.title = name;}
@@ -62,7 +84,7 @@ public class Book {
             return null;
         }
         for(String a : authors){
-            all = all+", "+a;
+            all = all+a+", ";
         }
         return all;
     }

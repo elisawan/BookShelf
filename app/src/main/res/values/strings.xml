@@ -33,4 +33,5 @@
     <string name="home">Home</string>
     <string name="my_books">My Books</string>
     <string name="unknown">Unknown</string>
+    <string name="profile">Profile</string>
 </resources>
