@@ -9,6 +9,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.afec.bookshelf.Models.Owner;
+
 import java.util.List;
 
 public class OwnerAdapter extends ArrayAdapter<Owner> {

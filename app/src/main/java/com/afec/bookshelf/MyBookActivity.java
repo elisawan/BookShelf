@@ -1,10 +1,16 @@
 package com.afec.bookshelf;
 
+import android.content.Context;
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
+import android.content.pm.PackageManager;
+import android.location.Location;
+import android.location.LocationManager;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.View;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
@@ -12,7 +18,11 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.afec.bookshelf.Models.Book;
 import com.afec.bookshelf.Models.BookInstance;
+import com.afec.bookshelf.Models.MyLocation;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -27,9 +37,16 @@ public class MyBookActivity extends BaseActivity {
     private ImageView iv_book;
     private Spinner S;
     private int status;
-    private Button locButton;
+    private Button locButton, delButton;
     private CheckBox avCheckbox;
+    FirebaseDatabase db;
+    FirebaseUser currentUser;
+    DatabaseReference item;
     String loc;
+    String instance;
+    MyLocation myLocation;
+    Location location;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +65,15 @@ public class MyBookActivity extends BaseActivity {
         S = (Spinner) findViewById(R.id.status_spinner);
         status = 0;
         locButton = (Button) findViewById(R.id.editLocationButton);
+        delButton = (Button) findViewById(R.id.DeleteButton);
         L= (TextView) findViewById(R.id.location);
         avCheckbox = (CheckBox) findViewById(R.id.availableCheckbox);
         loc=null;
+
+
+        db = FirebaseDatabase.getInstance();
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+
 
 
         Bundle b = getIntent().getExtras();
@@ -61,11 +84,11 @@ public class MyBookActivity extends BaseActivity {
         }
 
         String isbn = b.getString("isbn", null);
-        BookInstance instance= (BookInstance) b.get("istance");
+        instance= b.getString("istance");
 
         if (isbn != null && isbn.length()==13) {
             DatabaseReference bookRef = FirebaseDatabase.getInstance().getReference("books").child(isbn);
-            DatabaseReference bookInstanceRef= FirebaseDatabase.getInstance().getReference("book_instances");
+            DatabaseReference bookInstanceRef= FirebaseDatabase.getInstance().getReference("book_instances").child(instance);
 
             bookRef.addListenerForSingleValueEvent(new ValueEventListener() {
                 @Override
@@ -98,7 +121,7 @@ public class MyBookActivity extends BaseActivity {
                     status=bi.getStatus();
                     //S.setIndex(status) ?
                     loc=bi.getLocation().toString();
-                    L.setText("loc");
+                    L.setText(loc);
                     avCheckbox.setChecked(bi.getAvailability());
                 }
 
@@ -112,6 +135,44 @@ public class MyBookActivity extends BaseActivity {
         {
             Toast.makeText(MyBookActivity.this,"Book not found",Toast.LENGTH_SHORT).show();
         }
+
+        delButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        //First remove the book in mybooks of the user
+                        item = db.getReference("users").child(currentUser.getUid()).child("myBooks").child(instance);
+                        item.setValue(null);
+
+                        //Then remove it from book_instances
+                        item = db.getReference("book_instances").child(instance);
+                        item.setValue(null);
+
+                        //Go back to BookList activity
+                        Intent intent = new Intent(getApplicationContext(),BookList.class);
+                        startActivity(intent);
+                    }
+                }
+        );
+
+        locButton.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+                        if(ContextCompat.checkSelfPermission(getApplicationContext(), android.Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
+                            ActivityCompat.requestPermissions(MyBookActivity.this, new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION},1);
+                        }
+                        LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
+                        location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
+                        item = db.getReference("users").child(currentUser.getUid()).child("myBooks").child(instance).child("location");
+                        item.setValue(location);
+                    }
+                }
+        );
+
     }
 
     @Override
@@ -119,4 +180,5 @@ public class MyBookActivity extends BaseActivity {
         getMenuInflater().inflate(R.menu.toolbar, menu);
         return true;
     }
+
 }

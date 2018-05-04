@@ -1,4 +1,4 @@
-package com.afec.bookshelf;
+package com.afec.bookshelf.Models;
 
 public class Owner {
     private int color;

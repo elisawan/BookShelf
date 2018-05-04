@@ -1,4 +1,4 @@
-package com.afec.bookshelf;
+package com.afec.bookshelf.Models;
 
 import android.content.Context;
 import android.location.Location;

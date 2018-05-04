@@ -1,19 +1,14 @@
 package com.afec.bookshelf;
 
-import android.*;
 import android.Manifest;
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationManager;
-import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.JsonReader;
 import android.view.KeyEvent;
@@ -23,15 +18,15 @@ import android.util.Log;
 import android.view.inputmethod.EditorInfo;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.support.v7.widget.Toolbar;
 
+import com.afec.bookshelf.Models.Book;
 import com.afec.bookshelf.Models.BookInstance;
-import com.google.firebase.FirebaseError;
+import com.afec.bookshelf.Models.MyLocation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -53,12 +48,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.List;
 import java.util.Locale;
 
 import me.dm7.barcodescanner.zxing.ZXingScannerView;
@@ -75,6 +66,7 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
     ZXingScannerView scannerView;
     String isbn;
     Location location;
+    MyLocation myLocation;
     long status;
     String currentDateTime;
 
@@ -331,7 +323,7 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         //Inserimento in book_instances
         DatabaseReference bookInstanceRef = database.getReference("book_instances");
         String bookId = bookInstanceRef.push().getKey();
-        bookInstanceRef.child(bookId).setValue(new BookInstance(newBook.getIsbn(),location, user.getUid(), (int) status, currentDateTime, true));
+        bookInstanceRef.child(bookId).setValue(new BookInstance(newBook.getIsbn(), myLocation, user.getUid(), (int) status, currentDateTime, true));
 
         //Aggiornamento inserimento libro: update addedBooks count
         final DatabaseReference userRef = database.getReference("users").child(user.getUid()).child("addedBooks");
@@ -364,6 +356,8 @@ public class AddBook extends BaseActivity implements ZXingScannerView.ResultHand
         }
         LocationManager lm = (LocationManager)getSystemService(Context.LOCATION_SERVICE);
         location = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        myLocation.setLatitude(location.getLatitude());
+        myLocation.setLongitude(location.getLongitude());
     }
 
     @Override

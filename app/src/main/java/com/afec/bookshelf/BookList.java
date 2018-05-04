@@ -1,18 +1,10 @@
 package com.afec.bookshelf;
 
-import android.content.Context;
 import android.content.Intent;
-import android.graphics.Point;
-import android.location.Location;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.support.v7.widget.CardView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
-import android.view.Display;
-import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -21,7 +13,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.afec.bookshelf.Models.BookInstance;
+import com.afec.bookshelf.Models.Book;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -42,7 +34,7 @@ public class BookList extends BaseActivity {
     Toolbar myToolbar;
     FirebaseDatabase db;
     FirebaseUser currentUser;
-    DatabaseReference myBooksRef;
+    DatabaseReference myBooksRef, bookInstance;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,9 +63,11 @@ public class BookList extends BaseActivity {
                     // get book id
                     Log.d("child",child.toString());
                     String isbn = child.getValue(String.class);
+                    final String instance = child.getKey();
                     Log.d("isbn",isbn);
                     // get book
                     DatabaseReference bookRef = db.getReference("books").child(isbn);
+
                     bookRef.addValueEventListener(new ValueEventListener() {
 
                         @Override
@@ -82,7 +76,7 @@ public class BookList extends BaseActivity {
                             Book b = dataSnapshot.getValue(Book.class);
                             Log.d("book",b.toString());
                             myBooks.add(b);
-                            //myBooksInstances.add(dataSnapshot.getValue().toString());
+                            myBooksInstances.add(instance);
                             // show on view
                             gv.setAdapter(new BaseAdapter() {
 
@@ -134,8 +128,8 @@ public class BookList extends BaseActivity {
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //Intent intent = new Intent(getApplicationContext(), MyBookActivity.class);
-                Intent intent = new Intent(getApplicationContext(), ShowBook.class);
+                Intent intent = new Intent(getApplicationContext(), MyBookActivity.class);
+                //Intent intent = new Intent(getApplicationContext(), ShowBook.class);
                 Bundle b = new Bundle();
                 b.putString("isbn", myBooks.get(position).getIsbn());
                 b.putString("istance", myBooksInstances.get(position));
