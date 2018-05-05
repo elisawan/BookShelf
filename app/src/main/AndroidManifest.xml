@@ -22,6 +22,7 @@
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
         android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+
         <activity android:name=".FirebaseLogin">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -29,8 +30,8 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".EditUser" />
-        <activity android:name=".ShowBook" />
+
+        <activity android:name=".MainActivity" />
 
         <provider
             android:name="android.support.v4.content.FileProvider"
@@ -42,8 +43,6 @@
                 android:resource="@xml/file_paths" />
         </provider>
 
-        <activity android:name=".MainActivity" />
-        <activity android:name=".BaseActivity" />
     </application>
 
 </manifest>

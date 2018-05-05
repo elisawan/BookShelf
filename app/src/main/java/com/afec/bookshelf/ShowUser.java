@@ -23,6 +23,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -61,6 +62,8 @@ public class ShowUser extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View v = inflater.inflate(R.layout.activity_show_user, container, false);
+
+        setHasOptionsMenu(true);
 
         immagineUtente = (ImageView) v.findViewById(R.id.immagineUtente);
         nomeUtente = (TextView) v.findViewById(R.id.nomeUtente);
@@ -202,4 +205,10 @@ public class ShowUser extends Fragment {
         });
     }
 
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.setGroupVisible(R.id.showProfileMenu,true);
+        menu.setGroupVisible(R.id.defaultMenu,false);
+    }
 }

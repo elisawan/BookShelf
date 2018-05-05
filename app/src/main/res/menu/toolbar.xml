@@ -3,37 +3,20 @@
     xmlns:appcompat="http://schemas.android.com/apk/res-auto"
     xmlns:app="http://schemas.android.com/tools">
 
-    <item
-        android:id="@+id/action_settings"
-        android:title="@string/action_settings"
-        android:orderInCategory="100"
-        app:showAsAction="never"/>
+    <group android:id="@+id/defaultMenu">
+        <item
+            android:id="@+id/menu_search"
+            android:title="@string/menu_search"
+            appcompat:actionViewClass="android.support.v7.widget.SearchView"
+            appcompat:showAsAction="always"/>
+    </group>
 
-    <item
-        android:id="@+id/menu_search"
-        android:title="@string/menu_search"
-        appcompat:actionViewClass="android.support.v7.widget.SearchView"
-        appcompat:showAsAction="always"/>
-    <item
-        android:id="@+id/action_home"
-        android:title="@string/home"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/action_show_profile"
-        android:title="@string/show_profile"
-        app:showAsAction="never" />
+    <group android:id="@+id/showProfileMenu">
     <item
         android:id="@+id/action_edit_profile"
         android:title="@string/edit_profile"
-        app:showAsAction="never"/>
-    <item
-        android:id="@+id/action_add_book"
-        android:title="@string/add_book"
-        app:showAsAction="never" />
-    <item
-        android:id="@+id/action_my_books_list"
-        android:title="@string/my_books"
-        app:showAsAction="never" />
-
+        android:icon="@drawable/ic_edit_black_24dp"
+        appcompat:showAsAction="always"/>
+    </group>
 
 </menu>

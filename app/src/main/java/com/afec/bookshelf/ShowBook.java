@@ -2,8 +2,15 @@ package com.afec.bookshelf;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.afec.bookshelf.Models.Book;
@@ -23,34 +30,29 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ShowBook extends BaseActivity {
+public class ShowBook extends Fragment {
 
     private ListView mListView;
-    private Toolbar myToolbar;
     private TextView tv_title, tv_author, tv_publisher, tv_ed_year, tv_isbn, tv_desc;
     private ImageView iv_book;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_show_book);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.activity_show_book, container, false);
 
-        myToolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(myToolbar);
+        mListView = (ListView) v.findViewById(R.id.list_of_owner);
+        tv_author = (TextView) v.findViewById(R.id.book_autor);
+        tv_ed_year = (TextView) v.findViewById(R.id.book_year_edition);
+        tv_isbn = (TextView) v.findViewById(R.id.book_isbn);
+        tv_publisher = (TextView) v.findViewById(R.id.book_publisher);
+        tv_title = (TextView) v.findViewById(R.id.book_title);
+        iv_book = (ImageView) v.findViewById(R.id.book_image);
 
-        mListView = (ListView) findViewById(R.id.list_of_owner);
-        tv_author = (TextView) findViewById(R.id.book_autor);
-        tv_ed_year = (TextView) findViewById(R.id.book_year_edition);
-        tv_isbn = (TextView) findViewById(R.id.book_isbn);
-        tv_publisher = (TextView) findViewById(R.id.book_publisher);
-        tv_title = (TextView) findViewById(R.id.book_title);
-        iv_book = (ImageView) findViewById(R.id.book_image);
-
-        Bundle b = getIntent().getExtras();
+        Bundle b = getArguments();
         if(b == null){
-            Toast.makeText(ShowBook.this,"ISBN not valid",Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(getApplicationContext(), BookList.class);
-            startActivity(intent);
+            Toast.makeText(getActivity(),"ISBN not valid",Toast.LENGTH_SHORT).show();
+            myStartFragment(new BookList());
         }
         String isbn = b.getString("isbn", null);
         if (isbn != null && isbn.length()==13) {
@@ -69,7 +71,7 @@ public class ShowBook extends BaseActivity {
                     }
                     tv_isbn.setText(b.getIsbn());
 
-                    Picasso.with(ShowBook.this).load(b.getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
+                    Picasso.with(getActivity()).load(b.getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
                             .into(iv_book);
                 }
 
@@ -81,13 +83,15 @@ public class ShowBook extends BaseActivity {
         }
         else
         {
-            Toast.makeText(ShowBook.this,"ISBN not valid",Toast.LENGTH_SHORT).show();
+            Toast.makeText(getActivity(),"ISBN not valid",Toast.LENGTH_SHORT).show();
         }
 
         List<Owner> owners = genererOwner();
 
-        OwnerAdapter adapter = new OwnerAdapter(ShowBook.this, owners);
+        OwnerAdapter adapter = new OwnerAdapter(getActivity(), owners);
         mListView.setAdapter(adapter);
+
+        return v;
     }
 
     private List<Owner> genererOwner(){
@@ -115,10 +119,15 @@ public class ShowBook extends BaseActivity {
         return owners;
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.toolbar, menu);
-        return true;
+    public void myStartFragment(Fragment newFragment){
+        // Create new fragment and transaction
+        FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+        // Replace whatever is in the fragment_container view with this fragment,
+        // and add the transaction to the back stack
+        transaction.replace(R.id.content_frame, newFragment);
+        transaction.addToBackStack(null);
+        // Commit the transaction
+        transaction.commit();
     }
 }
 

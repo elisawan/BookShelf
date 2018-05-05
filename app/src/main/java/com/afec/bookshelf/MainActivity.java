@@ -37,14 +37,16 @@ import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
 
-public class MainActivity extends AppCompatActivity{
+import java.util.List;
+
+public class MainActivity extends AppCompatActivity {
 
     Toolbar myToolbar;
     private DrawerLayout mDrawerLayout;
     FirebaseDatabase db;
     private FirebaseUser user;
     DatabaseReference userRef;
-
+    Menu menu;
     TextView username, email;
 
     @Override
@@ -52,26 +54,16 @@ public class MainActivity extends AppCompatActivity{
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        // Toolbar initialization
         myToolbar = findViewById(R.id.toolbar);
         setSupportActionBar(myToolbar);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
+        // Navigation drawer header
         View header = ((NavigationView)findViewById(R.id.nav_view)).getHeaderView(0);
-
-        username= (TextView) header.findViewById(R.id.sidebar_username);
-        email = (TextView) header.findViewById(R.id.sidebar_mail);
-
-        db = FirebaseDatabase.getInstance();
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        user.getUid();
-
-        email.setText(user.getEmail());
-
-
         mDrawerLayout = findViewById(R.id.main_layout);
-
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
                 new NavigationView.OnNavigationItemSelectedListener() {
@@ -92,7 +84,6 @@ public class MainActivity extends AppCompatActivity{
                             case R.id.action_my_books_list:
                                 myStartFragment(new BookList());
                                 break;
-
                             case R.id.action_logout:
                                 Logout();
                                 break;
@@ -100,7 +91,16 @@ public class MainActivity extends AppCompatActivity{
                         return true;
                     }
                 });
+        username= (TextView) header.findViewById(R.id.sidebar_username);
+        email = (TextView) header.findViewById(R.id.sidebar_mail);
 
+        // Firebase
+        db = FirebaseDatabase.getInstance();
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        user.getUid();
+
+        // Fill navigation drawer view
+        email.setText(user.getEmail());
         userRef = db.getReference("users").child(user.getUid()).child("username");
         userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
             @Override
@@ -110,18 +110,16 @@ public class MainActivity extends AppCompatActivity{
                     username.setText(String.valueOf(userName));
                 }
             }
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 Log.e("db error report: ", databaseError.getDetails());
             }
         });
-
-
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
+        this.menu = menu;
         MenuInflater inflater = getMenuInflater();
         // Inflate menu to add items to action bar if it is present.
         inflater.inflate(R.menu.toolbar, menu);
@@ -133,8 +131,8 @@ public class MainActivity extends AppCompatActivity{
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
 
-        menu.removeItem(R.id.action_home);
-
+        menu.setGroupVisible(R.id.defaultMenu, true);
+        menu.setGroupVisible(R.id.showProfileMenu, false);
         return true;
     }
 
@@ -143,18 +141,13 @@ public class MainActivity extends AppCompatActivity{
         switch (item.getItemId()) {
             case android.R.id.home:
                 mDrawerLayout.openDrawer(GravityCompat.START);
-                return true;
+                break;
+            case R.id.action_edit_profile:
+                myStartFragment(new EditUser());
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
-
-    //
-    //@Override
-    //public boolean onCreateOptionsMenu(Menu menu) {
-    //    getMenuInflater().inflate(R.menu.toolbar, menu);
-    //    menu.removeItem(R.id.action_home);
-    //    return true;
-    //}
 
     public void myStartFragment(Fragment newFragment){
         // Create new fragment and transaction

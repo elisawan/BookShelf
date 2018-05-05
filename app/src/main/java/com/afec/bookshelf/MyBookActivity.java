@@ -3,12 +3,9 @@ package com.afec.bookshelf;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.hardware.SensorManager;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -16,9 +13,10 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.content.ContextCompat;
 import android.os.Bundle;
-import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -30,7 +28,6 @@ import android.widget.Toast;
 
 import com.afec.bookshelf.Models.Book;
 import com.afec.bookshelf.Models.BookInstance;
-import com.afec.bookshelf.Models.MyLocation;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -42,7 +39,6 @@ import com.squareup.picasso.Picasso;
 
 public class MyBookActivity extends Fragment {
 
-    private Toolbar myToolbar;
     private TextView tv_title, tv_author, tv_publisher, tv_ed_year, tv_isbn, L;
     private ImageView iv_book;
     private Spinner S;
@@ -54,14 +50,14 @@ public class MyBookActivity extends Fragment {
     DatabaseReference item;
     String loc;
     String instance;
-    MyLocation myLocation;
     Location location;
-
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.activity_my_book, container, false);
+
+        setHasOptionsMenu(true);
 
         tv_author = (TextView) v.findViewById(R.id.book_autor);
         tv_ed_year = (TextView) v.findViewById(R.id.book_year_edition);
@@ -209,9 +205,12 @@ public class MyBookActivity extends Fragment {
         transaction.commit();
     }
 
-
-
-
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.setGroupVisible(R.id.defaultMenu,false);
+        menu.setGroupVisible(R.id.showProfileMenu,false);
+    }
 }
 
 
