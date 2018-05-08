@@ -9,10 +9,24 @@ import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
+import com.afec.bookshelf.Models.Book;
+import com.afec.bookshelf.MyJsonParser.SearchResultBookJsonParser;
+import com.algolia.search.saas.AlgoliaException;
+import com.algolia.search.saas.Client;
+import com.algolia.search.saas.CompletionHandler;
+import com.algolia.search.saas.Index;
+import com.algolia.search.saas.Query;
+
+import org.json.JSONObject;
+
+import java.util.List;
 
 
 public class SearchResult extends Fragment {
@@ -25,6 +39,13 @@ public class SearchResult extends Fragment {
     TabItem tabSearchByTitle;
     TabItem tabSearchByAuthor;
     TabItem tabSearchByPublisher;
+    List<Book> booksList;
+
+    // Algolia search
+    Client client;
+    Query query;
+    Index index;
+    SearchView searchView;
 
     public SearchResult() {
         // Required empty public constructor
@@ -40,20 +61,40 @@ public class SearchResult extends Fragment {
 
         View v = inflater.inflate(R.layout.fragment_search_result, container, false);
 
-        toolbar = v.findViewById(R.id.toolbar);
-        toolbar.setTitle(getResources().getString(R.string.app_name));
-
-        tabSearchByAll = v.findViewById(R.id.tabSearchByAll);
+        /*tabSearchByAll = v.findViewById(R.id.tabSearchByAll);
         tabSearchByTitle = v.findViewById(R.id.tabSearchByTitle);
         tabSearchByAuthor = v.findViewById(R.id.tabSearchByAuthor);
         tabSearchByPublisher = v.findViewById(R.id.tabSearchByPublisher);
         tabLayout = v.findViewById(R.id.tablayout);
-        viewPager = v.findViewById(R.id.SearchViewPager);
+        viewPager = v.findViewById(R.id.SearchViewPager);*/
 
-        tabPageAdapter = new TabPageAdapter(getActivity().getSupportFragmentManager(), tabLayout.getTabCount());
-        viewPager.setAdapter(tabPageAdapter);
+        // Algolia setup
+        client = new Client("BDPR8QJ6ZZ", "57b47a26838971583fcb026954731774");
+        query = new Query();
+        query.setAttributesToRetrieve("title","authors");
+        query.setHitsPerPage(10);
+        index = client.getIndex("bookShelf");
 
-        tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        Bundle b = getArguments();
+
+        if(b.containsKey("query")){ //show search result
+            String q = b.getString("query");
+            query.setQuery(q);
+            index.searchAsync(query, new CompletionHandler() {
+                @Override
+                public void requestCompleted(JSONObject jsonObject, AlgoliaException e) {
+                    Log.d("msg","requestCompleted");
+                    Log.d("msg",jsonObject.toString());
+                    SearchResultBookJsonParser parser = new SearchResultBookJsonParser();
+                    booksList = parser.parseResults(jsonObject);
+                }
+            });
+        }
+
+        //tabPageAdapter = new TabPageAdapter(getActivity().getSupportFragmentManager(), tabLayout.getTabCount());
+        //viewPager.setAdapter(tabPageAdapter);
+
+        /*tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             public void onTabSelected(TabLayout.Tab tab) {
                 viewPager.setCurrentItem(tab.getPosition());
                 if(tab.getPosition()==1){
@@ -104,7 +145,7 @@ public class SearchResult extends Fragment {
             public void onTabReselected(TabLayout.Tab tab) {
 
             }
-        });
+        });*/
         return v;
     }
 }

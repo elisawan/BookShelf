@@ -23,12 +23,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
-import com.algolia.search.saas.AlgoliaException;
-import com.algolia.search.saas.Client;
-import com.algolia.search.saas.CompletionHandler;
-import com.algolia.search.saas.Index;
-import com.algolia.search.saas.Query;
-import com.algolia.search.saas.Searchable;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -39,8 +33,6 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
-import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -55,25 +47,11 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseUser user;
     DatabaseReference userRef;
 
-    // Algolia search
-    Client client;
-    Query query;
-    Index index;
-    SearchView searchView;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Algolia setup
-        client = new Client("BDPR8QJ6ZZ", "57b47a26838971583fcb026954731774");
-        query = new Query();
-        query.setAttributesToRetrieve("title","authors");
-        query.setHitsPerPage(10);
-        index = client.getIndex("bookShelf");
-
-        // Get the intent, verify the action and get the query
         Intent intent = getIntent();
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String q = intent.getStringExtra(SearchManager.QUERY);
@@ -228,15 +206,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void mySearch(String q){
-        query.setQuery(q);
-        index.searchAsync(query, new CompletionHandler() {
-            @Override
-            public void requestCompleted(JSONObject jsonObject, AlgoliaException e) {
-                Log.d("msg","requestCompleted");
-                Log.d("msg",jsonObject.toString());
-                
-            }
-        });
+        Bundle b = new Bundle();
+        b.putString("query",q);
+        Fragment newFragment = new SearchResult();
+        newFragment.setArguments(b);
+        myStartFragment(newFragment);
     }
 }
 
