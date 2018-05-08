@@ -208,9 +208,9 @@ public class MainActivity extends AppCompatActivity {
     public void mySearch(String q){
         Bundle b = new Bundle();
         b.putString("query",q);
-        Fragment newFragment = new SearchResult();
-        newFragment.setArguments(b);
-        myStartFragment(newFragment);
+        Intent intent = new Intent(getApplicationContext(),SearchBooks.class);
+        intent.putExtras(b);
+        startActivity(intent);
     }
 }
 

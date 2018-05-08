@@ -54,7 +54,6 @@ public class BookList extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.activity_book_list, container, false);
 
-        //
         booksList = new ArrayList<Book>();
         gv = v.findViewById(R.id.book_list_grid);
         fab = v.findViewById(R.id.fab);

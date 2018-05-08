@@ -1,20 +1,16 @@
 package com.afec.bookshelf;
 
 
-import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.TabItem;
-import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
-import android.support.v4.content.ContextCompat;
-import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.BaseAdapter;
+import android.widget.GridView;
+import android.widget.TextView;
 
 import com.afec.bookshelf.Models.Book;
 import com.afec.bookshelf.MyJsonParser.SearchResultBookJsonParser;
@@ -28,24 +24,15 @@ import org.json.JSONObject;
 
 import java.util.List;
 
-
 public class SearchResult extends Fragment {
 
-    Toolbar toolbar;
-    TabLayout tabLayout;
-    ViewPager viewPager;
-    TabPageAdapter tabPageAdapter;
-    TabItem tabSearchByAll;
-    TabItem tabSearchByTitle;
-    TabItem tabSearchByAuthor;
-    TabItem tabSearchByPublisher;
     List<Book> booksList;
+    GridView gv;
 
     // Algolia search
     Client client;
     Query query;
     Index index;
-    SearchView searchView;
 
     public SearchResult() {
         // Required empty public constructor
@@ -59,93 +46,71 @@ public class SearchResult extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.fragment_search_result, container, false);
+        View v = inflater.inflate(R.layout.fragment_search_res_list, container, false);
 
-        /*tabSearchByAll = v.findViewById(R.id.tabSearchByAll);
-        tabSearchByTitle = v.findViewById(R.id.tabSearchByTitle);
-        tabSearchByAuthor = v.findViewById(R.id.tabSearchByAuthor);
-        tabSearchByPublisher = v.findViewById(R.id.tabSearchByPublisher);
-        tabLayout = v.findViewById(R.id.tablayout);
-        viewPager = v.findViewById(R.id.SearchViewPager);*/
+        gv = v.findViewById(R.id.book_list_grid);
+        gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                //
+            }
+        });
+
+        String q = null;
+        String attr = "*";
+        Bundle b = getArguments();
+        if(b.containsKey("query"))
+            q = b.getString("query");
+        if(b.containsKey("search_on"))
+            attr = b.getString("search_on");
 
         // Algolia setup
         client = new Client("BDPR8QJ6ZZ", "57b47a26838971583fcb026954731774");
         query = new Query();
-        query.setAttributesToRetrieve("title","authors");
+        query.setAttributesToRetrieve(attr);
         query.setHitsPerPage(10);
         index = client.getIndex("bookShelf");
 
-        Bundle b = getArguments();
-
-        if(b.containsKey("query")){ //show search result
-            String q = b.getString("query");
-            query.setQuery(q);
-            index.searchAsync(query, new CompletionHandler() {
-                @Override
-                public void requestCompleted(JSONObject jsonObject, AlgoliaException e) {
-                    Log.d("msg","requestCompleted");
-                    Log.d("msg",jsonObject.toString());
-                    SearchResultBookJsonParser parser = new SearchResultBookJsonParser();
-                    booksList = parser.parseResults(jsonObject);
-                }
-            });
-        }
-
-        //tabPageAdapter = new TabPageAdapter(getActivity().getSupportFragmentManager(), tabLayout.getTabCount());
-        //viewPager.setAdapter(tabPageAdapter);
-
-        /*tabLayout.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            public void onTabSelected(TabLayout.Tab tab) {
-                viewPager.setCurrentItem(tab.getPosition());
-                if(tab.getPosition()==1){
-                    toolbar.setBackgroundColor(ContextCompat.getColor(
-                            getActivity(), R.color.colorTabSearchAll));
-                    tabLayout.setBackgroundColor(ContextCompat.getColor(
-                            getActivity(), R.color.colorTabSearchAll));
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-                        getActivity().getWindow().setStatusBarColor(ContextCompat.getColor(
-                                getActivity(), R.color.colorTabSearchAll));
-                    }
-                }else if (tab.getPosition()==2){
-                    toolbar.setBackgroundColor(ContextCompat.getColor(
-                            getActivity(), R.color.colorTabSearchTitle));
-                    tabLayout.setBackgroundColor(ContextCompat.getColor(
-                            getActivity(), R.color.colorTabSearchTitle));
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-                        getActivity().getWindow().setStatusBarColor(ContextCompat.getColor(
-                                getActivity(), R.color.colorTabSearchTitle));
-                    }
-                }else if (tab.getPosition()==3){
-                    toolbar.setBackgroundColor(ContextCompat.getColor(
-                            getActivity(), R.color.colorTabSearchAuthor));
-                    tabLayout.setBackgroundColor(ContextCompat.getColor(
-                            getActivity(), R.color.colorTabSearchAuthor));
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-                        getActivity().getWindow().setStatusBarColor(ContextCompat.getColor(
-                                getActivity(), R.color.colorTabSearchAuthor));
-                    }
-                }else{
-                    toolbar.setBackgroundColor(ContextCompat.getColor(
-                            getActivity(), R.color.colorTabSearchPublisher));
-                    tabLayout.setBackgroundColor(ContextCompat.getColor(
-                            getActivity(), R.color.colorTabSearchPublisher));
-                    if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP){
-                        getActivity().getWindow().setStatusBarColor(ContextCompat.getColor(
-                                getActivity(), R.color.colorTabSearchPublisher));
-                    }
-                }
-            }
-
+        //show search result
+        query.setQuery(q);
+        index.searchAsync(query, new CompletionHandler() {
             @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
+            public void requestCompleted(JSONObject jsonObject, AlgoliaException e) {
+                Log.d("msg","requestCompleted");
+                Log.d("msg",jsonObject.toString());
+                SearchResultBookJsonParser parser = new SearchResultBookJsonParser();
+                booksList = parser.parseResults(jsonObject);
+                gv.setAdapter(new BaseAdapter() {
 
+                    @Override
+                    public int getCount() {
+                        return booksList.size();
+                    }
+
+                    @Override
+                    public Object getItem(int position) {
+                        return booksList.get(position);
+                    }
+
+                    @Override
+                    public long getItemId(int position) {
+                        return position;
+                    }
+
+                    @Override
+                    public View getView(int position, View convertView, ViewGroup parent) {
+                        if (convertView == null) {
+                            convertView = getLayoutInflater().inflate(R.layout.book_preview, parent, false);
+                        }
+                        TextView title_tv = (TextView) convertView.findViewById(R.id.book_title_preview);
+                        title_tv.setText(booksList.get(position).getTitle());
+                        TextView author_tv = (TextView) convertView.findViewById(R.id.book_autor_preview);
+                        author_tv.setText(booksList.get(position).getAllAuthors());
+                        return convertView;
+                    }
+                });
             }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-
-            }
-        });*/
+        });
         return v;
     }
 }
