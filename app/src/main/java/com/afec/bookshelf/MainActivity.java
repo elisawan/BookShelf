@@ -8,7 +8,6 @@ import android.content.Intent;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -24,6 +23,12 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import com.algolia.search.saas.AlgoliaException;
+import com.algolia.search.saas.Client;
+import com.algolia.search.saas.CompletionHandler;
+import com.algolia.search.saas.Index;
+import com.algolia.search.saas.Query;
+import com.algolia.search.saas.Searchable;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -35,24 +40,45 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
-import org.w3c.dom.Text;
-
-import java.util.List;
+import org.json.JSONObject;
 
 public class MainActivity extends AppCompatActivity {
 
+    // Menus
     Toolbar myToolbar;
     private DrawerLayout mDrawerLayout;
+    Menu menu;
+    TextView username, email;
+
+    // Firebase
     FirebaseDatabase db;
     private FirebaseUser user;
     DatabaseReference userRef;
-    Menu menu;
-    TextView username, email;
+
+    // Algolia search
+    Client client;
+    Query query;
+    Index index;
+    SearchView searchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        // Algolia setup
+        client = new Client("BDPR8QJ6ZZ", "57b47a26838971583fcb026954731774");
+        query = new Query();
+        query.setAttributesToRetrieve("title","authors");
+        query.setHitsPerPage(10);
+        index = client.getIndex("bookShelf");
+
+        // Get the intent, verify the action and get the query
+        Intent intent = getIntent();
+        if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
+            String q = intent.getStringExtra(SearchManager.QUERY);
+            mySearch(q);
+        }
 
         // Toolbar initialization
         myToolbar = findViewById(R.id.toolbar);
@@ -130,7 +156,16 @@ public class MainActivity extends AppCompatActivity {
                 (SearchView) menu.findItem(R.id.menu_search).getActionView();
         searchView.setSearchableInfo(
                 searchManager.getSearchableInfo(getComponentName()));
-
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                return false;
+            }
+        });
         menu.setGroupVisible(R.id.defaultMenu, true);
         menu.setGroupVisible(R.id.showProfileMenu, false);
         return true;
@@ -161,13 +196,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void Logout(){
-
         //Display dialog box
         AlertDialog.Builder builder1 = new AlertDialog.Builder(MainActivity.this);
-
         builder1.setMessage(R.string.Logout_permission);
         builder1.setCancelable(true);
-
         builder1.setPositiveButton(
                 R.string.Affirmative,
                 new DialogInterface.OnClickListener() {
@@ -182,22 +214,29 @@ public class MainActivity extends AppCompatActivity {
                                     }
                                 });
                         dialog.cancel();
-
                     }
                 });
-
         builder1.setNegativeButton(
                 R.string.Negative,
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-
                         dialog.cancel();
                     }
                 });
-
         AlertDialog alert11 = builder1.create();
         alert11.show();
+    }
 
+    public void mySearch(String q){
+        query.setQuery(q);
+        index.searchAsync(query, new CompletionHandler() {
+            @Override
+            public void requestCompleted(JSONObject jsonObject, AlgoliaException e) {
+                Log.d("msg","requestCompleted");
+                Log.d("msg",jsonObject.toString());
+                
+            }
+        });
     }
 }
 
