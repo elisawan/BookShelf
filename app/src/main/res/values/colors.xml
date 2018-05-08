@@ -2,10 +2,18 @@
 <resources>
     <color name="colorPrimary">#EFECCA</color>
     <color name="colorPrimaryDark">#046380</color>
+    <color name="colorPrimaryDarkDarker">#023b4c</color>
     <color name="colorAccent">#FF4081</color>
+
+    <color name="colorTabSearchAll">#046380</color>
+    <color name="colorTabSearchTitle">#046380</color>
+    <color name="colorTabSearchAuthor">#046380</color>
+    <color name="colorTabSearchPublisher">#046380</color>
 
     <color name="colorNuanceDark">#A7A37E</color>
     <color name="colorNuanceLite">#E6E2AF</color>
+    <color name="colorSelected">#CDDC39</color>
+
 </resources>
 
 <!--
