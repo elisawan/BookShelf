@@ -124,14 +124,15 @@
 
             <Button
                 android:id="@+id/button_edit_confirm"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="end"
-                android:layout_marginBottom="10dp"
-                android:layout_marginEnd="30dp"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
-                android:background="@android:drawable/btn_default"
-                android:text="@string/save" />
+                android:background="@color/colorPrimaryDark"
+                android:text="@string/save"
+                android:textColor="@android:color/white" />
 
         </LinearLayout>
 </ScrollView>
