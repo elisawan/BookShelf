@@ -1,63 +1,56 @@
 package com.afec.bookshelf;
 
-import android.app.SearchManager;
-import android.content.Intent;
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.design.widget.TabLayout;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
-
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v7.widget.Toolbar;
+
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-
-import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class SearchBooks extends AppCompatActivity {
+public class SearchBooks extends Fragment {
 
     private static final String TAG = "SearchBooks activity";
     private SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
 
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_search_books);
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View v = inflater.inflate(R.layout.activity_search_books, container, false);
 
-        Bundle b = getIntent().getExtras();
+        Bundle b = getArguments();
         String q = b.getString("query");
 
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar);
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        mSectionsPagerAdapter = new SectionsPagerAdapter(getActivity().getSupportFragmentManager());
 
         // Set up the ViewPager with the sections adapter.
-        mViewPager = (ViewPager) findViewById(R.id.container);
+        mViewPager = (ViewPager) v.findViewById(R.id.container);
         setupViewPager(mViewPager, q);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tabs);
+        TabLayout tabLayout = (TabLayout) v.findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(mViewPager);
 
         mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
         tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+        return v;
     }
 
     private void setupViewPager(ViewPager mViewPager, String query){
-        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getSupportFragmentManager());
+        SectionsPagerAdapter adapter = new SectionsPagerAdapter(getActivity().getSupportFragmentManager());
 
         Bundle b_all = new Bundle();
         b_all.putString("query", query);
@@ -68,10 +61,24 @@ public class SearchBooks extends AppCompatActivity {
 
         Bundle b_title = new Bundle();
         b_title.putString("query", query);
-        b_title.putString("search_on","Title");
+        b_title.putString("search_on","title");
         Fragment searchTitle = new SearchResult();
         searchTitle.setArguments(b_title);
         adapter.addFragment(searchTitle,"Title");
+
+        Bundle b_author = new Bundle();
+        b_author.putString("query", query);
+        b_author.putString("search_on","authors, allAuthors, author");
+        Fragment searchAuthor = new SearchResult();
+        searchAuthor.setArguments(b_author);
+        adapter.addFragment(searchAuthor,"Author");
+
+        Bundle b_pub = new Bundle();
+        b_pub.putString("query", query);
+        b_pub.putString("search_on","publisher");
+        Fragment searchPub = new SearchResult();
+        searchPub.setArguments(b_pub);
+        adapter.addFragment(searchPub,"Publisher");
 
         mViewPager.setAdapter(adapter);
     }

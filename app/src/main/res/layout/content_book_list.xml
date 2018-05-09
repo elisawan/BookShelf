@@ -11,13 +11,11 @@
     tools:showIn="@layout/activity_book_list">
 
     <TextView
-        android:id="@+id/textView6"
+        android:id="@+id/search_msg"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
         android:layout_marginBottom="10dp"
-        android:text="@string/myBooks"
-        android:textStyle="bold"
         android:textAlignment="center"
         android:textSize="20sp" />
 

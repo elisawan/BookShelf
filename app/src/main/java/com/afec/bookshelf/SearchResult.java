@@ -1,8 +1,8 @@
 package com.afec.bookshelf;
 
-
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentTransaction;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,7 +33,8 @@ public class SearchResult extends Fragment {
     Client client;
     Query query;
     Index index;
-
+    SearchResultBookJsonParser parser = new SearchResultBookJsonParser();
+    TextView tv;
     public SearchResult() {
         // Required empty public constructor
     }
@@ -49,18 +50,16 @@ public class SearchResult extends Fragment {
         View v = inflater.inflate(R.layout.fragment_search_res_list, container, false);
 
         gv = v.findViewById(R.id.book_list_grid);
-        gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //
-            }
-        });
+
+        tv = (TextView) v.findViewById(R.id.search_msg);
 
         String q = null;
         String attr = "*";
         Bundle b = getArguments();
-        if(b.containsKey("query"))
+        if(b.containsKey("query")) {
             q = b.getString("query");
+            tv.setText(q);
+        }
         if(b.containsKey("search_on"))
             attr = b.getString("search_on");
 
@@ -73,44 +72,66 @@ public class SearchResult extends Fragment {
 
         //show search result
         query.setQuery(q);
+
         index.searchAsync(query, new CompletionHandler() {
             @Override
             public void requestCompleted(JSONObject jsonObject, AlgoliaException e) {
                 Log.d("msg","requestCompleted");
                 Log.d("msg",jsonObject.toString());
-                SearchResultBookJsonParser parser = new SearchResultBookJsonParser();
                 booksList = parser.parseResults(jsonObject);
-                gv.setAdapter(new BaseAdapter() {
+                if(booksList.size() == 0){
+                    tv = (TextView) getActivity().findViewById(R.id.search_msg);
+                    tv.setText("Nothing found");
+                }
+                gv.setAdapter(bookGridAdapter);
+            }
+        });
 
-                    @Override
-                    public int getCount() {
-                        return booksList.size();
-                    }
-
-                    @Override
-                    public Object getItem(int position) {
-                        return booksList.get(position);
-                    }
-
-                    @Override
-                    public long getItemId(int position) {
-                        return position;
-                    }
-
-                    @Override
-                    public View getView(int position, View convertView, ViewGroup parent) {
-                        if (convertView == null) {
-                            convertView = getLayoutInflater().inflate(R.layout.book_preview, parent, false);
-                        }
-                        TextView title_tv = (TextView) convertView.findViewById(R.id.book_title_preview);
-                        title_tv.setText(booksList.get(position).getTitle());
-                        TextView author_tv = (TextView) convertView.findViewById(R.id.book_autor_preview);
-                        author_tv.setText(booksList.get(position).getAllAuthors());
-                        return convertView;
-                    }
-                });
+        gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Fragment newFragment = new ShowBook();
+                Bundle b = new Bundle();
+                b.putString("isbn", booksList.get(position).getIsbn());
+                newFragment.setArguments(b);
+                FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
+                // Replace whatever is in the fragment_container view with this fragment,
+                // and add the transaction to the back stack
+                transaction.replace(R.id.content_frame, newFragment);
+                transaction.addToBackStack(null);
+                // Commit the transaction
+                transaction.commit();
             }
         });
         return v;
     }
+
+    private BaseAdapter bookGridAdapter = new BaseAdapter() {
+        @Override
+        public int getCount() {
+            return booksList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return booksList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            if (convertView == null) {
+                convertView = getLayoutInflater().inflate(R.layout.book_preview, parent, false);
+            }
+            TextView title_tv = (TextView) convertView.findViewById(R.id.book_title_preview);
+            title_tv.setText(booksList.get(position).getTitle());
+            TextView author_tv = (TextView) convertView.findViewById(R.id.book_autor_preview);
+            author_tv.setText(booksList.get(position).getAllAuthors());
+            return convertView;
+        }
+    };
 }
