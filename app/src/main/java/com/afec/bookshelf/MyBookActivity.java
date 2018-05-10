@@ -72,6 +72,7 @@ public class MyBookActivity extends Fragment {
         avCheckbox = (CheckBox) v.findViewById(R.id.availableCheckbox);
         loc=null;
 
+
         db = FirebaseDatabase.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
@@ -134,6 +135,7 @@ public class MyBookActivity extends Fragment {
             Toast.makeText(getActivity(),"Book not found",Toast.LENGTH_SHORT).show();
         }
 
+
         delButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -191,6 +193,7 @@ public class MyBookActivity extends Fragment {
                     }
                 }
         );
+
         return v;
     }
 
@@ -210,6 +213,10 @@ public class MyBookActivity extends Fragment {
         menu.setGroupVisible(R.id.defaultMenu,false);
         menu.setGroupVisible(R.id.showProfileMenu,false);
     }
+
+
 }
+
+
 
 

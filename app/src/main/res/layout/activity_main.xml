@@ -23,6 +23,7 @@
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
 
         <!-- Contains the main body of the activity -->
+
         <FrameLayout
             android:background="@color/colorPrimary"
             android:id="@+id/content_frame"
@@ -38,6 +39,19 @@
                 android:clickable="true"
                 app:backgroundTint="@color/colorAccent"
                 app:srcCompat="@android:drawable/ic_input_add" />-->
+
+            <SeekBar
+                android:id="@+id/seekBar"
+                style="@style/Widget.AppCompat.SeekBar.Discrete"
+                android:layout_width="match_parent"
+               android:layout_height="wrap_content"
+               android:max="10"
+               android:progress="1" />
+
+            <GridView
+                android:id="@+id/List_of_book_found"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
         </FrameLayout>
 
     </LinearLayout>

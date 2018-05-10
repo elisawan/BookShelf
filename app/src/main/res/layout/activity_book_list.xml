@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/Book_list"
     tools:context="com.afec.bookshelf.BookList">
 
     <include layout="@layout/content_book_list" />

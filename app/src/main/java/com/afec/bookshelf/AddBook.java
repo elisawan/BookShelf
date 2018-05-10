@@ -33,6 +33,9 @@ import android.widget.Toast;
 import com.afec.bookshelf.Models.Book;
 import com.afec.bookshelf.Models.BookInstance;
 import com.afec.bookshelf.Models.MyLocation;
+import com.firebase.geofire.GeoFire;
+import com.firebase.geofire.GeoLocation;
+import com.google.firebase.FirebaseError;
 import com.algolia.search.saas.Client;
 import com.algolia.search.saas.Index;
 import com.google.firebase.auth.FirebaseAuth;
@@ -325,6 +328,7 @@ public class AddBook extends Fragment {
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         Log.d("user", user.toString());
         String uid = user.getUid();
+        GeoFire geoFire;
 
         //Inserimento in books
         DatabaseReference bookRef = database.getReference("books")
@@ -335,6 +339,19 @@ public class AddBook extends Fragment {
         DatabaseReference bookInstanceRef = database.getReference("book_instances");
         String bookId = bookInstanceRef.push().getKey();
         bookInstanceRef.child(bookId).setValue(new BookInstance(newBook.getIsbn(), myLocation, user.getUid(), (int) status, currentDateTime, true));
+        geoFire = new GeoFire(bookInstanceRef.child(bookId));
+        geoFire.setLocation("Geofire_Location", new GeoLocation(myLocation.getLatitude(), myLocation.getLongitude()), new GeoFire.CompletionListener() {
+            @Override
+            public void onComplete(String key, DatabaseError error) {
+                if (error != null) {
+                    Toast.makeText(getActivity(),"There was an error saving the location to GeoFire: " + error,Toast.LENGTH_SHORT).show();
+                } else {
+                    Toast.makeText(getActivity(),"Location saved on server successfully!",Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
+
 
         //Aggiornamento inserimento libro: update addedBooks count
         final DatabaseReference userRef = database.getReference("users").child(user.getUid()).child("addedBooks");

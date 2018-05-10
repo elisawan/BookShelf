@@ -178,6 +178,9 @@ public class EditUser extends Fragment {
                 myStartFragment(new ShowUser());
             }
         });
+
+
+
         return v;
     }
 
@@ -219,6 +222,8 @@ public class EditUser extends Fragment {
                 break;
         }
     }
+
+
 
     private File createImageFile() throws IOException {
         // Create an image file name
@@ -291,4 +296,7 @@ public class EditUser extends Fragment {
         menu.setGroupVisible(R.id.defaultMenu,false);
         menu.setGroupVisible(R.id.showProfileMenu,false);
     }
+
+
+
 }

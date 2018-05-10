@@ -75,7 +75,6 @@ public class FirebaseLogin extends AppCompatActivity {
                             .build(), RC_SIGN_IN);
         }
 
-
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -112,6 +111,7 @@ public class FirebaseLogin extends AppCompatActivity {
 
 
                 Intent intent = new Intent(getBaseContext(), MainActivity.class);
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                 startActivity(intent);
                 finish();
             } else {
