@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.afec.bookshelf.Models.Book;
 import com.afec.bookshelf.Models.Owner;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -24,14 +25,18 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ShowBook extends Fragment {
 
     private ListView mListView;
-    private TextView tv_title, tv_author, tv_publisher, tv_ed_year, tv_isbn;
+    private TextView tv_title, tv_author, tv_publisher, tv_ed_year, tv_isbn, tv_desc;
     private ImageView iv_book;
+    List<Owner> owners;
+    OwnerAdapter adapter;
 
     @Nullable
     @Override
@@ -45,6 +50,10 @@ public class ShowBook extends Fragment {
         tv_publisher = (TextView) v.findViewById(R.id.book_publisher);
         tv_title = (TextView) v.findViewById(R.id.book_title);
         iv_book = (ImageView) v.findViewById(R.id.book_image);
+        tv_desc = (TextView) v.findViewById(R.id.book_description);
+
+        owners = new ArrayList<Owner>();
+
 
         Bundle b = getArguments();
         if(b == null){
@@ -67,7 +76,7 @@ public class ShowBook extends Fragment {
                         tv_publisher.setText(b.getPublisher());
                     }
                     tv_isbn.setText(b.getIsbn());
-
+                    tv_desc.setText(b.getDescription());
                     Picasso.with(getActivity()).load(b.getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
                             .into(iv_book);
                 }
@@ -83,37 +92,10 @@ public class ShowBook extends Fragment {
             Toast.makeText(getActivity(),"ISBN not valid",Toast.LENGTH_SHORT).show();
         }
 
-        List<Owner> owners = genererOwner();
-
-        OwnerAdapter adapter = new OwnerAdapter(getActivity(), owners);
-        mListView.setAdapter(adapter);
+        adapter = new OwnerAdapter(getActivity(), owners);
+        getOwners(isbn);
 
         return v;
-    }
-
-    private List<Owner> genererOwner(){
-        List<Owner> owners = new ArrayList<Owner>();
-        owners.add(new Owner(Color.BLACK, "Williams", "Very good Book !!","3 km"));
-        owners.add(new Owner(Color.BLUE, "Giovanna", "Questo libri e perfetto!","10 km"));
-        owners.add(new Owner(Color.GREEN, "Paul", "Miam!","11 km"));
-        owners.add(new Owner(Color.RED, "Mathieu", "Heuuu...","12 km"));
-        owners.add(new Owner(Color.GRAY, "Domenico", "Non so... Haa si! perfetto!!","13 km"));
-        owners.add(new Owner(Color.BLACK, "Williams", "Very good Book !!","3 km"));
-        owners.add(new Owner(Color.BLUE, "Giovanna", "Questo libri e perfetto!","10 km"));
-        owners.add(new Owner(Color.GREEN, "Paul", "Miam!","11 km"));
-        owners.add(new Owner(Color.RED, "Mathieu", "Heuuu...","12 km"));
-        owners.add(new Owner(Color.GRAY, "Domenico", "Non so... Haa si! perfetto!!","13 km"));
-        owners.add(new Owner(Color.BLACK, "Williams", "Very good Book !!","3 km"));
-        owners.add(new Owner(Color.BLUE, "Giovanna", "Questo libri e perfetto!","10 km"));
-        owners.add(new Owner(Color.GREEN, "Paul", "Miam!","11 km"));
-        owners.add(new Owner(Color.RED, "Mathieu", "Heuuu...","12 km"));
-        owners.add(new Owner(Color.GRAY, "Domenico", "Non so... Haa si! perfetto!!","13 km"));
-        owners.add(new Owner(Color.BLACK, "Williams", "Very good Book !!","3 km"));
-        owners.add(new Owner(Color.BLUE, "Giovanna", "Questo libri e perfetto!","10 km"));
-        owners.add(new Owner(Color.GREEN, "Paul", "Miam!","11 km"));
-        owners.add(new Owner(Color.RED, "Mathieu", "Heuuu...","12 km"));
-        owners.add(new Owner(Color.GRAY, "Domenico", "Non so... Haa si! perfetto!!","13 km"));
-        return owners;
     }
 
     public void myStartFragment(Fragment newFragment){
@@ -126,10 +108,35 @@ public class ShowBook extends Fragment {
         // Commit the transaction
         transaction.commit();
     }
-}
 
-class OwnerViewHolder{
-    public TextView pseudo;
-    public TextView text;
-    public ImageView avatar;
+    public void getOwners(String isbn){
+        DatabaseReference ownersRef = FirebaseDatabase.getInstance().getReference("books").child(isbn).child("owners");
+        ownersRef.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot child : dataSnapshot.getChildren()) {
+                    String userId = child.getValue(String.class);
+                    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
+                    userRef.addValueEventListener(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            Owner owner = dataSnapshot.getValue(Owner.class);
+                            owners.add(owner);
+                            mListView.setAdapter(adapter);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 }

@@ -28,6 +28,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="middle"
+            android:singleLine="true"
             android:text="@string/title_unknown"
             android:textAlignment="center" />
 
@@ -35,6 +36,8 @@
             android:id="@+id/book_autor_preview"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:singleLine="true"
+            android:ellipsize="end"
             android:text="@string/author_unknown"
             android:textAlignment="center" />
     </LinearLayout>

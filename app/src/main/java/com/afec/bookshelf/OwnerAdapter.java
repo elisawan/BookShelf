@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afec.bookshelf.Models.Owner;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -41,10 +42,10 @@ public class OwnerAdapter extends ArrayAdapter<Owner> {
         Owner owner = getItem(position);
 
         //il ne reste plus qu'à remplir notre vue
-        viewHolder.pseudo.setText(owner.getPseudo());
-        viewHolder.text.setText(owner.getText());
+        viewHolder.pseudo.setText(owner.getUserName());
         viewHolder.distance.setText(owner.getDistance());
-        viewHolder.avatar.setImageDrawable(new ColorDrawable(owner.getColor()));
+        Picasso.with(getContext()).load(owner.getProfileImage()).placeholder(R.drawable.book_image_placeholder)
+                .into(viewHolder.avatar);
 
         return convertView;
     }

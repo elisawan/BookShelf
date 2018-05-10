@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afec.bookshelf.Models.Book;
@@ -19,6 +20,7 @@ import com.algolia.search.saas.Client;
 import com.algolia.search.saas.CompletionHandler;
 import com.algolia.search.saas.Index;
 import com.algolia.search.saas.Query;
+import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
@@ -35,6 +37,7 @@ public class SearchResult extends Fragment {
     Index index;
     SearchResultBookJsonParser parser = new SearchResultBookJsonParser();
     TextView tv;
+
     public SearchResult() {
         // Required empty public constructor
     }
@@ -47,19 +50,19 @@ public class SearchResult extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        // view
         View v = inflater.inflate(R.layout.fragment_search_res_list, container, false);
-
         gv = v.findViewById(R.id.book_list_grid);
-
         tv = (TextView) v.findViewById(R.id.search_msg);
 
         String q = null;
+
+        // arguments
         Bundle b = getArguments();
         if(b.containsKey("query")) {
             q = b.getString("query");
             tv.setText(q);
         }
-
 
         // Algolia setup
         client = new Client("BDPR8QJ6ZZ", "57b47a26838971583fcb026954731774");
@@ -68,6 +71,7 @@ public class SearchResult extends Fragment {
             String attr = b.getString("search_on");
             query.setRestrictSearchableAttributes(attr);
         }
+        query.setAttributesToRetrieve("title","authors","thumbnailUrl","publisher","isbn");
         query.setHitsPerPage(10);
         index = client.getIndex("bookShelf");
 
@@ -135,6 +139,12 @@ public class SearchResult extends Fragment {
             title_tv.setText(booksList.get(position).getTitle());
             TextView author_tv = (TextView) convertView.findViewById(R.id.book_autor_preview);
             author_tv.setText(booksList.get(position).getAllAuthors());
+
+            // add book image
+            if(booksList.get(position).getThumbnailUrl() != null){
+                ImageView iv = (ImageView) convertView.findViewById(R.id.book_image_preview);
+                Picasso.with(getContext()).load(booksList.get(position).getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder).into(iv);
+            }
             return convertView;
         }
     };

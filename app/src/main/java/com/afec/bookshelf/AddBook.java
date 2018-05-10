@@ -354,6 +354,10 @@ public class AddBook extends Fragment {
 
 
 
+        // Add new owner to book
+        DatabaseReference ownersRef = database.getReference("books").child(newBook.getIsbn()).child("owners").child(bookId);
+        ownersRef.setValue(user.getUid());
+
         //Aggiornamento inserimento libro: update addedBooks count
         final DatabaseReference userRef = database.getReference("users").child(user.getUid()).child("addedBooks");
         userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
