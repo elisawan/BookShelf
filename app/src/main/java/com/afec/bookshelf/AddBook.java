@@ -33,6 +33,8 @@ import android.widget.Toast;
 import com.afec.bookshelf.Models.Book;
 import com.afec.bookshelf.Models.BookInstance;
 import com.afec.bookshelf.Models.MyLocation;
+import com.algolia.search.saas.Client;
+import com.algolia.search.saas.Index;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -48,6 +50,8 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -71,8 +75,11 @@ public class AddBook extends Fragment {
     long status;
     String currentDateTime;
 
-    //Web Call
+    // Algolia: add new added book to algolia
+    Client client;
+    Index index;
 
+    //Web Call
     String url = "https://www.googleapis.com/books/v1/volumes?q=isbn:";
 
     @Nullable
@@ -129,6 +136,8 @@ public class AddBook extends Fragment {
                         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                         currentDateTime = dateFormat.format(new Date());
                         getAddress();
+
+                        //--Add to Firebase--
                         addToDatabase();
                         Fragment newFragment = new BookList();
                         // Create new fragment and transaction
@@ -139,6 +148,13 @@ public class AddBook extends Fragment {
                         transaction.addToBackStack(null);
                         // Commit the transaction
                         transaction.commit();
+
+                        //--Add to Algolia--
+                        client = new Client("BDPR8QJ6ZZ", "57b47a26838971583fcb026954731774");
+                        index = client.getIndex("bookShelf");
+
+                        //ToDo
+                        //index.addObjectAsync(new JsonObject...);
                     }
                 }else {
                     Toast.makeText(getActivity(),"Scan a book first!",Toast.LENGTH_SHORT).show();

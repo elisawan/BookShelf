@@ -31,8 +31,6 @@ public class SearchBooks extends Fragment {
         Bundle b = getArguments();
         String q = b.getString("query");
 
-        Toolbar toolbar = (Toolbar) v.findViewById(R.id.toolbar);
-
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
         mSectionsPagerAdapter = new SectionsPagerAdapter(getActivity().getSupportFragmentManager());

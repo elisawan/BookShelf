@@ -25,5 +25,6 @@ public class BookJsonParser {
         String thumbnailUrl = jsonObject.optString("thumbnailUrl");
         return new Book(title, isbn, authors, thumbnailUrl, publisher, editionYear);
     }
+
 }
 

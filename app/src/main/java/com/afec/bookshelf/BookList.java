@@ -49,6 +49,7 @@ public class BookList extends Fragment {
     DatabaseReference myBooksRef;
     FloatingActionButton fab;
 
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -59,12 +60,13 @@ public class BookList extends Fragment {
         fab = v.findViewById(R.id.fab);
         myBooksInstances = new ArrayList<String>();
 
+        // Firebase setup
         db = FirebaseDatabase.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
+
         // get list of my books
         myBooksRef = db.getReference("users").child(currentUser.getUid()).child("myBooks");
-        //myBooksRef = db.getReference("users").child("id").child("myBooks");
 
         myBooksRef.addValueEventListener(new ValueEventListener() {
 
