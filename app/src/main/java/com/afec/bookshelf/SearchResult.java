@@ -140,8 +140,9 @@ public class SearchResult extends Fragment {
             TextView author_tv = (TextView) convertView.findViewById(R.id.book_autor_preview);
             author_tv.setText(booksList.get(position).getAllAuthors());
 
-            // add book image
-            if(booksList.get(position).getThumbnailUrl() != null){
+            // add book imageg
+            String url = booksList.get(position).getThumbnailUrl();
+            if(url != null && !url.isEmpty() && url != ""){
                 ImageView iv = (ImageView) convertView.findViewById(R.id.book_image_preview);
                 Picasso.with(getContext()).load(booksList.get(position).getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder).into(iv);
             }
