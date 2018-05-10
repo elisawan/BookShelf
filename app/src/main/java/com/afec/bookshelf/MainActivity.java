@@ -183,7 +183,22 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("db error report: ", databaseError.getDetails());
             }
         });
+
         StorageReference mImageRef =
+                FirebaseStorage.getInstance().getReference(user.getUid() + "/profilePic.png");
+        mImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.with(getApplicationContext()).load(uri.toString()).noPlaceholder().into((ImageView) findViewById(R.id.immagineUtente));
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.e("ERRORE RECUPERO IMG: ", exception.getMessage().toString());
+            }
+        });
+        /*StorageReference mImageRef =
                 FirebaseStorage.getInstance().getReference(user.getUid() + "/profilePic.png");
         mImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
             @Override
@@ -206,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
             public void onFailure(@NonNull Exception exception) {
                 Log.e("ERRORE RECUPERO IMG: ", exception.getMessage().toString());
             }
-        });
+        });*/
 
 
 
