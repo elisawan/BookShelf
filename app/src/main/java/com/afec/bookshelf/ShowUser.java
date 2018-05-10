@@ -20,6 +20,7 @@ import android.support.v4.graphics.drawable.RoundedBitmapDrawableFactory;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.Toolbar;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -32,6 +33,8 @@ import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
 
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -39,6 +42,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
@@ -57,11 +62,13 @@ public class ShowUser extends Fragment {
     FirebaseDatabase database;
     ProgressDialog dialog;
 
+    View v;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.activity_show_user, container, false);
+        v = inflater.inflate(R.layout.activity_show_user, container, false);
 
         setHasOptionsMenu(true);
 
@@ -124,8 +131,7 @@ public class ShowUser extends Fragment {
 
     public void publicationQuickView(){
         View view = getLayoutInflater().inflate( R.layout.inflater_immagine_profilo, null);
-        ImageView profileImage = (ImageView) view.findViewById(R.id.inflated_imageview);
-        Picasso.with(getContext()).load(imageUri).noPlaceholder().into(profileImage);
+
         builder = new Dialog(getContext());
         builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
         builder.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
@@ -203,6 +209,25 @@ public class ShowUser extends Fragment {
                 Log.e("db error report: ", databaseError.getDetails());
             }
         });
+
+        final ImageView profileImage = (ImageView) v.findViewById(R.id.immagineUtente);
+
+        StorageReference mImageRef =
+                FirebaseStorage.getInstance().getReference(user.getUid() + "/profilePic.png");
+        mImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.with(getContext()).load(uri.toString()).noPlaceholder().into(profileImage);
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.e("ERRORE RECUPERO IMG: ", exception.getMessage().toString());
+            }
+        });
+
+
     }
 
     @Override
