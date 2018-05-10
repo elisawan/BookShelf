@@ -13,6 +13,7 @@ public class Book {
     private String thumbnailUrl;
     private String publisher;
     private String editionYear;
+    private String description;
 
     public static final int likeNew = 0;
     public static final int veryGood = 1;
@@ -54,6 +55,20 @@ public class Book {
         this.thumbnailUrl = thumbnailUrl;
     }
 
+    public Book(String title, String isbn, String authors, String thumbnailUrl, String publisher, String editionYear, String description) {
+        super();
+        List<String> list = new ArrayList<String>();
+        for(String s : authors.split(",")){
+            list.add(s);
+        }
+        this.title = title;
+        this.isbn = isbn;
+        this.publisher = publisher;
+        this.editionYear = editionYear;
+        this.thumbnailUrl = thumbnailUrl;
+        this.description = description;
+    }
+
     public void setTitle(String name){this.title = name;}
     public void setIsbn(String isbn){this.isbn = isbn;}
     public void setAuthor(String author){
@@ -77,6 +92,10 @@ public class Book {
     }
     public String getEditionYear() {return editionYear;}
     public String getPublisher() {return publisher;}
+
+    public String getDescription() {
+        return description;
+    }
 
     public String getAllAuthors(){
         String all = "";

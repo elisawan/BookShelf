@@ -25,13 +25,15 @@ import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import org.w3c.dom.Text;
+
 import java.util.ArrayList;
 import java.util.List;
 
 public class ShowBook extends Fragment {
 
     private ListView mListView;
-    private TextView tv_title, tv_author, tv_publisher, tv_ed_year, tv_isbn;
+    private TextView tv_title, tv_author, tv_publisher, tv_ed_year, tv_isbn, tv_desc;
     private ImageView iv_book;
     List<Owner> owners;
     OwnerAdapter adapter;
@@ -48,6 +50,7 @@ public class ShowBook extends Fragment {
         tv_publisher = (TextView) v.findViewById(R.id.book_publisher);
         tv_title = (TextView) v.findViewById(R.id.book_title);
         iv_book = (ImageView) v.findViewById(R.id.book_image);
+        tv_desc = (TextView) v.findViewById(R.id.book_description);
 
         owners = new ArrayList<Owner>();
 
@@ -73,7 +76,7 @@ public class ShowBook extends Fragment {
                         tv_publisher.setText(b.getPublisher());
                     }
                     tv_isbn.setText(b.getIsbn());
-
+                    tv_desc.setText(b.getDescription());
                     Picasso.with(getActivity()).load(b.getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
                             .into(iv_book);
                 }
