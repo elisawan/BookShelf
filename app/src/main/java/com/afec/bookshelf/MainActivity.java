@@ -85,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
     List<Book> booksList;
     List<String> myBooksInstances;
     SeekBar SB;
-    TextView r_display;
+    TextView r_display, title;
     String isbn;
 
     @Override
@@ -171,6 +171,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Create the grid view with nearest books
+        title = (TextView) findViewById(R.id.textView7);
         SB = findViewById(R.id.seekBar);
         gv = (GridView) findViewById(R.id.List_of_book_found);
         foundBooks = new ArrayList<BookInstance>();
@@ -178,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
         booksList = new ArrayList<Book>();
         myBooksInstances = new ArrayList<String>();
 
-
+        title.setText(R.string.title_book_around_you);
         //populate the grid view with a default radius of 10 km
         r_display.setText("10 km");
         find_near_book(10);
@@ -199,7 +200,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-                String s = seekBar.getProgress() + "km";
+                String s = seekBar.getProgress() + " km";
                 r_display.setText(s);
                 find_near_book(seekBar.getProgress());
             }
