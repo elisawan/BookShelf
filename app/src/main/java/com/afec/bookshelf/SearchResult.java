@@ -54,34 +54,36 @@ public class SearchResult extends Fragment {
         tv = (TextView) v.findViewById(R.id.search_msg);
 
         String q = null;
-        String attr = "*";
         Bundle b = getArguments();
         if(b.containsKey("query")) {
             q = b.getString("query");
             tv.setText(q);
         }
-        if(b.containsKey("search_on"))
-            attr = b.getString("search_on");
+
 
         // Algolia setup
         client = new Client("BDPR8QJ6ZZ", "57b47a26838971583fcb026954731774");
         query = new Query();
-        query.setAttributesToRetrieve(attr);
+        if(b.containsKey("search_on")) {
+            String attr = b.getString("search_on");
+            query.setRestrictSearchableAttributes(attr);
+        }
         query.setHitsPerPage(10);
         index = client.getIndex("bookShelf");
 
         //show search result
         query.setQuery(q);
-
+        Log.d("query",query.toString());
         index.searchAsync(query, new CompletionHandler() {
             @Override
             public void requestCompleted(JSONObject jsonObject, AlgoliaException e) {
                 Log.d("msg","requestCompleted");
-                Log.d("msg",jsonObject.toString());
+                //Log.d("msg",jsonObject.toString());
                 booksList = parser.parseResults(jsonObject);
-                if(booksList.size() == 0){
+                if(booksList == null){
                     tv = (TextView) getActivity().findViewById(R.id.search_msg);
                     tv.setText("Nothing found");
+                    return;
                 }
                 gv.setAdapter(bookGridAdapter);
             }
@@ -128,6 +130,8 @@ public class SearchResult extends Fragment {
                 convertView = getLayoutInflater().inflate(R.layout.book_preview, parent, false);
             }
             TextView title_tv = (TextView) convertView.findViewById(R.id.book_title_preview);
+
+            Log.d("title",booksList.get(position).getTitle());
             title_tv.setText(booksList.get(position).getTitle());
             TextView author_tv = (TextView) convertView.findViewById(R.id.book_autor_preview);
             author_tv.setText(booksList.get(position).getAllAuthors());

@@ -52,7 +52,6 @@ public class SearchBooks extends Fragment {
 
         Bundle b_all = new Bundle();
         b_all.putString("query", query);
-        b_all.putString("search_on","*");
         Fragment searchAll = new SearchResult();
         searchAll.setArguments(b_all);
         adapter.addFragment(searchAll,"All");

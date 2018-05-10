@@ -6,6 +6,6 @@
     android:layout_height="match_parent"
     tools:context="com.afec.bookshelf.BookList">
 
-    <include layout="@layout/content_book_list" />
+    <include layout="@layout/content_search_list" />
 
 </android.support.design.widget.CoordinatorLayout>
