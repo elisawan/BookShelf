@@ -33,6 +33,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -83,6 +84,9 @@ public class MainActivity extends AppCompatActivity {
     private Location location;
     List<Book> booksList;
     List<String> myBooksInstances;
+    SeekBar SB;
+    TextView r_display;
+    String isbn;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -167,102 +171,17 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Create the grid view with nearest books
+        SB = findViewById(R.id.seekBar);
         gv = (GridView) findViewById(R.id.List_of_book_found);
         foundBooks = new ArrayList<BookInstance>();
-        final DatabaseReference bookInstances = db.getReference().child("book_instances");
-        GeoFire geoFire = new GeoFire(bookInstances);
+        r_display = (TextView) findViewById(R.id.textView6);
+        booksList = new ArrayList<Book>();
+        myBooksInstances = new ArrayList<String>();
 
-        getAddress();
 
-        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(myLocation.getLatitude(), myLocation.getLongitude()), 30);
-
-        geoQuery.addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
-
-            @Override
-            public void onDataEntered(DataSnapshot dataSnapshot, GeoLocation location) {
-                // get book isbn and bookInstance
-                String isbn = dataSnapshot.getValue(String.class);
-                final String instance = dataSnapshot.getKey();
-                // get book
-                myBooksInstances.add(instance);
-
-                DatabaseReference bookRef = db.getReference("books").child(isbn);
-
-                            bookRef.addValueEventListener(new ValueEventListener() {
-
-                                @Override
-                                public void onDataChange(DataSnapshot dataSnapshot) {
-                                    Book b = dataSnapshot.getValue(Book.class);
-                                    booksList.add(b);
-
-                                    // show on view
-
-                                    gv.setAdapter(new BaseAdapter() {
-
-                                        @Override
-                                        public int getCount() {
-                                            return booksList.size();
-                                        }
-
-                                        @Override
-                                        public Object getItem(int position) {
-                                            return booksList.get(position);
-                                        }
-
-                                        @Override
-                                        public long getItemId(int position) {
-                                            return position;
-                                        }
-
-                                        @Override
-                                        public View getView(int position, View convertView, ViewGroup parent) {
-                                            if (convertView==null && !booksList.isEmpty()) {
-                                                convertView = getLayoutInflater().inflate(R.layout.book_preview, parent,false);
-                                            }
-                                            ImageView iv = (ImageView) convertView.findViewById(R.id.book_image_preview);
-                                            Picasso.with(MainActivity.this).load(booksList.get(position).getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
-                                                    .into(iv);
-                                            TextView title_tv =(TextView) convertView.findViewById(R.id.book_title_preview);
-                                            title_tv.setText(booksList.get(position).getTitle());
-                                            TextView author_tv = (TextView) convertView.findViewById(R.id.book_autor_preview);
-                                            author_tv.setText(booksList.get(position).getAllAuthors());
-                                            return convertView;
-                                        }
-                                    });
-
-                                }
-                                @Override
-                                public void onCancelled(DatabaseError databaseError) {
-                                }
-                            });
-            }
-
-            @Override
-            public void onDataExited(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onDataMoved(DataSnapshot dataSnapshot, GeoLocation location) {
-                // ...
-            }
-
-            @Override
-            public void onDataChanged(DataSnapshot dataSnapshot, GeoLocation location) {
-                // ...
-            }
-
-            @Override
-            public void onGeoQueryReady() {
-
-            }
-
-            @Override
-            public void onGeoQueryError(DatabaseError error) {
-                Toast.makeText(MainActivity.this,"An error loading the nearest Book occured!",Toast.LENGTH_SHORT).show();
-            }
-
-        });
+        //populate the grid view with a default radius of 10 km
+        r_display.setText("10 km");
+        find_near_book(10);
 
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -271,6 +190,37 @@ public class MainActivity extends AppCompatActivity {
                 Bundle b = new Bundle();
                 b.putString("isbn", booksList.get(position).getIsbn());
                 b.putString("instance", myBooksInstances.get(position));
+                newFragment.setArguments(b);
+                myStartFragment(newFragment);
+            }
+        });
+
+        SB.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+                String s = seekBar.getProgress() + "km";
+                r_display.setText(s);
+                find_near_book(seekBar.getProgress());
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
+
+            }
+        });
+
+        gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Fragment newFragment = new ShowBook();
+                Bundle b = new Bundle();
+                b.putString("isbn", booksList.get(position).getIsbn());
                 newFragment.setArguments(b);
                 myStartFragment(newFragment);
             }
@@ -419,6 +369,121 @@ public class MainActivity extends AppCompatActivity {
 
         }
     };
+
+    public void find_near_book(int radius){
+        final DatabaseReference bookInstances = db.getReference().child("geofire");
+        final GeoFire geoFire = new GeoFire(bookInstances);
+
+        booksList.clear();
+
+        getAddress();
+
+        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(myLocation.getLatitude(), myLocation.getLongitude()), radius);
+
+        geoQuery.addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
+
+            @Override
+            public void onDataEntered(DataSnapshot dataSnapshot, GeoLocation location) {
+                // get book isbn and bookInstance
+                final String instance = dataSnapshot.getKey();
+                // get book
+
+                DatabaseReference book_inst_Ref = db.getReference("book_instances").child(instance);
+
+                 book_inst_Ref.addValueEventListener(new ValueEventListener() {
+                     @Override
+                     public void onDataChange(DataSnapshot dataSnapshot) {
+                         isbn = dataSnapshot.child("isbn").getValue(String.class);
+                         myBooksInstances.add(dataSnapshot.getKey());
+
+                         DatabaseReference bookRef = db.getReference("books").child(isbn);
+
+                         bookRef.addValueEventListener(new ValueEventListener() {
+
+                             @Override
+                             public void onDataChange(DataSnapshot dataSnapshot) {
+                                 Book b = dataSnapshot.getValue(Book.class);
+                                 booksList.add(b);
+
+                                 // show on view
+
+                                 gv.setAdapter(new BaseAdapter() {
+
+                                     @Override
+                                     public int getCount() {
+                                         return booksList.size();
+                                     }
+
+                                     @Override
+                                     public Object getItem(int position) {
+                                         return booksList.get(position);
+                                     }
+
+                                     @Override
+                                     public long getItemId(int position) {
+                                         return position;
+                                     }
+
+                                     @Override
+                                     public View getView(int position, View convertView, ViewGroup parent) {
+                                         if (convertView==null && !booksList.isEmpty()) {
+                                             convertView = getLayoutInflater().inflate(R.layout.book_preview, parent,false);
+                                         }
+                                         ImageView iv = (ImageView) convertView.findViewById(R.id.book_image_preview);
+                                         Picasso.with(MainActivity.this).load(booksList.get(position).getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
+                                                 .into(iv);
+                                         TextView title_tv =(TextView) convertView.findViewById(R.id.book_title_preview);
+                                         title_tv.setText(booksList.get(position).getTitle());
+                                         TextView author_tv = (TextView) convertView.findViewById(R.id.book_autor_preview);
+                                         author_tv.setText(booksList.get(position).getAllAuthors());
+                                         return convertView;
+                                     }
+                                 });
+
+                             }
+                             @Override
+                             public void onCancelled(DatabaseError databaseError) {
+                             }
+                         });
+
+                     }
+
+                     @Override
+                     public void onCancelled(DatabaseError databaseError) {
+
+                     }
+                 });
+
+
+            }
+
+            @Override
+            public void onDataExited(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onDataMoved(DataSnapshot dataSnapshot, GeoLocation location) {
+                // ...
+            }
+
+            @Override
+            public void onDataChanged(DataSnapshot dataSnapshot, GeoLocation location) {
+                // ...
+            }
+
+            @Override
+            public void onGeoQueryReady() {
+
+            }
+
+            @Override
+            public void onGeoQueryError(DatabaseError error) {
+                Toast.makeText(MainActivity.this,"An error loading the nearest Book occurred!",Toast.LENGTH_SHORT).show();
+            }
+
+        });
+    }
 
 
 }

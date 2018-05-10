@@ -333,14 +333,15 @@ public class AddBook extends Fragment {
         //Inserimento in books
         DatabaseReference bookRef = database.getReference("books")
                 .child(newBook.getIsbn());
+        DatabaseReference locRef = database.getReference("geofire");
         bookRef.setValue(newBook);
 
         //Inserimento in book_instances
         DatabaseReference bookInstanceRef = database.getReference("book_instances");
         String bookId = bookInstanceRef.push().getKey();
         bookInstanceRef.child(bookId).setValue(new BookInstance(newBook.getIsbn(), myLocation, user.getUid(), (int) status, currentDateTime, true));
-        geoFire = new GeoFire(bookInstanceRef.child(bookId));
-        geoFire.setLocation("Geofire_Location", new GeoLocation(myLocation.getLatitude(), myLocation.getLongitude()), new GeoFire.CompletionListener() {
+        geoFire = new GeoFire(locRef);
+        geoFire.setLocation(bookId, new GeoLocation(myLocation.getLatitude(), myLocation.getLongitude()), new GeoFire.CompletionListener() {
             @Override
             public void onComplete(String key, DatabaseError error) {
                 if (error != null) {
