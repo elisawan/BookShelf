@@ -6,7 +6,8 @@
     android:background="@color/colorPrimaryDark"
     android:padding="16dp"
     android:theme="@style/ThemeOverlay.AppCompat.Dark"
-    android:gravity="bottom">
+    android:gravity="bottom"
+    android:id="@+id/drawer_layout">
 
     <TextView
         android:id="@+id/sidebar_username"

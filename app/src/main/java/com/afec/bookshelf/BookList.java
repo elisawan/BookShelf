@@ -72,6 +72,8 @@ public class BookList extends Fragment {
         // get list of my books
         myBooksRef = db.getReference("users").child(currentUser.getUid()).child("myBooks");
 
+
+
         myBooksRef.addValueEventListener(new ValueEventListener() {
 
             @Override

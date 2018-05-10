@@ -6,10 +6,15 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
 import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
 import android.support.v4.app.ActivityCompat;
@@ -33,6 +38,7 @@ import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -46,6 +52,8 @@ import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryDataEventListener;
 import com.firebase.ui.auth.AuthUI;
 import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -55,8 +63,12 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.io.FileNotFoundException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -69,7 +81,8 @@ public class MainActivity extends AppCompatActivity {
     Toolbar myToolbar;
     private DrawerLayout mDrawerLayout;
     Menu menu;
-    TextView username, email;
+    TextView drawerUsername, drawerEmail;
+    LinearLayout drawerLayout;
 
     // Firebase
     FirebaseDatabase db;
@@ -142,8 +155,9 @@ public class MainActivity extends AppCompatActivity {
                         return true;
                     }
                 });
-        username= (TextView) header.findViewById(R.id.sidebar_username);
-        email = (TextView) header.findViewById(R.id.sidebar_mail);
+        drawerUsername= (TextView) header.findViewById(R.id.sidebar_username);
+        drawerEmail = (TextView) header.findViewById(R.id.sidebar_mail);
+        drawerLayout = (LinearLayout) findViewById(R.id.drawer_layout);
 
         // Firebase
         db = FirebaseDatabase.getInstance();
@@ -154,14 +168,14 @@ public class MainActivity extends AppCompatActivity {
         //    finish();
 
         // Fill navigation drawer view
-        email.setText(user.getEmail());
+        drawerEmail.setText(user.getEmail());
         userRef = db.getReference("users").child(user.getUid()).child("username");
         userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
                     String userName = dataSnapshot.getValue(String.class);
-                    username.setText(String.valueOf(userName));
+                    drawerUsername.setText(String.valueOf(userName));
                 }
             }
             @Override
@@ -169,6 +183,32 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("db error report: ", databaseError.getDetails());
             }
         });
+        StorageReference mImageRef =
+                FirebaseStorage.getInstance().getReference(user.getUid() + "/profilePic.png");
+        mImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+
+                InputStream inputStream = null;
+                try {
+                    inputStream = getContentResolver().openInputStream(uri);
+                    Drawable d = Drawable.createFromStream(inputStream, uri.toString() );
+                    drawerLayout.setBackground(d);
+                } catch (FileNotFoundException e) {
+                }
+
+
+
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.e("ERRORE RECUPERO IMG: ", exception.getMessage().toString());
+            }
+        });
+
+
 
         // Create the grid view with nearest books
         title = (TextView) findViewById(R.id.textView7);

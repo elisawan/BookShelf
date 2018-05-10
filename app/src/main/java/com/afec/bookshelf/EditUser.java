@@ -59,7 +59,7 @@ import static android.app.Activity.RESULT_OK;
 public class EditUser extends Fragment {
 
     ImageView immagineUtente;
-    EditText nomeUtente, emailUtente, bioUtente;
+    EditText nomeUtente, bioUtente;
     Button b;
     CheckBox email_cb, whatsapp_cb, call_cb;
     ImageButton ib;
@@ -89,7 +89,6 @@ public class EditUser extends Fragment {
 
         immagineUtente = (ImageView) v.findViewById(R.id.editImmagineUtente);
         nomeUtente = (EditText) v.findViewById(R.id.editNomeUtente);
-        emailUtente = (EditText) v.findViewById(R.id.editEmailUtente);
         bioUtente = (EditText) v.findViewById(R.id.editBioUtente);
         b = (Button) v.findViewById(R.id.button_edit_confirm);
         ib = (ImageButton) v.findViewById(R.id.edit_profile_image_bt);
@@ -99,7 +98,6 @@ public class EditUser extends Fragment {
         sharedPref = getActivity().getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
 
         nomeUtente.setText(sharedPref.getString("nomeUtente", null));
-        emailUtente.setText(sharedPref.getString("emailUtente", null));
         bioUtente.setText(sharedPref.getString("bioUtente", null));
         email_cb.setChecked(sharedPref.getBoolean("contact_email",false));
         whatsapp_cb.setChecked(sharedPref.getBoolean("contact_whatsapp",false));
@@ -166,7 +164,6 @@ public class EditUser extends Fragment {
             public void onClick(View view) {
                 SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString("nomeUtente", String.valueOf(nomeUtente.getText()));
-                editor.putString("emailUtente", String.valueOf(emailUtente.getText()));
                 editor.putString("bioUtente", String.valueOf(bioUtente.getText()));
                 editor.putBoolean("contact_email", email_cb.isChecked());
                 editor.putBoolean("contact_whatsapp", whatsapp_cb.isChecked());

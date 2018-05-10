@@ -54,7 +54,7 @@ public class ShowUser extends Fragment {
 
     ImageView immagineUtente;
     Uri imageUri;
-    TextView nomeUtente, emailUtente, bioUtente, sharedBookCount, takenBookCount;
+    TextView nomeUtente, bioUtente, sharedBookCount, takenBookCount;
     RoundedBitmapDrawable dr;
     RatingBar ratingBar;
     Dialog builder;
@@ -75,7 +75,6 @@ public class ShowUser extends Fragment {
 
         immagineUtente = (ImageView) v.findViewById(R.id.immagineUtente);
         nomeUtente = (TextView) v.findViewById(R.id.nomeUtente);
-        emailUtente = (TextView) v.findViewById(R.id.emailUtente);
         bioUtente = (TextView) v.findViewById(R.id.bioUtente);
 
         sharedBookCount = (TextView) v.findViewById(R.id.shared_book_count);
@@ -229,6 +228,23 @@ public class ShowUser extends Fragment {
                 Log.e("db error report: ", databaseError.getDetails());
             }
         });
+
+        userRef = database.getReference("users").child(user.getUid()).child("biography");
+        userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    String biography = dataSnapshot.getValue(String.class);
+                    bioUtente.setText(String.valueOf(biography));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("db error report: ", databaseError.getDetails());
+            }
+        });
+
 
         final ImageView profileImage = (ImageView) v.findViewById(R.id.immagineUtente);
 
