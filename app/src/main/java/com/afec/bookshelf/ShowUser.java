@@ -62,11 +62,13 @@ public class ShowUser extends Fragment {
     FirebaseDatabase database;
     ProgressDialog dialog;
 
+    View v;
+
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        View v = inflater.inflate(R.layout.activity_show_user, container, false);
+        v = inflater.inflate(R.layout.activity_show_user, container, false);
 
         setHasOptionsMenu(true);
 
@@ -129,23 +131,6 @@ public class ShowUser extends Fragment {
 
     public void publicationQuickView(){
         View view = getLayoutInflater().inflate( R.layout.inflater_immagine_profilo, null);
-        final ImageView profileImage = (ImageView) view.findViewById(R.id.inflated_imageview);
-
-        StorageReference mImageRef =
-                FirebaseStorage.getInstance().getReference(user.getUid() + "/profilePic.png");
-        mImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
-                Picasso.with(getContext()).load(uri.toString()).noPlaceholder().into(profileImage);
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.e("ERRORE RECUPERO IMG: ", exception.getMessage().toString());
-            }
-        });
-
 
         builder = new Dialog(getContext());
         builder.requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -224,6 +209,25 @@ public class ShowUser extends Fragment {
                 Log.e("db error report: ", databaseError.getDetails());
             }
         });
+
+        final ImageView profileImage = (ImageView) v.findViewById(R.id.immagineUtente);
+
+        StorageReference mImageRef =
+                FirebaseStorage.getInstance().getReference(user.getUid() + "/profilePic.png");
+        mImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.with(getContext()).load(uri.toString()).noPlaceholder().into(profileImage);
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.e("ERRORE RECUPERO IMG: ", exception.getMessage().toString());
+            }
+        });
+
+
     }
 
     @Override
