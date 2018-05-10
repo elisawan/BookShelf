@@ -1,17 +1,20 @@
 package com.afec.bookshelf.Models;
 
 public class Owner {
-    private int color;
-    private String pseudo;
-    private String text;
+
+    private String username;
+    private String profileImage;
     private String distance;
 
-    public Owner(int color, String pseudo, String text, String distance) {
-        this.color = color;
-        this.pseudo = pseudo;
-        this.text = text;
-        this.distance = distance;
+    public Owner(){}
+
+
+    public Owner(String userName, String image) {
+        this.username = userName;
+        this.profileImage = image;
+        this.distance = "-km";
     }
+
 
     public String getDistance() {
         return distance;
@@ -21,27 +24,11 @@ public class Owner {
         this.distance = distance;
     }
 
-    public int getColor() {
-        return color;
+    public String getUserName() {
+        return username;
     }
 
-    public void setColor(int color) {
-        this.color = color;
-    }
-
-    public String getPseudo() {
-        return pseudo;
-    }
-
-    public void setPseudo(String pseudo) {
-        this.pseudo = pseudo;
-    }
-
-    public String getText() {
-        return text;
-    }
-
-    public void setText(String text) {
-        this.text = text;
+    public String getProfileImage() {
+        return profileImage;
     }
 }

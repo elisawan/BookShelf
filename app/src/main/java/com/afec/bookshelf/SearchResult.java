@@ -37,6 +37,7 @@ public class SearchResult extends Fragment {
     Index index;
     SearchResultBookJsonParser parser = new SearchResultBookJsonParser();
     TextView tv;
+
     public SearchResult() {
         // Required empty public constructor
     }
@@ -49,19 +50,19 @@ public class SearchResult extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
+        // view
         View v = inflater.inflate(R.layout.fragment_search_res_list, container, false);
-
         gv = v.findViewById(R.id.book_list_grid);
-
         tv = (TextView) v.findViewById(R.id.search_msg);
 
         String q = null;
+
+        // arguments
         Bundle b = getArguments();
         if(b.containsKey("query")) {
             q = b.getString("query");
             tv.setText(q);
         }
-
 
         // Algolia setup
         client = new Client("BDPR8QJ6ZZ", "57b47a26838971583fcb026954731774");
@@ -70,7 +71,7 @@ public class SearchResult extends Fragment {
             String attr = b.getString("search_on");
             query.setRestrictSearchableAttributes(attr);
         }
-        query.setAttributesToRetrieve("title","authors","thumbnailUrl","publisher");
+        query.setAttributesToRetrieve("title","authors","thumbnailUrl","publisher","isbn");
         query.setHitsPerPage(10);
         index = client.getIndex("bookShelf");
 
