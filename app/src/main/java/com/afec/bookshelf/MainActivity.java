@@ -119,6 +119,12 @@ public class MainActivity extends AppCompatActivity {
                         // For example, swap UI fragments here
                         int id = menuItem.getItemId();
                         switch (id){
+                            case R.id.action_show_main_activity:
+                                Intent intent = new Intent(MainActivity.this, FirebaseLogin.class);
+                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                                startActivity(intent);
+                                finish();
+                                break;
                             case R.id.action_show_profile:
                                 myStartFragment(new ShowUser());
                                 break;
