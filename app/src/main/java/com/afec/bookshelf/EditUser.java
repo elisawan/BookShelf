@@ -39,12 +39,16 @@ import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.OnProgressListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -63,20 +67,21 @@ public class EditUser extends Fragment {
     Button b;
     CheckBox email_cb, whatsapp_cb, call_cb;
     ImageButton ib;
-    AlertDialog.Builder alert;
     SharedPreferences sharedPref;
     public static final int PICK_IMAGE = 1;
     public static final int SNAP_PIC = 2;
-    private Uri mUri;
-    private Bitmap mPhoto;
     String mCurrentPhotoPath;
     Bitmap bitmap;
     File image;
+    private FirebaseUser user;
+    FirebaseDatabase database;
+    View v;
+
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.activity_edit_user, container, false);
+        v = inflater.inflate(R.layout.activity_edit_user, container, false);
 
         if(ContextCompat.checkSelfPermission(getActivity(), Manifest.permission.WRITE_EXTERNAL_STORAGE)!= PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(getActivity(), new String[] {Manifest.permission.WRITE_EXTERNAL_STORAGE},1);
@@ -97,7 +102,7 @@ public class EditUser extends Fragment {
         call_cb = (CheckBox) v.findViewById(R.id.call_cb);
         sharedPref = getActivity().getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
 
-        nomeUtente.setText(sharedPref.getString("nomeUtente", null));
+        /*nomeUtente.setText(sharedPref.getString("nomeUtente", null));
         bioUtente.setText(sharedPref.getString("bioUtente", null));
         email_cb.setChecked(sharedPref.getBoolean("contact_email",false));
         whatsapp_cb.setChecked(sharedPref.getBoolean("contact_whatsapp",false));
@@ -115,69 +120,67 @@ public class EditUser extends Fragment {
                 Bitmap bitmap = BitmapFactory.decodeFile(immagineSalvata);
                 immagineUtente.setImageBitmap(bitmap);
             }
-        }
+        }*/
+
+        config();
 
         ib.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                PopupMenu popupMenu = new PopupMenu(getActivity(), immagineUtente);
-                popupMenu.getMenuInflater().inflate(R.menu.picture_popup_menu, popupMenu.getMenu());
-                popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
-                    @Override
-                    public boolean onMenuItemClick(MenuItem menuItem) {
-                        Toast.makeText(getActivity(),"You Clicked : " + menuItem.getTitle(),Toast.LENGTH_SHORT).show();
-                        if(menuItem.getTitle().equals(getString(R.string.camera))){
-                            Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-                            // Ensure that there's a camera activity to handle the intent
-                            if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
-                                // Create the File where the photo should go
-                                File photoFile = null;
-                                try {
-                                    photoFile = createImageFile();
-                                } catch (IOException ex) {
-                                    // Error occurred while creating the File
-                                }
-                                // Continue only if the File was successfully created
-                                if (photoFile != null) {
-                                    Uri photoURI = FileProvider.getUriForFile(getActivity(),
-                                            "com.afec.bookshelf.fileprovider",
-                                            photoFile);
-                                    takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
-                                    startActivityForResult(takePictureIntent, SNAP_PIC);
-                                }
+            PopupMenu popupMenu = new PopupMenu(getActivity(), immagineUtente);
+            popupMenu.getMenuInflater().inflate(R.menu.picture_popup_menu, popupMenu.getMenu());
+            popupMenu.setOnMenuItemClickListener(new PopupMenu.OnMenuItemClickListener() {
+                @Override
+                public boolean onMenuItemClick(MenuItem menuItem) {
+                    Toast.makeText(getActivity(),"You Clicked : " + menuItem.getTitle(),Toast.LENGTH_SHORT).show();
+                    if(menuItem.getTitle().equals(getString(R.string.camera))){
+                        Intent takePictureIntent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+                        // Ensure that there's a camera activity to handle the intent
+                        if (takePictureIntent.resolveActivity(getActivity().getPackageManager()) != null) {
+                            // Create the File where the photo should go
+                            File photoFile = null;
+                            try {
+                                photoFile = createImageFile();
+                            } catch (IOException ex) {
+                                // Error occurred while creating the File
                             }
-                        }else{
-                            Intent intent = new Intent();
-                            intent.setType("image/*");
-                            intent.setAction(Intent.ACTION_GET_CONTENT);
-                            startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
+                            // Continue only if the File was successfully created
+                            if (photoFile != null) {
+                                Uri photoURI = FileProvider.getUriForFile(getActivity(),
+                                        "com.afec.bookshelf.fileprovider",
+                                        photoFile);
+                                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                startActivityForResult(takePictureIntent, SNAP_PIC);
+                            }
                         }
-                        return true;
+                    }else{
+                        Intent intent = new Intent();
+                        intent.setType("image/*");
+                        intent.setAction(Intent.ACTION_GET_CONTENT);
+                        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE);
                     }
-                });
-                popupMenu.show();
+                    return true;
+                }
+            });
+            popupMenu.show();
             }
         });
 
         b.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                SharedPreferences.Editor editor = sharedPref.edit();
+              /*  SharedPreferences.Editor editor = sharedPref.edit();
                 editor.putString("nomeUtente", String.valueOf(nomeUtente.getText()));
                 editor.putString("bioUtente", String.valueOf(bioUtente.getText()));
                 editor.putBoolean("contact_email", email_cb.isChecked());
                 editor.putBoolean("contact_whatsapp", whatsapp_cb.isChecked());
                 editor.putBoolean("contact_call", call_cb.isChecked());
                 editor.commit();
-
+*/
                 updateFirebase(String.valueOf(bioUtente.getText()), String.valueOf(nomeUtente.getText()));
-
                 myStartFragment(new ShowUser());
             }
         });
-
-
-
         return v;
     }
 
@@ -294,6 +297,60 @@ public class EditUser extends Fragment {
         menu.setGroupVisible(R.id.showProfileMenu,false);
     }
 
+    public void config(){
 
+        user = FirebaseAuth.getInstance().getCurrentUser();
+        user.getUid();
+        database = FirebaseDatabase.getInstance();
+        DatabaseReference userRef;
 
+        userRef = database.getReference("users").child(user.getUid()).child("username");
+        userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    String userName = dataSnapshot.getValue(String.class);
+                    nomeUtente.setText(String.valueOf(userName));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("db error report: ", databaseError.getDetails());
+            }
+        });
+
+        userRef = database.getReference("users").child(user.getUid()).child("biography");
+        userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(dataSnapshot.exists()) {
+                    String biography = dataSnapshot.getValue(String.class);
+                    bioUtente.setText(String.valueOf(biography));
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                Log.e("db error report: ", databaseError.getDetails());
+            }
+        });
+
+        final ImageView profileImage = (ImageView) v.findViewById(R.id.immagineUtente);
+
+        StorageReference mImageRef =
+                FirebaseStorage.getInstance().getReference(user.getUid() + "/profilePic.png");
+        mImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+            @Override
+            public void onSuccess(Uri uri) {
+                Picasso.with(getContext()).load(uri.toString()).noPlaceholder().into(immagineUtente);
+
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception exception) {
+                Log.e("ERRORE RECUPERO IMG: ", exception.getMessage().toString());
+            }
+        });
+    }
 }
