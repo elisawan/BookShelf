@@ -89,18 +89,6 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseUser user;
     DatabaseReference userRef;
 
-    // Others
-    GridView gv;
-    List<BookInstance> foundBooks;
-    GeoFire geoFire;
-    private MyLocation myLocation;
-    private Location location;
-    List<Book> booksList;
-    List<String> myBooksInstances;
-    SeekBar SB;
-    TextView r_display, title;
-    String isbn;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -124,37 +112,37 @@ public class MainActivity extends AppCompatActivity {
         mDrawerLayout = findViewById(R.id.main_layout);
         NavigationView navigationView = findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(
-                new NavigationView.OnNavigationItemSelectedListener() {
-                    @Override
-                    public boolean onNavigationItemSelected(MenuItem menuItem) {
-                        // set item as selected to persist highlight
-                        menuItem.setChecked(true);
-                        // close drawer when item is tapped
-                        mDrawerLayout.closeDrawers();
+            new NavigationView.OnNavigationItemSelectedListener() {
+                @Override
+                public boolean onNavigationItemSelected(MenuItem menuItem) {
+                    // set item as selected to persist highlight
+                    menuItem.setChecked(true);
+                    // close drawer when item is tapped
+                    mDrawerLayout.closeDrawers();
 
-                        // Add code here to update the UI based on the item selected
-                        // For example, swap UI fragments here
-                        int id = menuItem.getItemId();
-                        switch (id){
-                            case R.id.action_show_main_activity:
-                                Intent intent = new Intent(MainActivity.this, FirebaseLogin.class);
-                                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                                startActivity(intent);
-                                finish();
-                                break;
-                            case R.id.action_show_profile:
-                                myStartFragment(new ShowUser());
-                                break;
-                            case R.id.action_my_books_list:
-                                myStartFragment(new BookList());
-                                break;
-                            case R.id.action_logout:
-                                Logout();
-                                break;
-                        }
-                        return true;
+                    // Add code here to update the UI based on the item selected
+                    // For example, swap UI fragments here
+                    int id = menuItem.getItemId();
+                    switch (id){
+                        case R.id.action_show_main_activity:
+                            Intent intent = new Intent(MainActivity.this, FirebaseLogin.class);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            startActivity(intent);
+                            finish();
+                            break;
+                        case R.id.action_show_profile:
+                            myStartFragment(new ShowUser());
+                            break;
+                        case R.id.action_my_books_list:
+                            myStartFragment(new BookList());
+                            break;
+                        case R.id.action_logout:
+                            Logout();
+                            break;
                     }
-                });
+                    return true;
+                }
+            });
         drawerUsername= (TextView) header.findViewById(R.id.sidebar_username);
         drawerEmail = (TextView) header.findViewById(R.id.sidebar_mail);
         drawerLayout = (LinearLayout) findViewById(R.id.drawer_layout);
@@ -162,10 +150,6 @@ public class MainActivity extends AppCompatActivity {
         // Firebase
         db = FirebaseDatabase.getInstance();
         user = FirebaseAuth.getInstance().getCurrentUser();
-        //if(user!=null)
-            user.getUid();
-        //else
-        //    finish();
 
         // Fill navigation drawer view
         drawerEmail.setText(user.getEmail());
@@ -198,90 +182,9 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("ERRORE RECUPERO IMG: ", exception.getMessage().toString());
             }
         });
-        /*StorageReference mImageRef =
-                FirebaseStorage.getInstance().getReference(user.getUid() + "/profilePic.png");
-        mImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
-            @Override
-            public void onSuccess(Uri uri) {
 
-                InputStream inputStream = null;
-                try {
-                    inputStream = getContentResolver().openInputStream(uri);
-                    Drawable d = Drawable.createFromStream(inputStream, uri.toString() );
-                    drawerLayout.setBackground(d);
-                } catch (FileNotFoundException e) {
-                }
-
-
-
-
-            }
-        }).addOnFailureListener(new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception exception) {
-                Log.e("ERRORE RECUPERO IMG: ", exception.getMessage().toString());
-            }
-        });*/
-
-
-
-        // Create the grid view with nearest books
-        title = (TextView) findViewById(R.id.textView7);
-        SB = findViewById(R.id.seekBar);
-        gv = (GridView) findViewById(R.id.List_of_book_found);
-        foundBooks = new ArrayList<BookInstance>();
-        r_display = (TextView) findViewById(R.id.textView6);
-        booksList = new ArrayList<Book>();
-        myBooksInstances = new ArrayList<String>();
-
-        title.setText(R.string.title_book_around_you);
-        //populate the grid view with a default radius of 10 km
-        r_display.setText("10 km");
-        find_near_book(10);
-
-        gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Fragment newFragment = new MyBookActivity();
-                Bundle b = new Bundle();
-                b.putString("isbn", booksList.get(position).getIsbn());
-                b.putString("instance", myBooksInstances.get(position));
-                newFragment.setArguments(b);
-                myStartFragment(newFragment);
-            }
-        });
-
-        SB.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
-
-            @Override
-            public void onStopTrackingTouch(SeekBar seekBar) {
-                String s = seekBar.getProgress() + " km";
-                r_display.setText(s);
-                find_near_book(seekBar.getProgress());
-            }
-
-            @Override
-            public void onStartTrackingTouch(SeekBar seekBar) {
-
-            }
-
-            @Override
-            public void onProgressChanged(SeekBar seekBar, int progress,boolean fromUser) {
-
-            }
-        });
-
-        gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Fragment newFragment = new ShowBook();
-                Bundle b = new Bundle();
-                b.putString("isbn", booksList.get(position).getIsbn());
-                newFragment.setArguments(b);
-                myStartFragment(newFragment);
-            }
-        });
-
+        Fragment startFragment = new NearBooks();
+        myStartFragment(startFragment);
     }
 
     @Override
@@ -377,170 +280,5 @@ public class MainActivity extends AppCompatActivity {
         newFragment.setArguments(b);
         myStartFragment(newFragment);
     }
-
-    public void getAddress(){
-        Geocoder geoCoder = new Geocoder(this, Locale.getDefault()); //it is Geocoder
-        StringBuilder builder = new StringBuilder();
-        String streetAddress;
-
-        if(ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
-            ActivityCompat.requestPermissions(this, new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION},1);
-        }
-        LocationManager lm= (LocationManager) getSystemService(LOCATION_SERVICE);
-
-        lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLocationListener);
-
-        myLocation= new MyLocation();
-
-        location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        if(location==null) {
-            lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,0,0, this.mLocationListener);
-            location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        }
-        else{
-            myLocation.setLatitude(location.getLatitude());
-            myLocation.setLongitude(location.getLongitude());
-        }
-
-    }
-
-    private final LocationListener mLocationListener = new LocationListener() {
-        @Override
-        public void onLocationChanged(final Location location) {
-            //your code here
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-        }
-
-        @Override
-        public void onProviderEnabled(String provider) {
-
-        }
-
-        @Override
-        public void onProviderDisabled(String provider) {
-
-        }
-    };
-
-    public void find_near_book(int radius){
-        final DatabaseReference bookInstances = db.getReference().child("geofire");
-        final GeoFire geoFire = new GeoFire(bookInstances);
-
-        booksList.clear();
-
-        getAddress();
-
-        GeoQuery geoQuery = geoFire.queryAtLocation(new GeoLocation(myLocation.getLatitude(), myLocation.getLongitude()), radius);
-
-        geoQuery.addGeoQueryDataEventListener(new GeoQueryDataEventListener() {
-
-            @Override
-            public void onDataEntered(DataSnapshot dataSnapshot, GeoLocation location) {
-                // get book isbn and bookInstance
-                final String instance = dataSnapshot.getKey();
-                // get book
-
-                DatabaseReference book_inst_Ref = db.getReference("book_instances").child(instance);
-
-                 book_inst_Ref.addValueEventListener(new ValueEventListener() {
-                     @Override
-                     public void onDataChange(DataSnapshot dataSnapshot) {
-                         isbn = dataSnapshot.child("isbn").getValue(String.class);
-                         myBooksInstances.add(dataSnapshot.getKey());
-
-                         DatabaseReference bookRef = db.getReference("books").child(isbn);
-
-                         bookRef.addValueEventListener(new ValueEventListener() {
-
-                             @Override
-                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                 Book b = dataSnapshot.getValue(Book.class);
-                                 booksList.add(b);
-
-                                 // show on view
-
-                                 gv.setAdapter(new BaseAdapter() {
-
-                                     @Override
-                                     public int getCount() {
-                                         return booksList.size();
-                                     }
-
-                                     @Override
-                                     public Object getItem(int position) {
-                                         return booksList.get(position);
-                                     }
-
-                                     @Override
-                                     public long getItemId(int position) {
-                                         return position;
-                                     }
-
-                                     @Override
-                                     public View getView(int position, View convertView, ViewGroup parent) {
-                                         if (convertView==null && !booksList.isEmpty()) {
-                                             convertView = getLayoutInflater().inflate(R.layout.book_preview, parent,false);
-                                         }
-                                         ImageView iv = (ImageView) convertView.findViewById(R.id.book_image_preview);
-                                         Picasso.with(MainActivity.this).load(booksList.get(position).getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
-                                                 .into(iv);
-                                         TextView title_tv =(TextView) convertView.findViewById(R.id.book_title_preview);
-                                         title_tv.setText(booksList.get(position).getTitle());
-                                         TextView author_tv = (TextView) convertView.findViewById(R.id.book_autor_preview);
-                                         author_tv.setText(booksList.get(position).getAllAuthors());
-                                         return convertView;
-                                     }
-                                 });
-
-                             }
-                             @Override
-                             public void onCancelled(DatabaseError databaseError) {
-                             }
-                         });
-
-                     }
-
-                     @Override
-                     public void onCancelled(DatabaseError databaseError) {
-
-                     }
-                 });
-
-
-            }
-
-            @Override
-            public void onDataExited(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onDataMoved(DataSnapshot dataSnapshot, GeoLocation location) {
-                // ...
-            }
-
-            @Override
-            public void onDataChanged(DataSnapshot dataSnapshot, GeoLocation location) {
-                // ...
-            }
-
-            @Override
-            public void onGeoQueryReady() {
-
-            }
-
-            @Override
-            public void onGeoQueryError(DatabaseError error) {
-                Toast.makeText(MainActivity.this,"An error loading the nearest Book occurred!",Toast.LENGTH_SHORT).show();
-            }
-
-        });
-    }
-
-
 }
 

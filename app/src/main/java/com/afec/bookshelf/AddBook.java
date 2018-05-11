@@ -1,8 +1,6 @@
 package com.afec.bookshelf;
 
 import android.Manifest;
-import android.content.Context;
-import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Geocoder;
 import android.location.Location;
@@ -18,7 +16,6 @@ import android.os.Bundle;
 import android.util.JsonReader;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.util.Log;
 import android.view.ViewGroup;
@@ -35,7 +32,6 @@ import com.afec.bookshelf.Models.BookInstance;
 import com.afec.bookshelf.Models.MyLocation;
 import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
-import com.google.firebase.FirebaseError;
 import com.algolia.search.saas.Client;
 import com.algolia.search.saas.Index;
 import com.google.firebase.auth.FirebaseAuth;
@@ -54,6 +50,7 @@ import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
@@ -67,7 +64,7 @@ import java.util.Locale;
 public class AddBook extends Fragment {
 
     ImageView ib;
-    EditText ISBN_reader, edit_location;
+    EditText edit_location;
     Button ISBN_scan_button, Locate_button, confirm_button ;
     TextView ISBN_show, book_title, book_author, status_bar, location_bar;
     Book newBook;
@@ -142,6 +139,8 @@ public class AddBook extends Fragment {
 
                         //--Add to Firebase--
                         addToDatabase();
+
+                        //--Go to Book List
                         Fragment newFragment = new BookList();
                         // Create new fragment and transaction
                         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -151,20 +150,12 @@ public class AddBook extends Fragment {
                         transaction.addToBackStack(null);
                         // Commit the transaction
                         transaction.commit();
-
-                        //--Add to Algolia--
-                        client = new Client("BDPR8QJ6ZZ", "57b47a26838971583fcb026954731774");
-                        index = client.getIndex("bookShelf");
-
-                        //ToDo
-                        //index.addObjectAsync(new JsonObject...);
                     }
                 }else {
                     Toast.makeText(getActivity(),"Scan a book first!",Toast.LENGTH_SHORT).show();
                 }
             }
         });
-
 
         Bundle b = getArguments();
         if(b != null) {
@@ -200,8 +191,6 @@ public class AddBook extends Fragment {
         });
         return v;
     }
-
-
 
     public void isbnHttpRequest() {
         RequestQueue queue = Volley.newRequestQueue(getActivity());
@@ -336,6 +325,22 @@ public class AddBook extends Fragment {
         DatabaseReference locRef = database.getReference("geofire");
         bookRef.setValue(newBook);
 
+        //Add book in Algolia
+        client = new Client("BDPR8QJ6ZZ", "57b47a26838971583fcb026954731774");
+
+        index = client.getIndex("bookShelf");
+        JSONObject obj = new JSONObject();
+        try{
+            obj.put("objectID",newBook.getIsbn());
+            obj.put("title", newBook.getTitle());
+            obj.put("authors", newBook.getAuthors());
+            obj.put("isbn", newBook.getIsbn());
+            obj.put("thumbnailUrl", newBook.getThumbnailUrl());
+        }catch (JSONException e){
+
+        }
+        index.addObjectAsync(obj,newBook.getIsbn(),null,null);
+        
         //Inserimento in book_instances
         DatabaseReference bookInstanceRef = database.getReference("book_instances");
         String bookId = bookInstanceRef.push().getKey();
@@ -351,8 +356,6 @@ public class AddBook extends Fragment {
                 }
             }
         });
-
-
 
         // Add new owner to book
         DatabaseReference ownersRef = database.getReference("books").child(newBook.getIsbn()).child("owners").child(bookId);

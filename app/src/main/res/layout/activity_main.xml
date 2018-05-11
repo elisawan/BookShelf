@@ -40,47 +40,6 @@
                 app:backgroundTint="@color/colorAccent"
                 app:srcCompat="@android:drawable/ic_input_add" />-->
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
-                <TextView
-                    android:id="@+id/textView7"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:textAllCaps="true"
-                    android:textSize="30sp"
-                    android:textAlignment="center"
-                    android:text="@+id/title_book_around_you" />
-
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="horizontal">
-
-                    <SeekBar
-                        android:id="@+id/seekBar"
-                        style="@style/Widget.AppCompat.SeekBar.Discrete"
-                        android:layout_width="300dp"
-                        android:layout_height="wrap_content"
-                        android:max="10"
-                        android:progress="1" />
-
-                    <TextView
-                        android:id="@+id/textView6"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:text="@+id/radius_text" />
-                </LinearLayout>
-
-                <GridView
-                    android:id="@+id/List_of_book_found"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:numColumns="2" />
-            </LinearLayout>
 
         </FrameLayout>
 
