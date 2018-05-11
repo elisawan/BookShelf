@@ -28,6 +28,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.Html;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -108,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
+        actionbar.setTitle(Html.fromHtml("<font color='#ffffff'>Book Hook</font>"));
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
         // Navigation drawer header
