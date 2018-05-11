@@ -30,6 +30,7 @@ import com.firebase.geofire.GeoLocation;
 import com.firebase.geofire.GeoQuery;
 import com.firebase.geofire.GeoQueryDataEventListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -59,6 +60,8 @@ public class NearBooks extends Fragment {
 
     // Firebase
     FirebaseDatabase db;
+    FirebaseUser CurrentUser;
+    String UID;
 
     public NearBooks() {
         // Required empty public constructor
@@ -73,6 +76,9 @@ public class NearBooks extends Fragment {
 
         // Firebase
         db = FirebaseDatabase.getInstance();
+        CurrentUser = FirebaseAuth.getInstance().getCurrentUser();
+        UID = CurrentUser.getUid();
+
 
         // Create the grid view with nearest books
         title = (TextView) v.findViewById(R.id.textView7);
@@ -150,56 +156,58 @@ public class NearBooks extends Fragment {
                 final String instance = dataSnapshot.getKey();
 
                 // get book isbn
-                DatabaseReference book_inst_Ref = db.getReference("book_instances").child(instance);
+                final DatabaseReference book_inst_Ref = db.getReference("book_instances").child(instance);
                 book_inst_Ref.addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
                         isbn = dataSnapshot.child("isbn").getValue(String.class);
-                        DatabaseReference bookRef = db.getReference("books").child(isbn);
-                        bookRef.addValueEventListener(new ValueEventListener() {
-                            @Override
-                            public void onDataChange(DataSnapshot dataSnapshot) {
-                                Book b = dataSnapshot.getValue(Book.class);
-                                booksList.add(b);
+                            final DatabaseReference bookRef = db.getReference("books").child(isbn);
+                            bookRef.addValueEventListener(new ValueEventListener() {
+                                @Override
+                                public void onDataChange(DataSnapshot dataSnapshot) {
+                                    Book b = dataSnapshot.getValue(Book.class);
+                                        booksList.add(b);
 
-                                // show on view
-                                gv.setAdapter(new BaseAdapter() {
+                                    // show on view
+                                    gv.setAdapter(new BaseAdapter() {
 
-                                    @Override
-                                    public int getCount() {
-                                        return booksList.size();
-                                    }
-
-                                    @Override
-                                    public Object getItem(int position) {
-                                        return booksList.get(position);
-                                    }
-
-                                    @Override
-                                    public long getItemId(int position) {
-                                        return position;
-                                    }
-
-                                    @Override
-                                    public View getView(int position, View convertView, ViewGroup parent) {
-                                        if (convertView==null && !booksList.isEmpty()) {
-                                            convertView = getLayoutInflater().inflate(R.layout.book_preview, parent,false);
+                                        @Override
+                                        public int getCount() {
+                                            return booksList.size();
                                         }
-                                        ImageView iv = (ImageView) convertView.findViewById(R.id.book_image_preview);
-                                        Picasso.with(getActivity()).load(booksList.get(position).getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
-                                                .into(iv);
-                                        TextView title_tv =(TextView) convertView.findViewById(R.id.book_title_preview);
-                                        title_tv.setText(booksList.get(position).getTitle());
-                                        TextView author_tv = (TextView) convertView.findViewById(R.id.book_autor_preview);
-                                        author_tv.setText(booksList.get(position).getAllAuthors());
-                                        return convertView;
-                                    }
-                                });
-                            }
-                            @Override
-                            public void onCancelled(DatabaseError databaseError) {
-                            }
-                        });
+
+                                        @Override
+                                        public Object getItem(int position) {
+                                            return booksList.get(position);
+                                        }
+
+                                        @Override
+                                        public long getItemId(int position) {
+                                            return position;
+                                        }
+
+                                        @Override
+                                        public View getView(int position, View convertView, ViewGroup parent) {
+                                            if (convertView == null && !booksList.isEmpty()) {
+                                                convertView = getLayoutInflater().inflate(R.layout.book_preview, parent, false);
+
+                                                ImageView iv = (ImageView) convertView.findViewById(R.id.book_image_preview);
+                                                Picasso.with(getActivity()).load(booksList.get(position).getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
+                                                        .into(iv);
+                                                TextView title_tv = (TextView) convertView.findViewById(R.id.book_title_preview);
+                                                title_tv.setText(booksList.get(position).getTitle());
+                                                TextView author_tv = (TextView) convertView.findViewById(R.id.book_autor_preview);
+                                                author_tv.setText(booksList.get(position).getAllAuthors());
+                                            }
+                                            return convertView;
+                                        }
+                                    });
+                                }
+
+                                @Override
+                                public void onCancelled(DatabaseError databaseError) {
+                                }
+                            });
                     }
 
                     @Override

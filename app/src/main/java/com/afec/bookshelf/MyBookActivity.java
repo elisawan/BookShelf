@@ -61,6 +61,7 @@ public class MyBookActivity extends Fragment {
     String instance;
     Location location;
     DatabaseReference bookInstanceRef;
+    boolean DatabaseRetrievalComplete= false;
 
 
     @Nullable
@@ -134,6 +135,7 @@ public class MyBookActivity extends Fragment {
                     loc=bi.getLocation().toString();
                     L.setText(loc);
                     avCheckbox.setChecked(bi.getAvailability());
+                    DatabaseRetrievalComplete=true;
                 }
 
                 @Override
@@ -168,6 +170,16 @@ public class MyBookActivity extends Fragment {
                                         //Then remove it from book_instances
                                         item = db.getReference("book_instances").child(instance);
                                         item.setValue(null);
+
+                                        //Remove it from the geofire locations
+                                        item=db.getReference("geofire").child(instance);
+                                        item.setValue(null);
+
+                                        //Remove it from the book owners
+                                        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+                                        item = db.getReference("books").child(isbn).child("owners").child(instance);
+                                        item.setValue(null);
+
                                         dialog.cancel();
                                         toBookList();
                                     }
@@ -260,7 +272,7 @@ public class MyBookActivity extends Fragment {
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, final int i, long l) {
-                if(i!=0){
+                if(i!=0 && DatabaseRetrievalComplete){
                     AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
                     builder.setMessage("Modificare lo stato del libro?")
@@ -283,6 +295,9 @@ public class MyBookActivity extends Fragment {
 
                     dialog.show();
                 }
+                else
+                    Toast.makeText(getActivity(),"Status cannot be 'Not set'!",Toast.LENGTH_SHORT).show();
+
             }
 
             @Override
