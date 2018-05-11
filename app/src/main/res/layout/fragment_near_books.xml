@@ -29,7 +29,9 @@
                 android:layout_width="300dp"
                 android:layout_height="wrap_content"
                 android:max="10"
-                android:progress="1" />
+                android:progress="1"
+                android:min="1"/>
+
 
             <TextView
                 android:id="@+id/textView6"
