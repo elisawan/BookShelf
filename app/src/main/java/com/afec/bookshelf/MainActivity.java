@@ -98,6 +98,9 @@ public class MainActivity extends AppCompatActivity {
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String q = intent.getStringExtra(SearchManager.QUERY);
             mySearch(q);
+        }else{
+            Fragment startFragment = new NearBooks();
+            myStartFragment(startFragment);
         }
 
         // Toolbar initialization
@@ -183,8 +186,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        Fragment startFragment = new NearBooks();
-        myStartFragment(startFragment);
+
     }
 
     @Override
@@ -237,6 +239,7 @@ public class MainActivity extends AppCompatActivity {
         transaction.addToBackStack(null);
         // Commit the transaction
         transaction.commit();
+
     }
 
     private void Logout(){
