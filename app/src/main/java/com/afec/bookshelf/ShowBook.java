@@ -8,6 +8,7 @@ import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.TextView;
 
 import com.afec.bookshelf.Models.Book;
@@ -54,7 +55,6 @@ public class ShowBook extends Fragment {
 
         owners = new ArrayList<Owner>();
 
-
         Bundle b = getArguments();
         if(b == null){
             Toast.makeText(getActivity(),"ISBN not valid",Toast.LENGTH_SHORT).show();
@@ -91,9 +91,23 @@ public class ShowBook extends Fragment {
         {
             Toast.makeText(getActivity(),"ISBN not valid",Toast.LENGTH_SHORT).show();
         }
-
-        adapter = new OwnerAdapter(getActivity(), owners);
         getOwners(isbn);
+        adapter = new OwnerAdapter(getActivity(), owners);
+
+        mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Fragment newFragment = new ShowUserPublic();
+                Bundle b = new Bundle();
+                b.putString("username", owners.get(position).getUsername());
+                b.putString("rating", owners.get(position).getRating().toString());
+                b.putString("borrowedBooks", owners.get(position).getBorrowedBooks().toString());
+                b.putString("lentBooks", owners.get(position).getLentBooks().toString());
+                b.putString("bio", owners.get(position).getBiography());
+                newFragment.setArguments(b);
+                myStartFragment(newFragment);
+            }
+        });
 
         return v;
     }

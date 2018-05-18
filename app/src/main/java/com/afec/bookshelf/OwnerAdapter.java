@@ -6,7 +6,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.afec.bookshelf.Models.Owner;
@@ -35,6 +37,13 @@ public class OwnerAdapter extends ArrayAdapter<Owner> {
             viewHolder.text = (TextView) convertView.findViewById(R.id.text);
             viewHolder.avatar = (ImageView) convertView.findViewById(R.id.avatar);
             viewHolder.distance = (TextView) convertView.findViewById(R.id.distance);
+            viewHolder.reqButton = (Button) convertView.findViewById(R.id.req_button);
+            viewHolder.reqButton.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    // TODO: send book request
+                }
+            });
             convertView.setTag(viewHolder);
         }
 
@@ -42,7 +51,7 @@ public class OwnerAdapter extends ArrayAdapter<Owner> {
         Owner owner = getItem(position);
 
         //il ne reste plus qu'à remplir notre vue
-        viewHolder.pseudo.setText(owner.getUserName());
+        viewHolder.pseudo.setText(owner.getUsername());
         viewHolder.distance.setText(owner.getDistance());
         Picasso.with(getContext()).load(owner.getProfileImage()).placeholder(R.drawable.book_image_placeholder)
                 .into(viewHolder.avatar);
@@ -55,5 +64,7 @@ public class OwnerAdapter extends ArrayAdapter<Owner> {
         public TextView text;
         public TextView distance;
         public ImageView avatar;
+        public Button reqButton;
+
     }
 }
