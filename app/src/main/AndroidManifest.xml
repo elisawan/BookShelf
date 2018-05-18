@@ -36,8 +36,6 @@
                 android:name="android.app.searchable"
                 android:resource="@xml/searchable" />
         </activity>
-        <activity android:name=".SearchBooks">
-        </activity>
         <activity android:name=".Chat">
         </activity>
         <provider
