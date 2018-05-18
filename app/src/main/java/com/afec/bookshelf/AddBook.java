@@ -313,21 +313,35 @@ public class AddBook extends Fragment {
     }
 
     public void addToDatabase(){
-        FirebaseDatabase database = FirebaseDatabase.getInstance();
+        final FirebaseDatabase database = FirebaseDatabase.getInstance();
         FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         Log.d("user", user.toString());
         String uid = user.getUid();
         GeoFire geoFire;
 
-        //Inserimento in books
-        DatabaseReference bookRef = database.getReference("books")
-                .child(newBook.getIsbn());
+        //--insert new book in firebase--
+        //-insert only if this book is not already present-
+        DatabaseReference bookRef = database.getReference("books");
+        bookRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.hasChild(newBook.getIsbn())){
+                    DatabaseReference bookRef = database.getReference("books").child(newBook.getIsbn());
+                    bookRef.setValue(newBook);
+                }
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        //--Geofire
         DatabaseReference locRef = database.getReference("geofire");
-        bookRef.setValue(newBook);
 
-        //Add book in Algolia
+        //--Add book in Algolia
         client = new Client("BDPR8QJ6ZZ", "57b47a26838971583fcb026954731774");
-
         index = client.getIndex("bookShelf");
         JSONObject obj = new JSONObject();
         try{
