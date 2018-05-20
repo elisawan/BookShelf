@@ -314,10 +314,8 @@ public class AddBook extends Fragment {
 
     public void addToDatabase(){
         final FirebaseDatabase database = FirebaseDatabase.getInstance();
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        final FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
         Log.d("user", user.toString());
-        String uid = user.getUid();
-        GeoFire geoFire;
 
         //--insert new book in firebase--
         //-insert only if this book is not already present-
@@ -325,10 +323,54 @@ public class AddBook extends Fragment {
         bookRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                if(!dataSnapshot.hasChild(newBook.getIsbn())){
+                if(!dataSnapshot.child(newBook.getIsbn()).exists()){
                     DatabaseReference bookRef = database.getReference("books").child(newBook.getIsbn());
                     bookRef.setValue(newBook);
                 }
+
+                //--Geofire
+                DatabaseReference locRef = database.getReference("geofire");
+                GeoFire geoFire = new GeoFire(locRef);
+
+                //Inserimento in book_instances
+                DatabaseReference bookInstanceRef = database.getReference("book_instances");
+                String bookId = bookInstanceRef.push().getKey();
+                bookInstanceRef.child(bookId).setValue(new BookInstance(newBook.getIsbn(), myLocation, user.getUid(), (int) status, currentDateTime, true));
+
+                geoFire.setLocation(bookId, new GeoLocation(myLocation.getLatitude(), myLocation.getLongitude()), new GeoFire.CompletionListener() {
+                    @Override
+                    public void onComplete(String key, DatabaseError error) {
+                        if (error != null) {
+                            Toast.makeText(getActivity(),"There was an error saving the location to GeoFire: " + error,Toast.LENGTH_SHORT).show();
+                        } else {
+                            Toast.makeText(getActivity(),"Location saved on server successfully!",Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
+
+                // Add new owner to book
+                DatabaseReference ownersRef = database.getReference("books").child(newBook.getIsbn()).child("owners").child(bookId);
+                ownersRef.setValue(user.getUid());
+
+                //Aggiornamento inserimento libro: update addedBooks count
+                final DatabaseReference userRef = database.getReference("users").child(user.getUid()).child("addedBooks");
+                userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+
+                        long value =(long) dataSnapshot.getValue(Long.class);
+                        value = value + 1;
+                        userRef.setValue(value);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        Log.e("db error report: ", databaseError.getDetails());
+                    }
+                });
+
+                //Aggiornamento lista myBooks
+                database.getReference("users").child(user.getUid()).child("myBooks").child(bookId).setValue(newBook.getIsbn());
             }
 
             @Override
@@ -336,9 +378,6 @@ public class AddBook extends Fragment {
 
             }
         });
-
-        //--Geofire
-        DatabaseReference locRef = database.getReference("geofire");
 
         //--Add book in Algolia
         client = new Client("BDPR8QJ6ZZ", "57b47a26838971583fcb026954731774");
@@ -354,46 +393,6 @@ public class AddBook extends Fragment {
 
         }
         index.addObjectAsync(obj,newBook.getIsbn(),null,null);
-        
-        //Inserimento in book_instances
-        DatabaseReference bookInstanceRef = database.getReference("book_instances");
-        String bookId = bookInstanceRef.push().getKey();
-        bookInstanceRef.child(bookId).setValue(new BookInstance(newBook.getIsbn(), myLocation, user.getUid(), (int) status, currentDateTime, true));
-        geoFire = new GeoFire(locRef);
-        geoFire.setLocation(bookId, new GeoLocation(myLocation.getLatitude(), myLocation.getLongitude()), new GeoFire.CompletionListener() {
-            @Override
-            public void onComplete(String key, DatabaseError error) {
-                if (error != null) {
-                    Toast.makeText(getActivity(),"There was an error saving the location to GeoFire: " + error,Toast.LENGTH_SHORT).show();
-                } else {
-                    Toast.makeText(getActivity(),"Location saved on server successfully!",Toast.LENGTH_SHORT).show();
-                }
-            }
-        });
-
-        // Add new owner to book
-        DatabaseReference ownersRef = database.getReference("books").child(newBook.getIsbn()).child("owners").child(bookId);
-        ownersRef.setValue(user.getUid());
-
-        //Aggiornamento inserimento libro: update addedBooks count
-        final DatabaseReference userRef = database.getReference("users").child(user.getUid()).child("addedBooks");
-        userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-
-                long value =(long) dataSnapshot.getValue(Long.class);
-                value = value + 1;
-                userRef.setValue(value);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                Log.e("db error report: ", databaseError.getDetails());
-            }
-        });
-
-        //Aggiornamento lista myBooks
-        database.getReference("users").child(user.getUid()).child("myBooks").child(bookId).setValue(newBook.getIsbn());
     }
 
     public void getAddress(){

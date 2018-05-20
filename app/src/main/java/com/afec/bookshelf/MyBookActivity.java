@@ -85,7 +85,6 @@ public class MyBookActivity extends Fragment {
         avCheckbox = (CheckBox) v.findViewById(R.id.availableCheckbox);
         loc=null;
 
-
         db = FirebaseDatabase.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 

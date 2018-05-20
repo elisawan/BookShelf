@@ -1,17 +1,17 @@
 package com.afec.bookshelf.Models;
 
-import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-
 public class ChatMessage {
     String message;
-    String UID;
+    String uid;
     long timestamp;
+
+
+
+    Boolean bookReq;
 
     public ChatMessage(String message, String UID, long timestamp){
         this.message=message;
-        this.UID=UID;
+        this.uid=UID;
         this.timestamp=timestamp;
     }
 
@@ -23,12 +23,12 @@ public class ChatMessage {
         this.message = message;
     }
 
-    public String getUID() {
-        return UID;
+    public String getUid() {
+        return uid;
     }
 
-    public void setUID(String UID) {
-        this.UID = UID;
+    public void setUid(String UID) {
+        this.uid = UID;
     }
 
     public long getTimestamp() {
@@ -37,5 +37,13 @@ public class ChatMessage {
 
     public void setTimestamp(long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public Boolean getBookReq() {
+        return bookReq;
+    }
+
+    public void setBookReq(Boolean bookReq) {
+        this.bookReq = bookReq;
     }
 }

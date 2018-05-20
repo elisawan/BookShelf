@@ -8,8 +8,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.RatingBar
 import android.widget.TextView
-import kotlinx.android.synthetic.main.activity_edit_user.view.*
-import org.w3c.dom.Text
 
 class ShowUserPublic : Fragment() {
 
