@@ -23,8 +23,10 @@ class Chat : Activity() {
     lateinit var button_send:Button
     lateinit var message_written:TextView
     lateinit var message:ChatMessage
-    lateinit var user:FirebaseUser
+    lateinit var userMe:FirebaseUser
     lateinit var chatID:String
+    lateinit var userYouUid:String
+    lateinit var userMeUid:String
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -34,20 +36,26 @@ class Chat : Activity() {
 
     private fun config(){
         var fbAuth = FirebaseAuth.getInstance()
-        user = fbAuth.currentUser!!
+        userMe = fbAuth.currentUser!!
+        userYouUid = intent.extras["userYou"].toString()
+        userMeUid = userMe.uid
+        if(userMeUid.compareTo(userYouUid)>0){
+            chatID = userYouUid+userMeUid
+        }else{
+            chatID = userMeUid+userYouUid
+        }
         var fbRef = FirebaseDatabase.getInstance()
                 .reference
                 .child("chat/")
-                .child("1234567890")
+                .child(chatID)
         button_send = findViewById(R.id.button_chatbox_send)
         message_written = findViewById(R.id.edittext_chatbox)
         button_send.setOnClickListener { view ->
             Toast.makeText(baseContext, "Write your message here", Toast.LENGTH_LONG).show()
             var messaggio = message_written.text.toString()
             val time = System.currentTimeMillis()
-            message = ChatMessage(messaggio, user.uid, time)
-            val key = fbRef.push().key
-            fbRef.child(key).setValue(message)
+            message = ChatMessage(messaggio, userMeUid, time)
+            fbRef.push().setValue(message)
         }
     }
 }
