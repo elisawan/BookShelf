@@ -16,6 +16,10 @@
             android:title="@string/my_books"/>
 
         <item
+            android:id="@+id/action_chat_list"
+            android:title="Chat"/>
+
+        <item
             android:id="@+id/action_logout"
             android:title="Logout"/>
 

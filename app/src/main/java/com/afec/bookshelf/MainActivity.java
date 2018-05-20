@@ -141,6 +141,9 @@ public class MainActivity extends AppCompatActivity {
                         case R.id.action_my_books_list:
                             myStartFragment(new BookList());
                             break;
+                        case R.id.action_chat_list:
+                            myStartFragment(new ChatList());
+                            break;
                         case R.id.action_logout:
                             Logout();
                             break;
