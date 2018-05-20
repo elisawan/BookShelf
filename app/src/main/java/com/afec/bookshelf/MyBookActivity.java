@@ -149,7 +149,6 @@ public class MyBookActivity extends Fragment {
             Toast.makeText(getActivity(),"Book not found",Toast.LENGTH_SHORT).show();
         }
 
-
         delButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
@@ -197,7 +196,6 @@ public class MyBookActivity extends Fragment {
 
                         AlertDialog alert11 = builder1.create();
                         alert11.show();
-
                     }
                 }
         );
@@ -232,8 +230,6 @@ public class MyBookActivity extends Fragment {
                                 }
                             }
                         });
-
-
                     }
                 }
         );
@@ -262,16 +258,17 @@ public class MyBookActivity extends Fragment {
                     }
                 });
 
-
                 AlertDialog dialog = builder.create();
-
                 dialog.show();
-
-
             }
 
         });
+        return v;
+    }
 
+    /*@Override
+    public void onResume(){
+        super.onResume();
         spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> adapterView, View view, final int i, long l) {
@@ -309,8 +306,7 @@ public class MyBookActivity extends Fragment {
             }
         });
 
-        return v;
-    }
+    }*/
 
     private void toBookList(){
         FragmentTransaction transaction = getActivity().getSupportFragmentManager().beginTransaction();
@@ -328,7 +324,6 @@ public class MyBookActivity extends Fragment {
         menu.setGroupVisible(R.id.defaultMenu,false);
         menu.setGroupVisible(R.id.showProfileMenu,false);
     }
-
 
     public void getAddress(){
 

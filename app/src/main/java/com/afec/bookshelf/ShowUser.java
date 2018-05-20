@@ -142,11 +142,8 @@ public class ShowUser extends Fragment {
                 return false;
             }
         } );
-
-
         return v;
     }
-
 
     public void publicationQuickView(){
         View view = getLayoutInflater().inflate( R.layout.inflater_immagine_profilo, null);
@@ -262,8 +259,6 @@ public class ShowUser extends Fragment {
                 Log.e("ERRORE RECUPERO IMG: ", exception.getMessage().toString());
             }
         });
-
-
     }
 
     @Override
