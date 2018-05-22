@@ -6,10 +6,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
-import android.support.v7.widget.SearchView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -22,12 +19,6 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afec.bookshelf.Models.Book;
-import com.afec.bookshelf.MyJsonParser.SearchResultBookJsonParser;
-import com.algolia.search.saas.AlgoliaException;
-import com.algolia.search.saas.Client;
-import com.algolia.search.saas.CompletionHandler;
-import com.algolia.search.saas.Index;
-import com.algolia.search.saas.Query;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -37,11 +28,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
-import org.json.JSONObject;
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class BookList extends Fragment {
 
@@ -52,7 +40,6 @@ public class BookList extends Fragment {
     FirebaseUser currentUser;
     DatabaseReference myBooksRef;
     FloatingActionButton fab;
-
 
     @Nullable
     @Override
@@ -68,12 +55,8 @@ public class BookList extends Fragment {
         db = FirebaseDatabase.getInstance();
         currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
-
         // get list of my books
         myBooksRef = db.getReference("users").child(currentUser.getUid()).child("myBooks");
-
-
-
         myBooksRef.addValueEventListener(new ValueEventListener() {
 
             @Override
@@ -178,7 +161,6 @@ public class BookList extends Fragment {
                 return false;
             }
         } );
-
         return v;
     }
 
@@ -192,7 +174,4 @@ public class BookList extends Fragment {
         // Commit the transaction
         transaction.commit();
     }
-
-
-
 }

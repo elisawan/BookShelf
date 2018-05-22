@@ -4,26 +4,20 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.graphics.drawable.ColorDrawable;
-import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.afec.bookshelf.Models.ChatMessage;
 import com.afec.bookshelf.Models.Owner;
+import com.afec.bookshelf.Models.Chat;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
@@ -68,28 +62,22 @@ public class OwnerAdapter extends ArrayAdapter<Owner> {
                                 public void onClick(DialogInterface dialog, int id) {
                                     FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
                                     FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+                                    String currUserId = currentUser.getUid();
+                                    String ownerId = owner.getUid();
+                                    String chatId = Chat.Companion.chatID(currUserId,ownerId);
 
                                     String msg = "New book request from "+currentUser.getDisplayName()+" of ...";
                                     ChatMessage message = new ChatMessage(msg, currentUser.getUid(),System.currentTimeMillis());
                                     message.setBookReq(true);
 
-                                    DatabaseReference chatRef = firebaseDatabase.getReference("chat");
-                                    String currentUserUid = currentUser.getUid();
-                                    String ownerUid = owner.getUid();
-                                    String chatId;
-                                    if(currentUserUid.compareTo(ownerUid)>0){
-                                         chatId = ownerUid+currentUserUid;
-                                    }else{
-                                        chatId = currentUserUid+ownerUid;
-                                    }
-                                    chatRef.child(chatId).push().setValue(message);
+                                    Chat.Companion.sendMsgToChat(message,currentUser.getUid(),owner.getUid());
 
-                                    firebaseDatabase.getReference("users").child(currentUserUid).child("chat").child(ownerUid).setValue(chatId);
-                                    firebaseDatabase.getReference("users").child(ownerUid).child("chat").child(currentUserUid).setValue(chatId);
+                                    firebaseDatabase.getReference("users").child(currUserId).child("chat").child(ownerId).setValue(chatId);
+                                    firebaseDatabase.getReference("users").child(ownerId).child("chat").child(currUserId).setValue(chatId);
 
                                     dialog.cancel();
                                     Intent intent = new Intent(getContext(),Chat.class);
-                                    intent.putExtra("userYou",ownerUid);
+                                    intent.putExtra("userYou",ownerId);
                                     getContext().startActivity(intent);
                                 }
                             });

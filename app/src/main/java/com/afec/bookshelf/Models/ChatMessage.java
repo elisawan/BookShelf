@@ -1,13 +1,13 @@
 package com.afec.bookshelf.Models;
 
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
 public class ChatMessage {
     String message;
     String uid;
     long timestamp;
-
-
-
-    Boolean bookReq;
+    Boolean bookReq; //is this a special message for book request?
 
     public ChatMessage(String message, String UID, long timestamp){
         this.message=message;
@@ -46,4 +46,6 @@ public class ChatMessage {
     public void setBookReq(Boolean bookReq) {
         this.bookReq = bookReq;
     }
+
+
 }
