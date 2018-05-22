@@ -9,6 +9,8 @@ public class ChatMessage {
     long timestamp;
     Boolean bookReq; //is this a special message for book request?
 
+    public ChatMessage(){}
+
     public ChatMessage(String message, String UID, long timestamp){
         this.message=message;
         this.uid=UID;
