@@ -4,14 +4,19 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class ChatMessage {
+
     String message;
-    String uid;
     long timestamp;
-    Boolean bookReq; //is this a special message for book request?
+    Boolean bookReq = false; //is this a special message for book request?
+    String bookInstance;
+    String bookISBN;
+    String uid;
+    String toUserID;
 
     public ChatMessage(){}
 
     public ChatMessage(String message, String UID, long timestamp){
+        super();
         this.message=message;
         this.uid=UID;
         this.timestamp=timestamp;
@@ -23,14 +28,6 @@ public class ChatMessage {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public String getUid() {
-        return uid;
-    }
-
-    public void setUid(String UID) {
-        this.uid = UID;
     }
 
     public long getTimestamp() {
@@ -49,5 +46,35 @@ public class ChatMessage {
         this.bookReq = bookReq;
     }
 
+    public String getBookInstance() {
+        return bookInstance;
+    }
 
+    public void setBookInstance(String bookInstance) {
+        this.bookInstance = bookInstance;
+    }
+
+    public String getBookISBN() {
+        return bookISBN;
+    }
+
+    public void setBookISBN(String bookISBN) {
+        this.bookISBN = bookISBN;
+    }
+
+    public String getUid() {
+        return uid;
+    }
+
+    public void setUid(String uid) {
+        this.uid = uid;
+    }
+
+    public String getToUserID() {
+        return toUserID;
+    }
+
+    public void setToUserID(String toUserID) {
+        this.toUserID = toUserID;
+    }
 }

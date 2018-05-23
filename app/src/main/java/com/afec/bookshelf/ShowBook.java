@@ -1,6 +1,8 @@
 package com.afec.bookshelf;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
@@ -13,6 +15,8 @@ import android.widget.TextView;
 
 import com.afec.bookshelf.Models.Book;
 import com.afec.bookshelf.Models.Owner;
+import com.afec.bookshelf.Models.OwnerInstanceBook;
+import com.afec.bookshelf.Models.User;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -36,7 +40,7 @@ public class ShowBook extends Fragment {
     private ListView mListView;
     private TextView tv_title, tv_author, tv_publisher, tv_ed_year, tv_isbn, tv_desc;
     private ImageView iv_book;
-    List<Owner> owners;
+    List<OwnerInstanceBook> contentList;
     OwnerAdapter adapter;
 
     @Nullable
@@ -53,7 +57,7 @@ public class ShowBook extends Fragment {
         iv_book = (ImageView) v.findViewById(R.id.book_image);
         tv_desc = (TextView) v.findViewById(R.id.book_description);
 
-        owners = new ArrayList<Owner>();
+        contentList = new ArrayList<OwnerInstanceBook>();
 
         Bundle b = getArguments();
         if(b == null){
@@ -92,20 +96,34 @@ public class ShowBook extends Fragment {
             Toast.makeText(getActivity(),"ISBN not valid",Toast.LENGTH_SHORT).show();
         }
         getOwners(isbn);
-        adapter = new OwnerAdapter(getActivity(), owners);
+        adapter = new OwnerAdapter(getActivity(), contentList);
 
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Fragment newFragment = new ShowUserPublic();
-                Bundle b = new Bundle();
-                b.putString("username", owners.get(position).getUsername());
-                b.putString("rating", owners.get(position).getRating().toString());
-                b.putString("borrowedBooks", owners.get(position).getBorrowedBooks().toString());
-                b.putString("lentBooks", owners.get(position).getLentBooks().toString());
-                b.putString("bio", owners.get(position).getBiography());
-                newFragment.setArguments(b);
-                myStartFragment(newFragment);
+                DatabaseReference ownerRef = FirebaseDatabase.getInstance().getReference("users");
+                ownerRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User owner = dataSnapshot.getValue(User.class);
+                        Bundle b = new Bundle();
+                        b.putString("username", owner.getUsername());
+                        b.putString("rating", ((Float)owner.getRating()).toString());
+                        b.putString("borrowedBooks", ((Integer)owner.getBorrowedBooks()).toString());
+                        b.putString("lentBooks", ((Integer)owner.getLentBooks()).toString());
+                        b.putString("bio", owner.getBiography());
+
+                        Fragment newFragment = new ShowUserPublic();
+                        newFragment.setArguments(b);
+                        myStartFragment(newFragment);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+
+                    }
+                });
+
             }
         });
 
@@ -123,27 +141,29 @@ public class ShowBook extends Fragment {
         transaction.commit();
     }
 
-    public void getOwners(String isbn){
+    public void getOwners(final String isbn){
         DatabaseReference ownersRef = FirebaseDatabase.getInstance().getReference("books").child(isbn).child("owners");
         ownersRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot child : dataSnapshot.getChildren()) {
-                    String userId = child.getValue(String.class);
-                    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users").child(userId);
-                    userRef.addValueEventListener(new ValueEventListener() {
+                    final String userId = child.getValue(String.class);
+                    final String bookInstanceId = child.getKey();
+
+                    DatabaseReference userRef = FirebaseDatabase.getInstance().getReference("users");
+                    userRef.child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(DataSnapshot dataSnapshot) {
-                            Owner owner = dataSnapshot.getValue(Owner.class);
-                            owners.add(owner);
+                            User owner = dataSnapshot.getValue(User.class);
+                            contentList.add(new OwnerInstanceBook(userId,isbn,bookInstanceId,owner));
                             mListView.setAdapter(adapter);
                         }
-
                         @Override
                         public void onCancelled(DatabaseError databaseError) {
 
                         }
                     });
+
                 }
             }
 

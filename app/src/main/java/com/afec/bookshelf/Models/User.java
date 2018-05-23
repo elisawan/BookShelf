@@ -13,6 +13,9 @@ public class User {
     private String username;
     private Bitmap userPic;
 
+    public User() {
+    }
+
     public User(String uid, int addedBooks, String biography, int borrowedBooks, int lentBooks, float rating, String username) {
         this.uid = uid;
         this.addedBooks = addedBooks;

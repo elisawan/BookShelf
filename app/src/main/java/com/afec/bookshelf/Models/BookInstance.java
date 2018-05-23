@@ -85,20 +85,6 @@ public class BookInstance {
         this.bookId = bookId;
     }
 
-    public void acceptRequest (String fromUser, String toUser){
-
-        //1.set availability to false in Firebase
-        DatabaseReference bookInstRef = BookInstance.getFirebaseRef();
-        bookInstRef.child(bookId).child("availability").setValue(false);
-
-        //2. create confirmation message
-        String msg = "I acceped your book request";
-        ChatMessage message = new ChatMessage(msg, fromUser, System.currentTimeMillis());
-
-        //3.send the confirmation message in chat
-        Chat.Companion.sendMsgToChat(message, fromUser, toUser);
-    }
-
     static public DatabaseReference getFirebaseRef (){
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         return db.getReference("bookInstance");

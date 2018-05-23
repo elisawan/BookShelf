@@ -13,20 +13,32 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.afec.bookshelf.Models.ChatMessage;
-import com.afec.bookshelf.Models.Owner;
 import com.afec.bookshelf.Models.Chat;
+import com.afec.bookshelf.Models.OwnerInstanceBook;
+import com.afec.bookshelf.Models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.FirebaseDatabase;
-import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class OwnerAdapter extends ArrayAdapter<Owner> {
+public class OwnerAdapter extends ArrayAdapter<OwnerInstanceBook> {
+
+    String ownerID;
+    String isbn;
+    String bookInstanceID;
+    String currentUserId;
+
+    FirebaseDatabase firebaseDatabase;
+    FirebaseUser currentUser;
+
+    User owner;
+
+    OwnerViewHolder viewHolder;
 
     //Owner est la liste des models à afficher
-    public OwnerAdapter(Context context, List<Owner> owners) {
-        super(context, 0, owners);
+    public OwnerAdapter(Context context, List<OwnerInstanceBook> list) {
+        super(context, 0, list);
     }
 
     @Override
@@ -36,9 +48,16 @@ public class OwnerAdapter extends ArrayAdapter<Owner> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.row_owner,parent, false);
         }
 
-        final Owner owner = getItem(position);
+        firebaseDatabase = FirebaseDatabase.getInstance();
 
-        OwnerViewHolder viewHolder = (OwnerViewHolder) convertView.getTag();
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        currentUserId = currentUser.getUid();
+
+        ownerID = getItem(position).getOwnerID();
+        isbn = getItem(position).getISBN();
+        bookInstanceID = getItem(position).getBookInstanceID();
+        owner = getItem(position).getOwner();
+        viewHolder = (OwnerViewHolder) convertView.getTag();
 
         if(viewHolder == null){
             viewHolder = new OwnerViewHolder();
@@ -60,24 +79,23 @@ public class OwnerAdapter extends ArrayAdapter<Owner> {
                             R.string.Affirmative,
                             new DialogInterface.OnClickListener() {
                                 public void onClick(DialogInterface dialog, int id) {
-                                    FirebaseUser currentUser = FirebaseAuth.getInstance().getCurrentUser();
-                                    FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-                                    String currUserId = currentUser.getUid();
-                                    String ownerId = owner.getUid();
-                                    String chatId = Chat.Companion.chatID(currUserId,ownerId);
+                                    String chatId = Chat.Companion.chatID(currentUserId,ownerID);
 
                                     String msg = "New book request from "+currentUser.getDisplayName()+" of ...";
-                                    ChatMessage message = new ChatMessage(msg, currentUser.getUid(),System.currentTimeMillis());
+                                    ChatMessage message = new ChatMessage(msg, currentUserId, System.currentTimeMillis());
                                     message.setBookReq(true);
+                                    message.setBookInstance(bookInstanceID);
+                                    message.setBookISBN(isbn);
+                                    message.setToUserID(ownerID);
 
-                                    Chat.Companion.sendMsgToChat(message,currentUser.getUid(),owner.getUid());
+                                    Chat.Companion.sendMsgToChat(message,currentUserId,ownerID);
 
-                                    firebaseDatabase.getReference("users").child(currUserId).child("chat").child(ownerId).setValue(chatId);
-                                    firebaseDatabase.getReference("users").child(ownerId).child("chat").child(currUserId).setValue(chatId);
+                                    firebaseDatabase.getReference("users").child(currentUserId).child("chat").child(ownerID).setValue(chatId);
+                                    firebaseDatabase.getReference("users").child(ownerID).child("chat").child(currentUserId).setValue(chatId);
 
                                     dialog.cancel();
-                                    Intent intent = new Intent(getContext(),Chat.class);
-                                    intent.putExtra("userYou",ownerId);
+                                    Intent intent = new Intent(getContext(), com.afec.bookshelf.Chat.class);
+                                    intent.putExtra("userYou",ownerID);
                                     getContext().startActivity(intent);
                                 }
                             });
@@ -96,11 +114,14 @@ public class OwnerAdapter extends ArrayAdapter<Owner> {
             });
             convertView.setTag(viewHolder);
         }
-        //il ne reste plus qu'à remplir notre vue
+
+
         viewHolder.pseudo.setText(owner.getUsername());
-        viewHolder.distance.setText(owner.getDistance());
-        Picasso.with(getContext()).load(owner.getProfileImage()).placeholder(R.drawable.book_image_placeholder)
-                .into(viewHolder.avatar);
+
+        //il ne reste plus qu'à remplir notre vue
+
+        //viewHolder.distance.setText(owner.getDistance());
+        //Picasso.with(getContext()).load(owner.).placeholder(R.drawable.book_image_placeholder).into(viewHolder.avatar);
         return convertView;
     }
 
