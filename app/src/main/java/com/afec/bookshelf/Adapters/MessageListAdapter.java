@@ -1,9 +1,7 @@
 package com.afec.bookshelf.Adapters;
 
 import android.content.Context;
-import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,22 +11,22 @@ import android.widget.TextView;
 import com.afec.bookshelf.Chat;
 import com.afec.bookshelf.Models.ChatMessage;
 import com.afec.bookshelf.R;
+import com.google.firebase.auth.FirebaseAuth;
 
 import java.util.List;
+
 
 public class MessageListAdapter extends RecyclerView.Adapter {
 
     private static final int VIEW_TYPE_MESSAGE_SENT = 1;
     private static final int VIEW_TYPE_MESSAGE_RECEIVED = 2;
-    private Context mContext;
     private List<ChatMessage> mMessageList;
+    private String currentUser;
 
-
-    public MessageListAdapter(Context context, List<ChatMessage> messageList) {
-        mContext = context;
+    public MessageListAdapter(List<ChatMessage> messageList) {
         mMessageList = messageList;
+        currentUser = FirebaseAuth.getInstance().getCurrentUser().getUid();
     }
-
 
     @Override
     public int getItemCount() {
@@ -43,8 +41,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         ChatMessage message = (ChatMessage) mMessageList.get(position);
 
         Chat c = new Chat();
-        Log.e("bbbb","asfdasfda");
-        if (message.getUid().equals(c.getCurrentUser())) {
+        if (message.getUid().equals(currentUser)) {
 
             // If the current user is the sender of the message
 
@@ -52,11 +49,8 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         } else {
             // If some other user sent the message
             return VIEW_TYPE_MESSAGE_RECEIVED;
-
         }
-
     }
-
 
     // Inflates the appropriate layout according to the ViewType.
     @Override
@@ -73,7 +67,6 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                     .inflate(R.layout.item_message_received, parent, false);
             return new ReceivedMessageHolder(view);
         }
-
         return null;
     }
 
@@ -104,8 +97,6 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             timeText = (TextView) itemView.findViewById(R.id.text_message_time);
         }
 
-
-
         void bind(ChatMessage message) {
 
             messageText.setText(message.getMessage());
@@ -113,10 +104,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             // Format the stored timestamp into a readable String using method.
             timeText.setText(String.valueOf(message.getTimestamp()));
         }
-
     }
-
-
 
     private class ReceivedMessageHolder extends RecyclerView.ViewHolder {
 
@@ -133,8 +121,6 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             profileImage = (ImageView) itemView.findViewById(R.id.image_message_profile);
 
         }
-
-
 
         void bind(ChatMessage message) {
 

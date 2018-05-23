@@ -26,13 +26,11 @@ class ChatList : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
         val v: View = inflater.inflate(R.layout.fragment_chat_list, container, false)
-
         val lv: ListView = v.findViewById(R.id.listView)
 
         list_of_chat = ArrayList(100)
@@ -43,6 +41,7 @@ class ChatList : Fragment() {
         OtherReference.addValueEventListener(object : ValueEventListener {
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
+
                 for (child in dataSnapshot.children) {
                     //For each chat_id find the UID associated
                     val UID : String = child.key
@@ -50,9 +49,9 @@ class ChatList : Fragment() {
                     val username : DatabaseReference = db.getReference("users").child(UID).child("username")
 
                     username.addValueEventListener( object : ValueEventListener {
+
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             var name : String = dataSnapshot.value as String
-
                             var NewChat: ChatListItem = ChatListItem(UID, name, chatId, "prova")
 
                             list_of_chat.add(NewChat)

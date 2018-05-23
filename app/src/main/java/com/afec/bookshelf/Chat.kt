@@ -1,26 +1,17 @@
 package com.afec.bookshelf
 
 import android.app.Activity
-import android.app.Fragment
 import android.os.Bundle
-import android.os.Message
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
-import android.widget.Toast
 import com.afec.bookshelf.Adapters.MessageListAdapter
 import com.afec.bookshelf.Models.ChatMessage
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
-import org.w3c.dom.Text
-import java.sql.Time
-import java.time.LocalDateTime
 
 class Chat : Activity() {
 
@@ -42,9 +33,8 @@ class Chat : Activity() {
         setContentView(R.layout.activity_chat)
 
         mMessageRecycler = findViewById(R.id.recyclerview_message_list)
-        mMessageAdapater = MessageListAdapter(this, messageHistory)
+        mMessageAdapater = MessageListAdapter( messageHistory)
         mMessageRecycler.layoutManager = LinearLayoutManager(this)
-        mMessageRecycler.adapter = mMessageAdapater
 
         config()
     }
@@ -81,13 +71,13 @@ class Chat : Activity() {
         mDatabase = FirebaseDatabase.getInstance().reference
         mMessageReference = FirebaseDatabase.getInstance().getReference("chat").child(chatID)
 
-
         val messageEventListener = object : ChildEventListener{
             override fun onChildAdded(dataSnapshot: DataSnapshot?, previousChildName: String?) {
                 // A new message has been added
                 // onChildAdded() will be called for each node at the first time
                 val message = dataSnapshot!!.getValue(ChatMessage::class.java)
                 messageHistory.add(message!!)
+                mMessageRecycler.adapter = MessageListAdapter(messageHistory)
                 Log.e("msg", message?.message)
             }
 
@@ -106,19 +96,7 @@ class Chat : Activity() {
             override fun onChildRemoved(p0: DataSnapshot?) {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
-
-
         }
-
-
-
         mMessageReference!!.addChildEventListener(messageEventListener)
-
-
-
-    }
-
-    fun getCurrentUser(): String{
-        return userMeUid
     }
 }
