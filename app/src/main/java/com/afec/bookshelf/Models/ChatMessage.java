@@ -8,21 +8,23 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class ChatMessage {
 
-    String message;
-    long timestamp;
-    Boolean bookReq = false; //is this a special message for book request?
-    String bookInstance;
-    String bookISBN;
-    String uid;
-    String toUserID;
+    private String message;
+    private long timestamp;
+    private Boolean bookReq = false; //is this a special message for book request?
+    private String bookInstance;
+    private String bookISBN;
+    private String uid;
+    private String toUserID;
+    private Boolean isRead;
 
     public ChatMessage(){}
 
-    public ChatMessage(String message, String UID, long timestamp){
+    public ChatMessage(String message, String UID, long timestamp, boolean isRead){
         super();
         this.message=message;
         this.uid=UID;
         this.timestamp=timestamp;
+        this.isRead=isRead;
     }
 
     public String getMessage() {
@@ -81,6 +83,14 @@ public class ChatMessage {
         this.toUserID = toUserID;
     }
 
+    public Boolean getRead() {
+        return isRead;
+    }
+
+    public void setRead(Boolean isRead) {
+        this.isRead = isRead;
+    }
+
     public void acceptRequest(){
         //1.set availability to false
         FirebaseDatabase db = FirebaseDatabase.getInstance();
@@ -88,7 +98,7 @@ public class ChatMessage {
         bookInstRef.child("availability").setValue(false);
         //2.send confirmation message to the user who made the request
         FirebaseUser me = FirebaseAuth.getInstance().getCurrentUser();
-        ChatMessage message = new ChatMessage("Hi, I accepted your book request", me.getUid(), System.currentTimeMillis());
+        ChatMessage message = new ChatMessage("Hi, I accepted your book request", me.getUid(), System.currentTimeMillis(), false);
         Chat.Companion.sendMsgToChat(message, toUserID, uid);
     }
 }

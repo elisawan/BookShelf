@@ -74,7 +74,7 @@ class Chat : Activity() {
             val lb = messaggio?.length  //controllo se la stringa sia vuota o meno
             if(lb!=0) {
                 val time = System.currentTimeMillis()
-                message = ChatMessage(messaggio, userMeUid, time)
+                message = ChatMessage(messaggio, userMeUid, time, false)
                 fbRef.push().setValue(message)
                 message_written.text = ""
 

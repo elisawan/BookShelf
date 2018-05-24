@@ -82,11 +82,12 @@ public class OwnerAdapter extends ArrayAdapter<OwnerInstanceBook> {
                                     String chatId = Chat.Companion.chatID(currentUserId,ownerID);
 
                                     String msg = "New book request from "+currentUser.getDisplayName()+" of ...";
-                                    ChatMessage message = new ChatMessage(msg, currentUserId, System.currentTimeMillis());
+                                    ChatMessage message = new ChatMessage(msg, currentUserId, System.currentTimeMillis(), false);
                                     message.setBookReq(true);
                                     message.setBookInstance(bookInstanceID);
                                     message.setBookISBN(isbn);
                                     message.setToUserID(ownerID);
+                                    message.setRead(false);
 
                                     Chat.Companion.sendMsgToChat(message,currentUserId,ownerID);
 

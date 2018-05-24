@@ -7,14 +7,19 @@ import android.support.v4.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.AdapterView
-import android.widget.BaseAdapter
-import android.widget.ListView
-import android.widget.TextView
+import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
+import java.security.acl.LastOwnerException
 import java.util.*
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DataSnapshot
+import com.squareup.picasso.Picasso
+import com.google.firebase.database.ValueEventListener
+import com.google.firebase.database.DatabaseReference
+
+
 
 
 class ChatList : Fragment() {
@@ -52,38 +57,74 @@ class ChatList : Fragment() {
 
                         override fun onDataChange(dataSnapshot: DataSnapshot) {
                             var name : String = dataSnapshot.value as String
-                            var NewChat: ChatListItem = ChatListItem(UID, name, chatId, "prova")
+                            var lastMessageQuery : Query = db.getReference("chat").child(chatId).orderByKey().limitToLast(1)
 
-                            list_of_chat.add(NewChat)
+                            lastMessageQuery.addListenerForSingleValueEvent(object : ValueEventListener{
+                                override fun onDataChange(dataSnapshot: DataSnapshot) {
 
-                            lv.adapter = object : BaseAdapter() {
+                                    //wrong referencing!
+                                    if(dataSnapshot.value!=null){
 
-                                override fun getCount(): Int {
-                                    return list_of_chat.size
-                                }
+                                        var value : String = dataSnapshot.value!!.toString()
+                                        var messageId : String = value.substring(value.indexOf("{")+1, value.indexOf("="))
 
-                                override fun getItem(position: Int): Any {
-                                    return list_of_chat[position]
-                                }
+                                        val message : String = dataSnapshot.child(messageId).child("message").value!!.toString()
+                                        val read : Boolean = (dataSnapshot.child(messageId).child("read").value as Boolean?)!!
 
-                                override fun getItemId(position: Int): Long {
-                                    return position.toLong()
-                                }
+                                        var NewChat: ChatListItem = ChatListItem(UID, name, chatId, message, read)
 
-                                override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
-                                    var convertView = convertView
-                                    if (convertView == null) {
-                                        convertView = layoutInflater.inflate(R.layout.chat_item, parent, false)
+                                        list_of_chat.add(NewChat)
+
+                                        lv.adapter = object : BaseAdapter() {
+
+                                            override fun getCount(): Int {
+                                                return list_of_chat.size
+                                            }
+
+                                            override fun getItem(position: Int): Any {
+                                                return list_of_chat[position]
+                                            }
+
+                                            override fun getItemId(position: Int): Long {
+                                                return position.toLong()
+                                            }
+
+                                            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                                                var convertView = convertView
+                                                if (convertView == null) {
+                                                    convertView = layoutInflater.inflate(R.layout.chat_item, parent, false)
+                                                }
+                                                val iv = convertView!!.findViewById<View>(R.id.chat_image) as ImageView
+                                                Picasso.with(context).load(R.drawable.book_image_placeholder).into(iv)
+                                                if(read==false){
+                                                    db.getReference().child("chat").child(chatId).child(messageId).child("isRead").setValue(true)
+                                                    val notifIcon = convertView!!.findViewById<View>(R.id.chat_notificationIcon) as ImageView
+                                                    Picasso.with(context).load(android.R.drawable.ic_notification_overlay).into(notifIcon)
+                                                }
+                                                val username_tv = convertView?.findViewById<View>(R.id.chat_other_username) as TextView
+                                                username_tv.setText(list_of_chat[position].othername)
+                                                val preview_tv = convertView?.findViewById<View>(R.id.chat_preview) as TextView
+                                                preview_tv.setText(list_of_chat[position].preview)
+
+                                                return convertView
+                                            }
+                                        }
                                     }
-                                    //val iv = convertView!!.findViewById<View>(R.id.chat_image) as ImageView
-                                    //Picasso.with(context).load(list_of_chat[position].placeholder(R.drawable.book_image_placeholder).into(iv))
-                                    val username_tv = convertView?.findViewById<View>(R.id.chat_other_username) as TextView
-                                    username_tv.setText(list_of_chat[position].othername)
-                                    val preview_tv = convertView?.findViewById<View>(R.id.chat_preview) as TextView
-                                    preview_tv.setText(list_of_chat[position].preview)
-                                    return convertView
+
+
+
+
+
                                 }
-                            }
+
+                                override fun onCancelled(databaseError: DatabaseError) {
+                                    //Handle possible errors.
+                                }
+                            })
+
+
+
+
 
                         }
 
@@ -122,5 +163,5 @@ class ChatList : Fragment() {
 
 }
 
-class ChatListItem(var UID : String, var othername : String, var chat_id : String, var preview : String){
+class ChatListItem(var UID : String, var othername : String, var chat_id : String, var preview : String, var isRead : Boolean){
 }

@@ -24,6 +24,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class MessageListAdapter extends RecyclerView.Adapter {
 
@@ -156,7 +157,13 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             messageText.setText(message.getMessage());
 
             // Format the stored timestamp into a readable String using method.
-            timeText.setText(String.valueOf(message.getTimestamp()));
+            long duration = message.getTimestamp()/1000;
+            int day = (int)TimeUnit.SECONDS.toDays(duration);
+            long hours = TimeUnit.SECONDS.toHours(duration) - (day *24);
+            long minutes = TimeUnit.SECONDS.toMinutes(duration) - (TimeUnit.SECONDS.toHours(duration)* 60);
+            //long second = TimeUnit.SECONDS.toSeconds(duration) - (TimeUnit.SECONDS.toMinutes(duration) *60);
+            String time = hours + ":" + minutes;
+            timeText.setText(time);
         }
     }
 
@@ -181,7 +188,12 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             messageText.setText(message.getMessage());
 
             // Format the stored timestamp into a readable String using method.
-            timeText.setText(String.valueOf(message.getTimestamp()));
+            long duration = message.getTimestamp()/1000;
+            int day = (int)TimeUnit.SECONDS.toDays(duration);
+            long hours = TimeUnit.SECONDS.toHours(duration) - (day *24);
+            long minutes = TimeUnit.SECONDS.toMinutes(duration) - (TimeUnit.SECONDS.toHours(duration)* 60);
+            String time = hours + ":" + minutes;
+            timeText.setText(time);
 
             //nameText.setText(message.getSender().getNickname());
 
