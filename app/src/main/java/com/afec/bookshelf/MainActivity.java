@@ -178,23 +178,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Check for unread messages
-        DatabaseReference ref = db.getReference("users").child(user.getUid()).child("unreadMessages");
-        ref.addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                Boolean unread = dataSnapshot.getValue(Boolean.class);
-                if(unread){
-
-                }
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-
         StorageReference mImageRef =
                 FirebaseStorage.getInstance().getReference(user.getUid() + "/profilePic.png");
         mImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {

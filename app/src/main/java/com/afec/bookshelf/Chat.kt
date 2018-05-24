@@ -123,7 +123,28 @@ class Chat : Activity() {
             }
 
             override fun onChildChanged(p0: DataSnapshot?, p1: String?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                val message = p0!!.getValue(ChatMessage::class.java)
+                messageHistory.add(message!!)
+
+                if(message.uid !=userMeUid){
+                    val pendingIntent = PendingIntent.getActivity(baseContext, 0 /* Request code */, intent,
+                            PendingIntent.FLAG_ONE_SHOT)
+
+                    val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+
+                    val notificationBuilder = Notification.Builder(baseContext)
+                            .setContentTitle(message.message)
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setSound(defaultSoundUri)
+                            .setContentIntent(pendingIntent)
+                    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+                    notificationManager.notify(0 /* ID of notification */, notificationBuilder.build())
+
+                }
+
+                mMessageRecycler.adapter = MessageListAdapter(messageHistory)
+                Log.e("msg", message?.message)
             }
 
             override fun onChildRemoved(p0: DataSnapshot?) {
