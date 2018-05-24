@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:background="@color/colorNuanceLite"
     android:paddingTop="8dp">
 
     <ImageView
@@ -23,6 +24,8 @@
         android:layout_marginTop="4dp"
         android:text="John Doe"
         android:textSize="12sp"
+        android:maxLines="1"
+        android:ellipsize="end"
         app:layout_constraintLeft_toRightOf="@+id/image_message_profile"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -63,25 +66,29 @@
 
     <TextView
         android:id="@+id/req_book_title"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
         android:text="book title"
         android:textColor="@android:color/black"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/req_book_image"
         app:layout_constraintTop_toBottomOf="@+id/text_message_body" />
 
     <TextView
         android:id="@+id/req_book_author"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
         android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
+        android:ellipsize="end"
+        android:maxLines="1"
         android:text="book author"
         android:textColor="@android:color/black"
         app:layout_constraintBottom_toTopOf="@+id/req_book_accept"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/req_book_image"
         app:layout_constraintTop_toBottomOf="@+id/req_book_title"
         app:layout_constraintVertical_bias="0.137" />
@@ -90,12 +97,14 @@
         android:id="@+id/req_book_decline"
         android:layout_width="wrap_content"
         android:layout_height="37dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_weight="1"
         android:background="@drawable/rounded_rectangle_user"
-        android:textColor="@android:color/white"
         android:text="DECLINE"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toBottomOf="@+id/req_book_image" />
 
@@ -103,12 +112,14 @@
         android:id="@+id/req_book_accept"
         android:layout_width="wrap_content"
         android:layout_height="37dp"
+        android:layout_marginBottom="8dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_weight="1"
         android:background="@drawable/rounded_rectangle_sent"
-        android:textColor="@android:color/white"
         android:text="ACCEPT"
+        android:textColor="@android:color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toEndOf="@+id/req_book_decline"
         app:layout_constraintTop_toBottomOf="@+id/req_book_image" />
 

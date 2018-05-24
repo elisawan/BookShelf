@@ -37,7 +37,7 @@
         android:textColor="@android:color/black"
         android:layout_alignLeft="@+id/chat_other_username"
         android:layout_below="@+id/chat_other_username"
-        android:maxLines="2"
+        android:maxLines="1"
         android:ellipsize="end"
         tools:text="This is a preview of our chat" />
 
