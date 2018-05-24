@@ -20,11 +20,7 @@ class ChatNotificationService : IntentService("ChatService") {
     private var userMe: FirebaseUser? = null
     private var userMeUid: String? = null
 
-
-
-
     override fun onHandleIntent(intent: Intent?) {
-
 
         var fbAuth = FirebaseAuth.getInstance()
         userMe = fbAuth.currentUser!!
@@ -32,7 +28,6 @@ class ChatNotificationService : IntentService("ChatService") {
 
         mDatabase = FirebaseDatabase.getInstance().reference
         mMessageReference = FirebaseDatabase.getInstance().getReference("users").child(userMeUid).child("unreadMessages")
-
 
         val messageEventListener = object : ChildEventListener {
             override fun onCancelled(p0: DatabaseError?) {
