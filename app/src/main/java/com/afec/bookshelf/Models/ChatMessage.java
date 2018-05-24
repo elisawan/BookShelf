@@ -1,5 +1,8 @@
 package com.afec.bookshelf.Models;
 
+import com.afec.bookshelf.Models.Chat;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
@@ -76,5 +79,16 @@ public class ChatMessage {
 
     public void setToUserID(String toUserID) {
         this.toUserID = toUserID;
+    }
+
+    public void acceptRequest(){
+        //1.set availability to false
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference bookInstRef = db.getReference("book_instances").child(bookInstance);
+        bookInstRef.child("availability").setValue(false);
+        //2.send confirmation message to the user who made the request
+        FirebaseUser me = FirebaseAuth.getInstance().getCurrentUser();
+        ChatMessage message = new ChatMessage("Hi, I accepted your book request", me.getUid(), System.currentTimeMillis());
+        Chat.Companion.sendMsgToChat(message, toUserID, uid);
     }
 }

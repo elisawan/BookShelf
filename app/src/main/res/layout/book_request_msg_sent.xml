@@ -29,6 +29,41 @@
         app:layout_constraintBottom_toBottomOf="@+id/req_book_message"
         app:layout_constraintRight_toLeftOf="@+id/req_book_message" />
 
+    <ImageView
+        android:id="@+id/req_book_image"
+        android:layout_width="75dp"
+        android:layout_height="76dp"
+        android:layout_marginBottom="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:src="@drawable/book_image_placeholder"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/req_book_message"
+        app:srcCompat="@drawable/book_image_placeholder" />
+
+    <TextView
+        android:id="@+id/req_book_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="8dp"
+        android:layout_marginTop="8dp"
+        android:background="@color/colorSendMsg"
+        android:text="book title"
+        android:textColor="#ffffff"
+        app:layout_constraintEnd_toStartOf="@+id/req_book_image"
+        app:layout_constraintTop_toBottomOf="@+id/req_book_message" />
+
+    <TextView
+        android:id="@+id/req_book_author"
+        android:layout_width="76dp"
+        android:layout_height="18dp"
+        android:layout_marginEnd="8dp"
+        android:background="@color/colorSendMsg"
+        android:text="book author"
+        android:textColor="#ffffff"
+        app:layout_constraintEnd_toStartOf="@+id/req_book_image"
+        app:layout_constraintTop_toBottomOf="@+id/req_book_title" />
 
 
 
