@@ -28,11 +28,11 @@
 
     <TextView
         android:id="@+id/text_message_body"
-        android:layout_width="wrap_content"
+        android:layout_width="201dp"
         android:layout_height="wrap_content"
         android:layout_marginLeft="8dp"
         android:layout_marginTop="4dp"
-        android:background="#e60b57"
+        android:background="@drawable/rounded_rectangle_user"
         android:maxWidth="240dp"
         android:padding="8dp"
         android:text="Hi, I give me your book!"
@@ -65,11 +65,10 @@
         android:id="@+id/req_book_title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
         android:text="book title"
-        android:textColor="#ffffff"
-        android:background="@color/colorReceiveMsg"
+        android:textColor="@android:color/black"
         app:layout_constraintStart_toEndOf="@+id/req_book_image"
         app:layout_constraintTop_toBottomOf="@+id/text_message_body" />
 
@@ -78,22 +77,24 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="8dp"
-        android:layout_marginStart="8dp"
+        android:layout_marginStart="12dp"
         android:layout_marginTop="8dp"
         android:text="book author"
-        android:textColor="#ffffff"
-        android:background="@color/colorReceiveMsg"
+        android:textColor="@android:color/black"
         app:layout_constraintBottom_toTopOf="@+id/req_book_accept"
         app:layout_constraintStart_toEndOf="@+id/req_book_image"
-        app:layout_constraintTop_toBottomOf="@+id/req_book_title" />
+        app:layout_constraintTop_toBottomOf="@+id/req_book_title"
+        app:layout_constraintVertical_bias="0.137" />
 
     <Button
         android:id="@+id/req_book_decline"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="37dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_weight="1"
+        android:background="@drawable/rounded_rectangle_user"
+        android:textColor="@android:color/white"
         android:text="DECLINE"
         app:layout_constraintStart_toStartOf="@+id/guideline2"
         app:layout_constraintTop_toBottomOf="@+id/req_book_image" />
@@ -101,10 +102,12 @@
     <Button
         android:id="@+id/req_book_accept"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="37dp"
         android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
         android:layout_weight="1"
+        android:background="@drawable/rounded_rectangle_sent"
+        android:textColor="@android:color/white"
         android:text="ACCEPT"
         app:layout_constraintStart_toEndOf="@+id/req_book_decline"
         app:layout_constraintTop_toBottomOf="@+id/req_book_image" />
