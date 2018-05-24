@@ -69,6 +69,7 @@
         android:layout_marginTop="8dp"
         android:text="book title"
         android:textColor="#ffffff"
+        android:background="@color/colorReceiveMsg"
         app:layout_constraintStart_toEndOf="@+id/req_book_image"
         app:layout_constraintTop_toBottomOf="@+id/text_message_body" />
 
@@ -81,6 +82,7 @@
         android:layout_marginTop="8dp"
         android:text="book author"
         android:textColor="#ffffff"
+        android:background="@color/colorReceiveMsg"
         app:layout_constraintBottom_toTopOf="@+id/req_book_accept"
         app:layout_constraintStart_toEndOf="@+id/req_book_image"
         app:layout_constraintTop_toBottomOf="@+id/req_book_title" />
