@@ -90,9 +90,6 @@ class ChatList : Fragment() {
                         override fun onCancelled(databaseError: DatabaseError) {}
                     })
 
-
-
-
                 }
             }
             override fun onCancelled(databaseError: DatabaseError) {}
@@ -103,11 +100,6 @@ class ChatList : Fragment() {
             intent.putExtra("userYou", list_of_chat[position].UID)
             context?.startActivity(intent)
         }
-
-
-
-
-
 
         return v
     }
