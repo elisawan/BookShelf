@@ -1,7 +1,13 @@
 package com.afec.bookshelf
 
 import android.app.Activity
+import android.app.Notification
+import android.app.NotificationManager
+import android.app.PendingIntent
+import android.content.Context
+import android.media.RingtoneManager
 import android.os.Bundle
+import android.support.v4.app.NotificationCompat
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
@@ -54,6 +60,12 @@ class Chat : Activity() {
                 .child("chat/")
                 .child(chatID)
 
+        var receiverUnreadMessagesUpdaterReference = FirebaseDatabase.getInstance()
+                .reference
+                .child("users")
+                .child(userYouUid)
+                .child("unreadMessages")
+
         button_send = findViewById(R.id.button_chatbox_send)
         message_written = findViewById(R.id.edittext_chatbox)
 
@@ -65,6 +77,9 @@ class Chat : Activity() {
                 message = ChatMessage(messaggio, userMeUid, time)
                 fbRef.push().setValue(message)
                 message_written.text = ""
+
+                receiverUnreadMessagesUpdaterReference.push().setValue(true)
+
             }
         }
 
@@ -77,6 +92,24 @@ class Chat : Activity() {
                 // onChildAdded() will be called for each node at the first time
                 val message = dataSnapshot!!.getValue(ChatMessage::class.java)
                 messageHistory.add(message!!)
+
+                if(message.uid !=userMeUid){
+                    val pendingIntent = PendingIntent.getActivity(baseContext, 0 /* Request code */, intent,
+                            PendingIntent.FLAG_ONE_SHOT)
+
+                    val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
+
+                    val notificationBuilder = Notification.Builder(baseContext)
+                            .setContentTitle(message.message)
+                            .setSmallIcon(R.mipmap.ic_launcher)
+                            .setSound(defaultSoundUri)
+                            .setContentIntent(pendingIntent)
+                    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+
+                    notificationManager.notify(0 /* ID of notification */, notificationBuilder.build())
+
+                }
+
                 mMessageRecycler.adapter = MessageListAdapter(messageHistory)
                 Log.e("msg", message?.message)
             }
