@@ -14,7 +14,7 @@ import com.google.firebase.database.*
 import android.app.PendingIntent
 import android.widget.Toast
 import android.R.string.cancel
-
+import android.content.pm.PackageManager
 
 
 
@@ -41,7 +41,8 @@ import android.R.string.cancel
 
      override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
          Log.i("LocalService", "Received start id $startId: $intent")
-         return Service.START_STICKY
+
+         return Service.START_NOT_STICKY
      }
 
      override fun onDestroy() {
@@ -76,7 +77,7 @@ import android.R.string.cancel
             override fun onChildChanged(dataSnapshot: DataSnapshot?, p1: String?) {
                 var unreadMessage = dataSnapshot!!.getValue(Boolean::class.java)
 
-                if(unreadMessage!!){
+                if(!unreadMessage!!){
 
                     val intent = Intent(baseContext,ChatNotificationService::class.java)
 
@@ -100,9 +101,9 @@ import android.R.string.cancel
             override fun onChildAdded(dataSnapshot: DataSnapshot?, p1: String?) {
                 var unreadMessage = dataSnapshot!!.getValue(Boolean::class.java)
 
-                if(unreadMessage!! ){
+                if(!unreadMessage!! ){
 
-                    val intent = Intent(baseContext,ChatNotificationService::class.java)
+                    val intent = Intent(baseContext,ChatList::class.java)
 
 
                     val contentIntent = PendingIntent.getActivity(baseContext, 0, intent,0)
