@@ -54,12 +54,10 @@ class ChatList : Fragment() {
 
                 for (child in dataSnapshot.children) {
                     //For each chat_id find the UID associated
-                    val MessageUID : String = child.key
+                    val otherUID : String = child.key
                     var chatId : String = child.value as String
-                    val username : DatabaseReference = db.getReference("users").child(MessageUID).child("username")
-                    var otherUID : String = chatId.substring(MessageUID.length)
-                    if(otherUID.equals(User.uid))
-                        otherUID=chatId.substring(0,MessageUID.length-1)
+                    val username : DatabaseReference = db.getReference("users").child(otherUID).child("username")
+
 
                     username.addValueEventListener( object : ValueEventListener {
 
@@ -79,12 +77,12 @@ class ChatList : Fragment() {
                                         val message : String = dataSnapshot.child(messageId).child("message").value!!.toString()
                                         var read : Boolean = true
 
-                                        if(MessageUID.equals(otherUID)) {
+                                        if(otherUID.equals(otherUID)) {
                                             read = (dataSnapshot.child(messageId).child("read").value as Boolean?)!!
                                         }
 
 
-                                        var NewChat: ChatListItem = ChatListItem(MessageUID, name, chatId, message, read)
+                                        var NewChat: ChatListItem = ChatListItem(otherUID, name, chatId, message, read)
 
                                         list_of_chat.add(NewChat)
 
@@ -110,7 +108,7 @@ class ChatList : Fragment() {
 
                                                 val iv = convertView!!.findViewById<View>(R.id.chat_image) as ImageView
 
-                                                val mImageRef = FirebaseStorage.getInstance().getReference(otherUID + "/profilePic.png")
+                                                val mImageRef = FirebaseStorage.getInstance().getReference(list_of_chat[position].UID + "/profilePic.png")
                                                 mImageRef.downloadUrl.addOnSuccessListener{
                                                     uri -> Picasso.with(context).load(uri.toString()).noPlaceholder().into(iv)
                                                 }.addOnFailureListener {
@@ -120,7 +118,7 @@ class ChatList : Fragment() {
 
                                                 val notifIcon = convertView!!.findViewById<View>(R.id.chat_notificationIcon) as ImageView
 
-                                                if(read == true)
+                                                if(list_of_chat[position].isRead == true)
                                                     notifIcon.visibility = View.INVISIBLE
                                                 else
                                                     notifIcon.visibility = View.VISIBLE
@@ -136,19 +134,12 @@ class ChatList : Fragment() {
                                     }
 
 
-
-
-
                                 }
 
                                 override fun onCancelled(databaseError: DatabaseError) {
                                     //Handle possible errors.
                                 }
                             })
-
-
-
-
 
                         }
 
