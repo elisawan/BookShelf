@@ -79,7 +79,7 @@ class Chat : Activity() {
                 message_written.text = ""
 
                 receiverUnreadMessagesUpdaterReference.push().setValue(true)
-
+                mMessageRecycler.scrollToPosition(mMessageRecycler.adapter.itemCount-1)
             }
         }
 
@@ -94,10 +94,10 @@ class Chat : Activity() {
                 val messageId = dataSnapshot.key
                 messageHistory.add(message!!)
 
-                /*if(message.uid !=userMeUid && message.read==false){
+                if(message.uid !=userMeUid && message.read==false){
                     FirebaseDatabase.getInstance().getReference("chat").child(chatID).child(messageId).child("read").setValue(true)
 
-                    val pendingIntent = PendingIntent.getActivity(baseContext, 0 /* Request code */, intent,
+                    /*val pendingIntent = PendingIntent.getActivity(baseContext, 0 *//* Request code *//*, intent,
                             PendingIntent.FLAG_ONE_SHOT)
 
                     val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
@@ -109,11 +109,13 @@ class Chat : Activity() {
                             .setContentIntent(pendingIntent)
                     val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-                    notificationManager.notify(0 /* ID of notification */, notificationBuilder.build())
+                    notificationManager.notify(0 *//* ID of notification *//*, notificationBuilder.build())*/
 
-                }*/
+                }
 
                 mMessageRecycler.adapter = MessageListAdapter(messageHistory)
+                mMessageRecycler.scrollToPosition(mMessageRecycler.adapter.itemCount-1)
+
                 //Log.e("msg", message?.message)
             }
 

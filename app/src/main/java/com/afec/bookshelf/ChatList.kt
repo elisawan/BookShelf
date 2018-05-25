@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Message
 import android.support.v4.app.Fragment
+import android.util.ArrayMap
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -25,14 +26,16 @@ import com.squareup.picasso.Picasso
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.storage.FirebaseStorage
-
+import kotlin.collections.ArrayList
 
 class ChatList : Fragment() {
 
-    lateinit var list_of_chat : ArrayList<ChatListItem>
+    lateinit var map_of_chat : MutableMap<String,ChatListItem>
     lateinit var db : FirebaseDatabase
     lateinit var User : FirebaseUser
     lateinit var OtherReference : DatabaseReference
+    lateinit var v: View
+    lateinit var lv: ListView
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,13 +43,25 @@ class ChatList : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         // Inflate the layout for this fragment
-        val v: View = inflater.inflate(R.layout.fragment_chat_list, container, false)
-        val lv: ListView = v.findViewById(R.id.listView)
+        v = inflater.inflate(R.layout.fragment_chat_list, container, false)
+        lv = v.findViewById(R.id.listView)
 
-        list_of_chat = ArrayList(100)
+        map_of_chat = ArrayMap<String,ChatListItem>()
         db = FirebaseDatabase.getInstance()
         User = FirebaseAuth.getInstance().currentUser!!
         OtherReference = db.getReference("users").child(User.uid).child("chat")
+
+        lv.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, position, id ->
+            val intent = Intent(context, Chat::class.java)
+            intent.putExtra("userYou", map_of_chat.values.toList()[position].UID)
+            context?.startActivity(intent)
+        }
+
+        return v
+    }
+
+    override fun onResume(){
+        super.onResume()
 
         OtherReference.addValueEventListener(object : ValueEventListener {
 
@@ -54,12 +69,9 @@ class ChatList : Fragment() {
 
                 for (child in dataSnapshot.children) {
                     //For each chat_id find the UID associated
-                    val MessageUID : String = child.key
+                    val otherUID : String = child.key
                     var chatId : String = child.value as String
-                    val username : DatabaseReference = db.getReference("users").child(MessageUID).child("username")
-                    var otherUID : String = chatId.substring(MessageUID.length)
-                    if(otherUID.equals(User.uid))
-                        otherUID=chatId.substring(0,MessageUID.length-1)
+                    val username : DatabaseReference = db.getReference("users").child(otherUID).child("username")
 
                     username.addValueEventListener( object : ValueEventListener {
 
@@ -67,7 +79,7 @@ class ChatList : Fragment() {
                             var name : String = dataSnapshot.value as String
                             var lastMessageQuery : Query = db.getReference("chat").child(chatId).orderByKey().limitToLast(1)
 
-                            lastMessageQuery.addListenerForSingleValueEvent(object : ValueEventListener{
+                            lastMessageQuery.addValueEventListener(object : ValueEventListener{
                                 override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                                     //wrong referencing!
@@ -79,23 +91,23 @@ class ChatList : Fragment() {
                                         val message : String = dataSnapshot.child(messageId).child("message").value!!.toString()
                                         var read : Boolean = true
 
-                                        if(MessageUID.equals(otherUID)) {
+                                        if(otherUID.equals(otherUID)) {
                                             read = (dataSnapshot.child(messageId).child("read").value as Boolean?)!!
                                         }
 
 
-                                        var NewChat: ChatListItem = ChatListItem(MessageUID, name, chatId, message, read)
+                                        var NewChat: ChatListItem = ChatListItem(otherUID, name, chatId, message, read)
 
-                                        list_of_chat.add(NewChat)
+                                        map_of_chat.put(NewChat.UID, NewChat)
 
                                         lv.adapter = object : BaseAdapter() {
 
                                             override fun getCount(): Int {
-                                                return list_of_chat.size
+                                                return map_of_chat.size
                                             }
 
                                             override fun getItem(position: Int): Any {
-                                                return list_of_chat[position]
+                                                return map_of_chat.values.toList()[position]
                                             }
 
                                             override fun getItemId(position: Int): Long {
@@ -110,7 +122,7 @@ class ChatList : Fragment() {
 
                                                 val iv = convertView!!.findViewById<View>(R.id.chat_image) as ImageView
 
-                                                val mImageRef = FirebaseStorage.getInstance().getReference(otherUID + "/profilePic.png")
+                                                val mImageRef = FirebaseStorage.getInstance().getReference(map_of_chat.values.toList()[position].UID + "/profilePic.png")
                                                 mImageRef.downloadUrl.addOnSuccessListener{
                                                     uri -> Picasso.with(context).load(uri.toString()).noPlaceholder().into(iv)
                                                 }.addOnFailureListener {
@@ -120,53 +132,34 @@ class ChatList : Fragment() {
 
                                                 val notifIcon = convertView!!.findViewById<View>(R.id.chat_notificationIcon) as ImageView
 
-                                                if(read == true)
+                                                if(map_of_chat.values.toList()[position].isRead == true)
                                                     notifIcon.visibility = View.INVISIBLE
                                                 else
                                                     notifIcon.visibility = View.VISIBLE
 
                                                 val username_tv = convertView?.findViewById<View>(R.id.chat_other_username) as TextView
-                                                username_tv.setText(list_of_chat[position].othername)
+                                                username_tv.setText(map_of_chat.values.toList()[position].othername)
                                                 val preview_tv = convertView?.findViewById<View>(R.id.chat_preview) as TextView
-                                                preview_tv.setText(list_of_chat[position].preview)
+                                                preview_tv.setText(map_of_chat.values.toList()[position].preview)
 
                                                 return convertView
                                             }
                                         }
                                     }
-
-
-
-
-
                                 }
 
                                 override fun onCancelled(databaseError: DatabaseError) {
                                     //Handle possible errors.
                                 }
                             })
-
-
-
-
-
                         }
 
                         override fun onCancelled(databaseError: DatabaseError) {}
                     })
-
                 }
             }
             override fun onCancelled(databaseError: DatabaseError) {}
         })
-
-        lv.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, position, id ->
-            val intent = Intent(context, Chat::class.java)
-            intent.putExtra("userYou", list_of_chat[position].UID)
-            context?.startActivity(intent)
-        }
-
-        return v
     }
 
     override fun onAttach(context: Context) {
@@ -176,7 +169,6 @@ class ChatList : Fragment() {
     override fun onDetach() {
         super.onDetach()
     }
-
 }
 
 class ChatListItem(var UID : String, var othername : String, var chat_id : String, var preview : String, var isRead : Boolean){
