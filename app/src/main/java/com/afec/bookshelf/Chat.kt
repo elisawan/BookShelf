@@ -94,7 +94,7 @@ class Chat : Activity() {
                 val messageId = dataSnapshot.key
                 messageHistory.add(message!!)
 
-                if(message.uid !=userMeUid && message.read==false){
+                /*if(message.uid !=userMeUid && message.read==false){
                     FirebaseDatabase.getInstance().getReference("chat").child(chatID).child(messageId).child("read").setValue(true)
 
                     val pendingIntent = PendingIntent.getActivity(baseContext, 0 /* Request code */, intent,
@@ -111,10 +111,10 @@ class Chat : Activity() {
 
                     notificationManager.notify(0 /* ID of notification */, notificationBuilder.build())
 
-                }
+                }*/
 
                 mMessageRecycler.adapter = MessageListAdapter(messageHistory)
-                Log.e("msg", message?.message)
+                //Log.e("msg", message?.message)
             }
 
             override fun onCancelled(p0: DatabaseError?) {
