@@ -150,6 +150,9 @@ public class EditUser extends Fragment {
                                         "com.afec.bookshelf.fileprovider",
                                         photoFile);
                                 takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoURI);
+                                takePictureIntent.putExtra("android.intent.extras.CAMERA_FACING", android.hardware.Camera.CameraInfo.CAMERA_FACING_FRONT);
+                                takePictureIntent.putExtra("android.intent.extras.LENS_FACING_FRONT", 1);
+                                takePictureIntent.putExtra("android.intent.extra.USE_FRONT_CAMERA", true);
                                 startActivityForResult(takePictureIntent, SNAP_PIC);
                             }
                         }
