@@ -193,8 +193,8 @@ public class MainActivity extends AppCompatActivity {
                 Log.e("ERRORE RECUPERO IMG: ", exception.getMessage().toString());
             }
         });
-
-
+        Intent serviceIntent = new Intent(this, ChatNotificationService.class);
+        startService(serviceIntent);
     }
 
     @Override

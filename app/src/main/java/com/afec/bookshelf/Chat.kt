@@ -126,7 +126,7 @@ class Chat : Activity() {
             }
 
             override fun onChildChanged(p0: DataSnapshot?, p1: String?) {
-                val message = p0!!.getValue(ChatMessage::class.java)
+                /*val message = p0!!.getValue(ChatMessage::class.java)
                 messageHistory.add(message!!)
 
                 if(message.uid !=userMeUid && message.read==false){
@@ -147,7 +147,7 @@ class Chat : Activity() {
                 }
 
                 mMessageRecycler.adapter = MessageListAdapter(messageHistory)
-                Log.e("msg", message?.message)
+                Log.e("msg", message?.message)*/
             }
 
             override fun onChildRemoved(p0: DataSnapshot?) {
