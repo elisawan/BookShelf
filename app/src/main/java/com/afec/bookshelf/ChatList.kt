@@ -2,12 +2,18 @@ package com.afec.bookshelf
 
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.os.Message
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import com.firebase.ui.auth.AuthUI.getApplicationContext
+import com.google.android.gms.tasks.OnFailureListener
+import com.google.android.gms.tasks.OnSuccessListener
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
@@ -18,8 +24,7 @@ import com.google.firebase.database.DataSnapshot
 import com.squareup.picasso.Picasso
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.DatabaseReference
-
-
+import com.google.firebase.storage.FirebaseStorage
 
 
 class ChatList : Fragment() {
@@ -49,9 +54,12 @@ class ChatList : Fragment() {
 
                 for (child in dataSnapshot.children) {
                     //For each chat_id find the UID associated
-                    val UID : String = child.key
+                    val MessageUID : String = child.key
                     var chatId : String = child.value as String
-                    val username : DatabaseReference = db.getReference("users").child(UID).child("username")
+                    val username : DatabaseReference = db.getReference("users").child(MessageUID).child("username")
+                    var otherUID : String = chatId.substring(MessageUID.length)
+                    if(otherUID.equals(User.uid))
+                        otherUID=chatId.substring(0,MessageUID.length-1)
 
                     username.addValueEventListener( object : ValueEventListener {
 
@@ -69,9 +77,14 @@ class ChatList : Fragment() {
                                         var messageId : String = value.substring(value.indexOf("{")+1, value.indexOf("="))
 
                                         val message : String = dataSnapshot.child(messageId).child("message").value!!.toString()
-                                        val read : Boolean = (dataSnapshot.child(messageId).child("read").value as Boolean?)!!
+                                        var read : Boolean = true
 
-                                        var NewChat: ChatListItem = ChatListItem(UID, name, chatId, message, read)
+                                        if(MessageUID.equals(otherUID)) {
+                                            read = (dataSnapshot.child(messageId).child("read").value as Boolean?)!!
+                                        }
+
+
+                                        var NewChat: ChatListItem = ChatListItem(MessageUID, name, chatId, message, read)
 
                                         list_of_chat.add(NewChat)
 
@@ -94,13 +107,24 @@ class ChatList : Fragment() {
                                                 if (convertView == null) {
                                                     convertView = layoutInflater.inflate(R.layout.chat_item, parent, false)
                                                 }
+
                                                 val iv = convertView!!.findViewById<View>(R.id.chat_image) as ImageView
-                                                Picasso.with(context).load(R.drawable.book_image_placeholder).into(iv)
-                                                if(read==false){
-                                                    db.getReference().child("chat").child(chatId).child(messageId).child("isRead").setValue(true)
-                                                    val notifIcon = convertView!!.findViewById<View>(R.id.chat_notificationIcon) as ImageView
-                                                    Picasso.with(context).load(android.R.drawable.ic_notification_overlay).into(notifIcon)
+
+                                                val mImageRef = FirebaseStorage.getInstance().getReference(otherUID + "/profilePic.png")
+                                                mImageRef.downloadUrl.addOnSuccessListener{
+                                                    uri -> Picasso.with(context).load(uri.toString()).noPlaceholder().into(iv)
+                                                }.addOnFailureListener {
+                                                    exception -> Log.e("ERRORE RECUPERO IMG: ", exception.message.toString())
+                                                    Picasso.with(context).load(R.drawable.book_image_placeholder).into(iv)
                                                 }
+
+                                                val notifIcon = convertView!!.findViewById<View>(R.id.chat_notificationIcon) as ImageView
+
+                                                if(read == true)
+                                                    notifIcon.visibility = View.INVISIBLE
+                                                else
+                                                    notifIcon.visibility = View.VISIBLE
+
                                                 val username_tv = convertView?.findViewById<View>(R.id.chat_other_username) as TextView
                                                 username_tv.setText(list_of_chat[position].othername)
                                                 val preview_tv = convertView?.findViewById<View>(R.id.chat_preview) as TextView

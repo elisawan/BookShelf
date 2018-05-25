@@ -178,6 +178,7 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+
         StorageReference mImageRef =
                 FirebaseStorage.getInstance().getReference(user.getUid() + "/profilePic.png");
         mImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {

@@ -9,7 +9,7 @@ class Chat {
 
         fun firebaseRef():DatabaseReference{
             val db = FirebaseDatabase.getInstance()
-            return db.reference.child("chat");
+            return db.reference.child("chat")
         }
 
         fun chatID(uid1: String, uid2: String): String {

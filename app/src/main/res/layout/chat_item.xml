@@ -47,7 +47,7 @@
         android:layout_height="20dp"
         android:layout_alignBottom="@id/chat_other_username"
         android:layout_alignParentEnd="true"
-        android:layout_marginLeft="225dp"
-        android:layout_toRightOf="@id/chat_other_username" />
+        android:src="@android:drawable/ic_notification_overlay"
+        android:visibility="invisible"/>
 
 </RelativeLayout>
