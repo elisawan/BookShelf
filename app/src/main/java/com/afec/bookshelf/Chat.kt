@@ -78,7 +78,7 @@ class Chat : Activity() {
                 fbRef.push().setValue(message)
                 message_written.text = ""
 
-                receiverUnreadMessagesUpdaterReference.push().setValue(true)
+                receiverUnreadMessagesUpdaterReference.setValue(true)
                 mMessageRecycler.scrollToPosition(mMessageRecycler.adapter.itemCount-1)
             }
         }

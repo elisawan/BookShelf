@@ -39,6 +39,8 @@ class ChatList : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -56,6 +58,13 @@ class ChatList : Fragment() {
             intent.putExtra("userYou", map_of_chat.values.toList()[position].UID)
             context?.startActivity(intent)
         }
+
+        FirebaseDatabase.getInstance()
+                .reference
+                .child("users")
+                .child(User.uid)
+                .child("unreadMessages")
+                .setValue(false)
 
         return v
     }

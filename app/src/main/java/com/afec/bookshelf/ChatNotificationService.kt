@@ -77,7 +77,7 @@ import android.content.pm.PackageManager
             override fun onChildChanged(dataSnapshot: DataSnapshot?, p1: String?) {
                 var unreadMessage = dataSnapshot!!.getValue(Boolean::class.java)
 
-                if(!unreadMessage!!){
+                if(unreadMessage!!){
 
                     val intent = Intent(baseContext,ChatNotificationService::class.java)
 
@@ -101,7 +101,7 @@ import android.content.pm.PackageManager
             override fun onChildAdded(dataSnapshot: DataSnapshot?, p1: String?) {
                 var unreadMessage = dataSnapshot!!.getValue(Boolean::class.java)
 
-                if(!unreadMessage!! ){
+                if(unreadMessage!! ){
 
                     val intent = Intent(baseContext,ChatList::class.java)
 
