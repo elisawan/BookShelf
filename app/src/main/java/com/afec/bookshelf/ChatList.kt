@@ -11,16 +11,12 @@ import android.widget.*
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
-import java.security.acl.LastOwnerException
 import java.util.*
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DataSnapshot
 import com.squareup.picasso.Picasso
 import com.google.firebase.database.ValueEventListener
 import com.google.firebase.database.DatabaseReference
-
-
-
 
 class ChatList : Fragment() {
 
@@ -110,27 +106,16 @@ class ChatList : Fragment() {
                                             }
                                         }
                                     }
-
-
-
-
-
                                 }
 
                                 override fun onCancelled(databaseError: DatabaseError) {
                                     //Handle possible errors.
                                 }
                             })
-
-
-
-
-
                         }
 
                         override fun onCancelled(databaseError: DatabaseError) {}
                     })
-
                 }
             }
             override fun onCancelled(databaseError: DatabaseError) {}
@@ -152,7 +137,6 @@ class ChatList : Fragment() {
     override fun onDetach() {
         super.onDetach()
     }
-
 }
 
 class ChatListItem(var UID : String, var othername : String, var chat_id : String, var preview : String, var isRead : Boolean){

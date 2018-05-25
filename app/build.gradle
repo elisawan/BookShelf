@@ -1,5 +1,4 @@
 apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
 
 android {
     compileSdkVersion 27
@@ -55,11 +54,13 @@ dependencies {
     implementation 'com.fasterxml.jackson.core:jackson-annotations:2.7.3'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.7.3'
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    implementation 'com.google.firebase:firebase-messaging:15.0.0'
 }
 
-apply plugin: 'com.google.gms.google-services'
 repositories {
     mavenCentral()
 }
 
 apply plugin: 'kotlin-android-extensions'
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'kotlin-android'
