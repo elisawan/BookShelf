@@ -136,7 +136,7 @@ class ChatList : Fragment() {
                                                     uri -> Picasso.with(context).load(uri.toString()).noPlaceholder().into(iv)
                                                 }.addOnFailureListener {
                                                     exception -> Log.e("ERRORE RECUPERO IMG: ", exception.message.toString())
-                                                    Picasso.with(context).load(R.drawable.book_image_placeholder).into(iv)
+                                                    Picasso.with(context).load(R.drawable.ic_account_circle_black_24dp).into(iv)
                                                 }
 
                                                 val notifIcon = convertView!!.findViewById<View>(R.id.chat_notificationIcon) as ImageView
@@ -155,6 +155,11 @@ class ChatList : Fragment() {
                                             }
                                         }
                                     }
+
+
+
+
+
                                 }
 
                                 override fun onCancelled(databaseError: DatabaseError) {

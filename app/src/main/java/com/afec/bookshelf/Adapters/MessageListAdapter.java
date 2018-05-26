@@ -277,6 +277,17 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                     alertD.show();
                 }
             });
+            declineB.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    message.declineRequest();
+                    //Display dialog box
+                    AlertDialog.Builder alertB = new AlertDialog.Builder(v.getContext());
+                    alertB.setMessage("Book request declined");
+                    AlertDialog alertD = alertB.create();
+                    alertD.show();
+                }
+            });
         }
     }
 

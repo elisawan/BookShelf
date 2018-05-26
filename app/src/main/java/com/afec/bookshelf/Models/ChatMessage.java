@@ -101,4 +101,15 @@ public class ChatMessage {
         ChatMessage message = new ChatMessage("Hi, I accepted your book request", me.getUid(), System.currentTimeMillis(), false);
         Chat.Companion.sendMsgToChat(message, toUserID, uid);
     }
+
+    public void declineRequest(){
+        //1.set availability to true
+        FirebaseDatabase db = FirebaseDatabase.getInstance();
+        DatabaseReference bookInstRef = db.getReference("book_instances").child(bookInstance);
+        bookInstRef.child("availability").setValue(true);
+        //2.send decline message to the user who made the request
+        FirebaseUser me = FirebaseAuth.getInstance().getCurrentUser();
+        ChatMessage message = new ChatMessage("Hi, I'm sorry but had to decline your book request", me.getUid(), System.currentTimeMillis(), false);
+        Chat.Companion.sendMsgToChat(message, toUserID, uid);
+    }
 }

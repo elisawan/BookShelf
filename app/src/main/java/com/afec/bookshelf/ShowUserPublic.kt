@@ -3,14 +3,17 @@ package com.afec.bookshelf
 
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.RatingBar
 import android.widget.TextView
+import com.google.firebase.storage.FirebaseStorage
+import com.squareup.picasso.Picasso
 
 class ShowUserPublic : Fragment() {
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
@@ -21,13 +24,16 @@ class ShowUserPublic : Fragment() {
         var borrowedBooks:String
         var lentBooks:String
         var bio:String
-        var rating:Int
+        var rating:String
+        var uid:String
+
         if(b!=null){
             username = b.getString("username","-")
             borrowedBooks = b.getString("borrowedBooks","0")
             lentBooks = b.getString("lentBooks","0")
             bio = b.getString("bio","-")
-            rating = b.getInt("rating",0)
+            uid = b.getString("uid","-")
+            rating = b.getString("rating","0")
         }else{
             return null;
         }
@@ -41,12 +47,18 @@ class ShowUserPublic : Fragment() {
         val lentTV:TextView = v.findViewById<TextView>(R.id.shared_book_count);
         lentTV.setText(lentBooks);
         val ratingRB:RatingBar = v.findViewById<RatingBar>(R.id.ratingUser) as RatingBar;
-        ratingRB.numStars = rating
+        ratingRB.rating = rating.toFloat()
+        val imageView: ImageView = v.findViewById(R.id.immagineUtente)
+        val mImageRef = FirebaseStorage.getInstance().getReference( uid + "/profilePic.png")
+        mImageRef.downloadUrl.addOnSuccessListener{
+            uri -> Picasso.with(context).load(uri.toString()).noPlaceholder().into(imageView)
+        }.addOnFailureListener {
+            exception -> Log.e("ERRORE RECUPERO IMG: ", exception.message.toString())
+            Picasso.with(context).load(R.drawable.ic_account_circle_black_24dp).into(imageView)
+        }
 
         return v;
     }
-
-
 }
 
 
