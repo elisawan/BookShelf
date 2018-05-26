@@ -101,7 +101,7 @@ public class ShowBook extends Fragment {
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                DatabaseReference ownerRef = FirebaseDatabase.getInstance().getReference("users");
+                DatabaseReference ownerRef = FirebaseDatabase.getInstance().getReference("users").child(contentList.get(position).getOwnerID());
                 ownerRef.addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(DataSnapshot dataSnapshot) {
@@ -112,7 +112,7 @@ public class ShowBook extends Fragment {
                         b.putString("borrowedBooks", ((Integer)owner.getBorrowedBooks()).toString());
                         b.putString("lentBooks", ((Integer)owner.getLentBooks()).toString());
                         b.putString("bio", owner.getBiography());
-
+                        b.putString("uid", owner.getUid());
                         Fragment newFragment = new ShowUserPublic();
                         newFragment.setArguments(b);
                         myStartFragment(newFragment);
@@ -123,7 +123,6 @@ public class ShowBook extends Fragment {
 
                     }
                 });
-
             }
         });
 
