@@ -15,6 +15,7 @@ import android.widget.TextView;
 import com.afec.bookshelf.Models.Book;
 import com.afec.bookshelf.Models.Chat;
 import com.afec.bookshelf.Models.ChatMessage;
+import com.afec.bookshelf.Models.Review;
 import com.afec.bookshelf.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
@@ -111,7 +112,6 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         DatabaseReference ref;
         DatabaseReference usernameReference;
 
-
         switch (holder.getItemViewType()) {
             case VIEW_TYPE_MESSAGE_SENT:
                 ((SentMessageHolder) holder).bind(message);
@@ -163,8 +163,6 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                             public void onCancelled(DatabaseError databaseError) {
                             }
                         });
-
-
                     }
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
@@ -232,7 +230,6 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
             nameText.setText(username);
 
-
             // Insert the profile image from the URL into the ImageView.
             //Utils.displayRoundImageFromUrl(mContext, message.getSender().getProfileUrl(), profileImage);
         }
@@ -244,7 +241,6 @@ public class MessageListAdapter extends RecyclerView.Adapter {
         Button acceptB, declineB;
         ImageView bookImage;
         View itemView;
-
 
         ReceivedBookRequestHolder(View itemView) {
 
@@ -269,8 +265,27 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             acceptB.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+
+                    //1.send message of acceptance
                     message.acceptRequest();
-                    //Display dialog box
+
+                    //2.add pending review to fromUser
+                    Review review1 = new Review();
+                    review1.setStatus(Review.STATUS_PENDING);
+                    review1.setUidfrom(message.getUid());
+                    review1.setUidto(message.getToUserID());
+                    ref.child("users").child(message.getUid()).child("myReviews").push().setValue(review1);
+
+                    //3.add pending review to toUser
+                    Review review2 = new Review();
+                    review2.setStatus(Review.STATUS_PENDING);
+                    review2.setUidfrom(message.getToUserID());
+                    review2.setUidto(message.getUid());
+                    ref.child("users").child(message.getToUserID()).child("myReviews").push().setValue(review2);
+
+                    //4.Display dialog box
                     AlertDialog.Builder alertB = new AlertDialog.Builder(v.getContext());
                     alertB.setMessage("Book request accepted");
                     AlertDialog alertD = alertB.create();
