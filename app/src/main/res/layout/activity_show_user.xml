@@ -68,7 +68,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/taken_book_count"
+                android:id="@+id/borrowed_book_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -79,7 +79,7 @@
                 android:textSize="30sp" />
 
             <TextView
-                android:id="@+id/taken_book"
+                android:id="@+id/borrowed_book"
                 android:layout_width="134dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -97,7 +97,7 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/shared_book_count"
+                android:id="@+id/lent_book_count"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
@@ -108,7 +108,7 @@
                 android:textSize="30sp" />
 
             <TextView
-                android:id="@+id/shared_book"
+                android:id="@+id/lent_book"
                 android:layout_gravity="center_horizontal"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"

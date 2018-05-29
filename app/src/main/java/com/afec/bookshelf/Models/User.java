@@ -1,7 +1,7 @@
 package com.afec.bookshelf.Models;
 
-
-import android.graphics.Bitmap;
+import android.content.Context;
+import android.content.SharedPreferences;
 
 public class User {
     private String uid;
@@ -11,7 +11,8 @@ public class User {
     private int lentBooks;
     private float rating;
     private String username;
-    private Bitmap userPic;
+    private String email;
+    private Long timestamp;
 
     public User() {
     }
@@ -81,4 +82,56 @@ public class User {
     public void setUsername(String username) {
         this.username = username;
     }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public Long getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Long timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public boolean getUserLocalData(Context context, String uid){
+        SharedPreferences sharedPref = context.getSharedPreferences(uid, Context.MODE_PRIVATE);
+
+        this.uid = uid;
+        this.username = sharedPref.getString("username", null);
+        if(this.username==null) //a user cannot be without username
+            return false;
+        this.biography=sharedPref.getString("biography","");
+        this.rating=sharedPref.getFloat("rating",-1);
+        this.email=sharedPref.getString("emailUtente", null);
+        if(this.email==null) //a user cannot be without email
+            return false;
+        this.addedBooks=sharedPref.getInt("addedBooks",0);
+        this.borrowedBooks=sharedPref.getInt("borrowedBooks",0);
+        this.lentBooks=sharedPref.getInt("lentBooks",0);
+        this.timestamp=sharedPref.getLong("timestamp",0);
+
+        return true;
+    }
+
+    public void updateSharedPrefContent(Context context){
+        SharedPreferences sharedPref = context.getSharedPreferences(uid, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPref.edit();
+        editor.putString("uid", uid);
+        editor.putString("username", username);
+        editor.putString("biography", biography);
+        editor.putFloat("rating",rating);
+        editor.putString("email",email);
+        editor.putInt("addedBooks",addedBooks);
+        editor.putInt("borrowedBooks",borrowedBooks);
+        editor.putInt("lentBooks",lentBooks);
+        editor.putLong("timestamp",timestamp);
+        editor.commit();
+    }
+
 }
