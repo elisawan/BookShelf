@@ -24,6 +24,11 @@
             android:icon="@drawable/ic_chat_black_24dp" />
 
         <item
+            android:id="@+id/action_review_page"
+            android:title="Reviews"
+            android:icon="@drawable/ic_collections_bookmark_black_24dp" />
+
+        <item
             android:id="@+id/action_logout"
             android:title="Logout"
             android:icon="@drawable/ic_exit_to_app_black_24dp" />
