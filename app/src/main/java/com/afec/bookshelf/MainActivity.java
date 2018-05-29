@@ -1,6 +1,8 @@
 package com.afec.bookshelf;
 
 import android.app.AlertDialog;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
 import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
@@ -15,6 +17,7 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
+import android.os.Build;
 import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.design.widget.NavigationView;
@@ -92,19 +95,33 @@ public class MainActivity extends AppCompatActivity {
     private FirebaseUser user;
     DatabaseReference userRef;
 
+    public static String CHANNEL_ID = "newMsgChannel";
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        createNotificationChannel();
+
         setContentView(R.layout.activity_main);
 
         Intent intent = getIntent();
+        Bundle bundle = intent.getExtras();
+        String fragment = null;
+        if(bundle != null){
+            fragment = bundle.getString("fragment");
+        }
         if (Intent.ACTION_SEARCH.equals(intent.getAction())) {
             String q = intent.getStringExtra(SearchManager.QUERY);
             mySearch(q);
+        }else if(fragment!=null && fragment.equals("ChatList")) {
+            Fragment chatListFragment = new ChatList();
+            myStartFragment(chatListFragment);
         }else{
             Fragment startFragment = new NearBooks();
             myStartFragment(startFragment);
         }
+
 
         // Toolbar initialization
         myToolbar = findViewById(R.id.toolbar);
@@ -293,6 +310,21 @@ public class MainActivity extends AppCompatActivity {
         Fragment newFragment = new SearchBooks();
         newFragment.setArguments(b);
         myStartFragment(newFragment);
+    }
+    private void createNotificationChannel() {
+        // Create the NotificationChannel, but only on API 26+ because
+        // the NotificationChannel class is new and not in the support library
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence name = "Receive notification channel";
+            String description = "Receive new messages notification";
+            int importance = NotificationManager.IMPORTANCE_DEFAULT;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, name, importance);
+            channel.setDescription(description);
+            // Register the channel with the system; you can't change the importance
+            // or other notification behaviors after this
+            NotificationManager notificationManager = getSystemService(NotificationManager.class);
+            notificationManager.createNotificationChannel(channel);
+        }
     }
 }
 

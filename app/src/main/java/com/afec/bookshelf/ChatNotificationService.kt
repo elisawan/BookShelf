@@ -15,19 +15,17 @@ import android.app.PendingIntent
 import android.widget.Toast
 import android.R.string.cancel
 import android.content.pm.PackageManager
+import android.support.v4.app.NotificationCompat
+import com.afec.bookshelf.MainActivity.CHANNEL_ID
+import java.util.*
 
-
-
-
-
- class ChatNotificationService : Service() {
-
+class ChatNotificationService : Service() {
 
      private val mBinder = LocalBinder()
      private var mDatabase: DatabaseReference? = null
-    private var mMessageReference: DatabaseReference? = null
-    private var userMe: FirebaseUser? = null
-    private var userMeUid: String? = null
+     private var mMessageReference: DatabaseReference? = null
+     private var userMe: FirebaseUser? = null
+     private var userMeUid: String? = null
 
      override fun onBind(p0: Intent?): IBinder {
          TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -42,7 +40,7 @@ import android.content.pm.PackageManager
      override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
          Log.i("LocalService", "Received start id $startId: $intent")
 
-         return Service.START_NOT_STICKY
+         return Service.START_STICKY
      }
 
      override fun onDestroy() {
@@ -55,7 +53,6 @@ import android.content.pm.PackageManager
 
      override fun onCreate() {
 
-
         Log.e("asdhfablsjdf", "asdfhbaljdfhabjlsdhfalsjhdfba")
 
         var fbAuth = FirebaseAuth.getInstance()
@@ -65,67 +62,39 @@ import android.content.pm.PackageManager
         mDatabase = FirebaseDatabase.getInstance().reference
         mMessageReference = FirebaseDatabase.getInstance().getReference("users").child(userMeUid).child("unreadMessages")
 
-        val messageEventListener = object : ChildEventListener {
+
+        val messageEventListener = object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError?) {
                 TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
 
-            override fun onChildMoved(p0: DataSnapshot?, p1: String?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-            }
+            override fun onDataChange(p0: DataSnapshot?) {
+                var unreadMessage = p0!!.getValue(Boolean::class.java)
 
-            override fun onChildChanged(dataSnapshot: DataSnapshot?, p1: String?) {
-                var unreadMessage = dataSnapshot!!.getValue(Boolean::class.java)
+                if (unreadMessage!!) {
 
-                if(unreadMessage!!){
+                    val intent = Intent(applicationContext, MainActivity::class.java)
+                    intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or  Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                    intent.putExtra("fragment","ChatList")
 
-                    val intent = Intent(baseContext,ChatNotificationService::class.java)
-
-
-                    val contentIntent = PendingIntent.getActivity(baseContext, 0, intent,0)
-
+                    val contentIntent = PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                     val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
-                    val notificationBuilder = Notification.Builder(baseContext)
+                    val notificationBuilder = NotificationCompat.Builder(applicationContext,CHANNEL_ID)
                             .setContentTitle("Ci sono nuovi messaggi!")
                             .setSmallIcon(R.mipmap.ic_launcher)
                             .setSound(defaultSoundUri)
                             .setContentIntent(contentIntent)
+                            .setAutoCancel(true)
+                            .setPriority(NotificationCompat.PRIORITY_DEFAULT)
+
                     val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-                    notificationManager.notify(0 /* ID of notification */, notificationBuilder.build())
+                    notificationManager.notify(0, notificationBuilder.build())
                 }
-            }
-
-            override fun onChildAdded(dataSnapshot: DataSnapshot?, p1: String?) {
-                var unreadMessage = dataSnapshot!!.getValue(Boolean::class.java)
-
-                if(unreadMessage!! ){
-
-                    val intent = Intent(baseContext,ChatList::class.java)
-
-
-                    val contentIntent = PendingIntent.getActivity(baseContext, 0, intent,0)
-
-
-                    val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
-
-                    val notificationBuilder = Notification.Builder(baseContext)
-                            .setContentTitle("Ci sono nuovi messaggi!")
-                            .setSmallIcon(R.mipmap.ic_launcher)
-                            .setSound(defaultSoundUri)
-                            .setContentIntent(contentIntent)
-                    val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
-
-                    notificationManager.notify(0 /* ID of notification */, notificationBuilder.build())
-                }
-            }
-
-            override fun onChildRemoved(p0: DataSnapshot?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
             }
         }
-        mMessageReference!!.addChildEventListener(messageEventListener)
+            mMessageReference!!.addValueEventListener(messageEventListener)
     }
 }

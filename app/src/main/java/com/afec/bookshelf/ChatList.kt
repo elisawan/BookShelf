@@ -39,8 +39,6 @@ class ChatList : Fragment() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -96,14 +94,14 @@ class ChatList : Fragment() {
 
                                         var value : String = dataSnapshot.value!!.toString()
                                         var messageId : String = value.substring(value.indexOf("{")+1, value.indexOf("="))
-
+                                        //var sender : String = dataSnapshot.child(messageId).child("uid").value!!.toString()
                                         val message : String = dataSnapshot.child(messageId).child("message").value!!.toString()
                                         var read : Boolean = true
 
-                                        if(otherUID.equals(otherUID)) {
+                                        val currentUser:FirebaseUser  = FirebaseAuth.getInstance().currentUser!!
+                                        if(otherUID.equals(currentUser.uid)) {
                                             read = (dataSnapshot.child(messageId).child("read").value as Boolean?)!!
                                         }
-
 
                                         var NewChat: ChatListItem = ChatListItem(otherUID, name, chatId, message, read)
 
