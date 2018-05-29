@@ -37,8 +37,8 @@ class ChatNotificationService : Service() {
              get() = this@ChatNotificationService
      }
 
-     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
-         Log.i("LocalService", "Received start id $startId: $intent")
+     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+         //Log.i("LocalService", "Received start id $startId: $intent")
 
          return Service.START_STICKY
      }
