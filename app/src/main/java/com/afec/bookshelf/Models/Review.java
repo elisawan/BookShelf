@@ -1,5 +1,7 @@
 package com.afec.bookshelf.Models;
 
+import com.google.firebase.database.FirebaseDatabase;
+
 public class Review {
     public static final int STATUS_WRITTEN = 1;
     public static final int STATUS_PENDING = 0;
@@ -58,5 +60,13 @@ public class Review {
 
     public void setTimestamp(Long timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public static void addPendingReview(String uidfrom, String uidto){
+        Review review1 = new Review();
+        review1.setStatus(Review.STATUS_PENDING);
+        review1.setUidfrom(uidfrom);
+        review1.setUidto(uidto);
+        FirebaseDatabase.getInstance().getReference().child("users").child(uidfrom).child("myReviews").push().setValue(review1);
     }
 }

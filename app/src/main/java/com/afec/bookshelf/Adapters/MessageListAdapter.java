@@ -272,18 +272,10 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                     message.acceptRequest();
 
                     //2.add pending review to fromUser
-                    Review review1 = new Review();
-                    review1.setStatus(Review.STATUS_PENDING);
-                    review1.setUidfrom(message.getUid());
-                    review1.setUidto(message.getToUserID());
-                    ref.child("users").child(message.getUid()).child("myReviews").push().setValue(review1);
+                    Review.addPendingReview(message.getUid(),message.getToUserID());
 
                     //3.add pending review to toUser
-                    Review review2 = new Review();
-                    review2.setStatus(Review.STATUS_PENDING);
-                    review2.setUidfrom(message.getToUserID());
-                    review2.setUidto(message.getUid());
-                    ref.child("users").child(message.getToUserID()).child("myReviews").push().setValue(review2);
+                    Review.addPendingReview(message.getToUserID(), message.getUid());
 
                     //4.Display dialog box
                     AlertDialog.Builder alertB = new AlertDialog.Builder(v.getContext());
