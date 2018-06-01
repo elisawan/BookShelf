@@ -88,6 +88,7 @@ public class OwnerAdapter extends ArrayAdapter<OwnerInstanceBook> {
                                     message.setBookISBN(isbn);
                                     message.setToUserID(ownerID);
                                     message.setRead(false);
+                                    message.setResponded(false);
 
                                     Chat.Companion.sendMsgToChat(message,currentUserId,ownerID);
 

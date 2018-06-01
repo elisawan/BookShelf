@@ -51,6 +51,14 @@ public class Review {
     }
 
     public void setScore(Float score) {
+        if(score>5){
+            this.score= Float.valueOf(5);
+            return;
+        }
+        if(score<0){
+            this.score= Float.valueOf(0);
+            return;
+        }
         this.score = score;
     }
 

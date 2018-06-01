@@ -90,11 +90,14 @@ class Chat : Activity() {
             override fun onChildAdded(dataSnapshot: DataSnapshot?, previousChildName: String?) {
                 // A new message has been added
                 // onChildAdded() will be called for each node at the first time
-                val message = dataSnapshot!!.getValue(ChatMessage::class.java)
-                val messageId = dataSnapshot.key
+                var message : ChatMessage? = dataSnapshot!!.getValue(ChatMessage::class.java)
+                var messageId = dataSnapshot.key
+
+                message?.chatID=chatID
+                message?.messageID=messageId
                 messageHistory.add(message!!)
 
-                if(message.uid !=userMeUid && message.read==false){
+                if(message?.uid !=userMeUid && message?.read==false){
                     FirebaseDatabase.getInstance().getReference("chat").child(chatID).child(messageId).child("read").setValue(true)
 
                     /*val pendingIntent = PendingIntent.getActivity(baseContext, 0 *//* Request code *//*, intent,

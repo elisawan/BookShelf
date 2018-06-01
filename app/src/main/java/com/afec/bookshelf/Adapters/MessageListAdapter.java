@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.afec.bookshelf.Models.Book;
 import com.afec.bookshelf.Models.Chat;
@@ -23,6 +24,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.squareup.picasso.Picasso;
@@ -262,31 +265,82 @@ public class MessageListAdapter extends RecyclerView.Adapter {
             bookTitle.setText(book.getTitle());
             nameText.setText(username);
             Picasso.with(itemView.getContext()).load(book.getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder).into(bookImage);
+
+
+
             acceptB.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Boolean status=message.getResponded();
+                    if(status==null || status==true){
+                        Toast.makeText( itemView.getContext() ,"Book request no more valid",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
 
-                    DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
+                        DatabaseReference ref = FirebaseDatabase.getInstance().getReference();
 
-                    //1.send message of acceptance
-                    message.acceptRequest();
+                        //1.send message of acceptance
+                        message.acceptRequest();
 
-                    //2.add pending review to fromUser
-                    Review.addPendingReview(message.getUid(),message.getToUserID());
+                        //2.add pending review to fromUser
+                        Review.addPendingReview(message.getUid(), message.getToUserID());
 
-                    //3.add pending review to toUser
-                    Review.addPendingReview(message.getToUserID(), message.getUid());
+                        //3.add pending review to toUser
+                        Review.addPendingReview(message.getToUserID(), message.getUid());
 
-                    //4.Display dialog box
-                    AlertDialog.Builder alertB = new AlertDialog.Builder(v.getContext());
-                    alertB.setMessage("Book request accepted");
-                    AlertDialog alertD = alertB.create();
-                    alertD.show();
+                        //4.increment the counter in both profile
+                        final DatabaseReference bb = db.getReference().child("users").child(message.getToUserID()).child("borrowedBooks");
+                        bb.runTransaction(new Transaction.Handler() {
+                            @Override
+                            public Transaction.Result doTransaction(MutableData mutableData) {
+                                if (mutableData != null) {
+                                    Integer currentBorrowedBooks = mutableData.getValue(Integer.class);
+                                    mutableData.setValue(currentBorrowedBooks + 1);
+                                    return Transaction.success(mutableData);
+                                }
+                                return Transaction.success(mutableData);
+                            }
+
+                            @Override
+                            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+                            }
+                        });
+
+
+                        DatabaseReference lb = db.getReference("users").child(message.getUid()).child("lentBooks");
+                        lb.runTransaction(new Transaction.Handler() {
+                            @Override
+                            public Transaction.Result doTransaction(MutableData mutableData) {
+                                if (mutableData != null) {
+                                    Integer currentLentBooks = mutableData.getValue(Integer.class);
+                                    mutableData.setValue(currentLentBooks + 1);
+                                    return Transaction.success(mutableData);
+                                }
+                                return Transaction.success(mutableData);
+                            }
+
+                            @Override
+                            public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+                            }
+                        });
+
+                        //5.Display dialog box
+                        AlertDialog.Builder alertB = new AlertDialog.Builder(v.getContext());
+                        alertB.setMessage("Book request accepted");
+                        AlertDialog alertD = alertB.create();
+                        alertD.show();
                 }
             });
             declineB.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+                    Boolean status=message.getResponded();
+                    if(status==null || status==true){
+                        Toast.makeText( itemView.getContext() ,"Book request no more valid",Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     message.declineRequest();
                     //Display dialog box
                     AlertDialog.Builder alertB = new AlertDialog.Builder(v.getContext());

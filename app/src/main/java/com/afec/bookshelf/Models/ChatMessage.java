@@ -17,6 +17,10 @@ public class ChatMessage {
     private String toUserID;
     private Boolean isRead;
 
+    private Boolean responded;
+    private String messageID;
+    private String chatID;
+
     public ChatMessage(){}
 
     public ChatMessage(String message, String UID, long timestamp, boolean isRead){
@@ -25,6 +29,18 @@ public class ChatMessage {
         this.uid=UID;
         this.timestamp=timestamp;
         this.isRead=isRead;
+        this.responded=true;
+    }
+
+    public ChatMessage(String message, String UID, long timestamp, boolean isRead, String messageID, String chatID){
+        super();
+        this.message=message;
+        this.uid=UID;
+        this.timestamp=timestamp;
+        this.isRead=isRead;
+        this.responded=true;
+        this.messageID=messageID;
+        this.chatID=chatID;
     }
 
     public String getMessage() {
@@ -91,11 +107,36 @@ public class ChatMessage {
         this.isRead = isRead;
     }
 
+    public Boolean getResponded() {
+        return responded;
+    }
+
+    public void setResponded(Boolean responded) {
+        this.responded = responded;
+    }
+
+    public String getMessageID() {
+        return messageID;
+    }
+
+    public void setMessageID(String messageID) {
+        this.messageID = messageID;
+    }
+
+    public String getChatID() {
+        return chatID;
+    }
+
+    public void setChatID(String chatID) {
+        this.chatID = chatID;
+    }
+
     public void acceptRequest(){
         //1.set availability to false
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference bookInstRef = db.getReference("book_instances").child(bookInstance);
         bookInstRef.child("availability").setValue(false);
+        db.getReference("chat").child(chatID).child(messageID).child("responded").setValue(true);
         //2.send confirmation message to the user who made the request
         FirebaseUser me = FirebaseAuth.getInstance().getCurrentUser();
         ChatMessage message = new ChatMessage("Hi, I accepted your book request", me.getUid(), System.currentTimeMillis(), false);
@@ -107,6 +148,7 @@ public class ChatMessage {
         FirebaseDatabase db = FirebaseDatabase.getInstance();
         DatabaseReference bookInstRef = db.getReference("book_instances").child(bookInstance);
         bookInstRef.child("availability").setValue(true);
+        db.getReference("chat").child(chatID).child(messageID).child("responded").setValue(true);
         //2.send decline message to the user who made the request
         FirebaseUser me = FirebaseAuth.getInstance().getCurrentUser();
         ChatMessage message = new ChatMessage("Hi, I'm sorry but had to decline your book request", me.getUid(), System.currentTimeMillis(), false);
