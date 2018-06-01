@@ -65,7 +65,6 @@ public class EditUser extends Fragment {
     ImageView immagineUtente;
     EditText nomeUtente, bioUtente;
     Button b;
-    CheckBox email_cb, whatsapp_cb, call_cb;
     ImageButton ib;
     SharedPreferences sharedPref;
     public static final int PICK_IMAGE = 1;
@@ -97,9 +96,6 @@ public class EditUser extends Fragment {
         bioUtente = (EditText) v.findViewById(R.id.editBioUtente);
         b = (Button) v.findViewById(R.id.button_edit_confirm);
         ib = (ImageButton) v.findViewById(R.id.edit_profile_image_bt);
-        email_cb = (CheckBox) v.findViewById(R.id.email_cb);
-        whatsapp_cb = (CheckBox) v.findViewById(R.id.whatsapp_cb);
-        call_cb = (CheckBox) v.findViewById(R.id.call_cb);
         sharedPref = getActivity().getSharedPreferences("userPreferences", Context.MODE_PRIVATE);
 
         /*nomeUtente.setText(sharedPref.getString("nomeUtente", null));

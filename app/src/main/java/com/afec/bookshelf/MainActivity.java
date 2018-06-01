@@ -164,8 +164,7 @@ public class MainActivity extends AppCompatActivity {
                             myStartFragment(new ChatList());
                             break;
                         case R.id.action_review_page:
-                            Intent reviewIntent = new Intent(getBaseContext(), ReviewPage.class);
-                            startActivity(reviewIntent);
+                            myStartFragment(new ReviewPage());
                             break;
                         case R.id.action_logout:
                             Logout();

@@ -33,8 +33,6 @@ import java.util.List;
 
 public class ReviewPage extends Fragment {
 
-
-
     private FirebaseUser user;
     String userUid;
     FirebaseDatabase database;
@@ -49,8 +47,9 @@ public class ReviewPage extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.activity_search_books, container, false);
+        View v = inflater.inflate(R.layout.activity_reviews, container, false);
 
+        database = FirebaseDatabase.getInstance();
 
 
         // Create the adapter that will return a fragment for each of the three

@@ -75,39 +75,8 @@
                 android:maxLength="140"
                 android:textAlignment="center"
                 android:textSize="18sp" />
+            
 
-            <TextView
-                android:id="@+id/textView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="15dp"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:text="@string/contact_methods" />
-
-            <CheckBox
-                android:id="@+id/email_cb"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:text="@string/email" />
-
-            <CheckBox
-                android:id="@+id/whatsapp_cb"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:text="@string/whatsapp" />
-
-            <CheckBox
-                android:id="@+id/call_cb"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="30dp"
-                android:text="@string/phone_call" />
 
             <Button
                 android:id="@+id/button_edit_confirm"
