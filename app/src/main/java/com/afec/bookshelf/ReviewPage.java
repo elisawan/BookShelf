@@ -23,6 +23,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,12 +34,8 @@ import java.util.List;
 
 public class ReviewPage extends Fragment {
 
-    private FirebaseUser user;
-    String userUid;
+    FirebaseUser currentUser;
     FirebaseDatabase database;
-    DatabaseReference recRef, myRef;
-    List<Review> myReviews;
-    List<Review> receivedReviews;
 
     private static final String TAG = "ReviewPage activity";
     private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -50,7 +47,7 @@ public class ReviewPage extends Fragment {
         View v = inflater.inflate(R.layout.activity_reviews, container, false);
 
         database = FirebaseDatabase.getInstance();
-
+        currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -71,11 +68,25 @@ public class ReviewPage extends Fragment {
     private void setupViewPager(ViewPager mViewPager){
         SectionsPagerAdapter adapter = new SectionsPagerAdapter(getActivity().getSupportFragmentManager());
 
-        retrieveMyReviews();
+        Bundle b_pending = new Bundle();
+        b_pending.putInt("query",Review.STATUS_PENDING);
+        Fragment pendingReviews = new ReviewList();
+        pendingReviews.setArguments(b_pending);
+        adapter.addFragment(pendingReviews,"Pending");
 
-        retrieveReceivedReviews();
+        Bundle b_written = new Bundle();
+        b_written.putInt("query",Review.STATUS_WRITTEN);
+        Fragment writtenReviews = new ReviewList();
+        writtenReviews.setArguments(b_written);
+        adapter.addFragment(writtenReviews,"Written");
 
+        Bundle b_received = new Bundle();
+        b_received.putInt("query",Review.STATUS_RECEIVED);
+        Fragment receivedReviews = new ReviewList();
+        receivedReviews.setArguments(b_received);
+        adapter.addFragment(receivedReviews,"Received");
 
+        mViewPager.setAdapter(adapter);
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -107,74 +118,4 @@ public class ReviewPage extends Fragment {
             mFragmentTitleList.add(title);
         }
     }
-
-
-    private void retrieveMyReviews(){
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        userUid = user.getUid();
-
-        myRef = database.getReference("users/"+userUid).child("myReviews");
-        myRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-    private void retrieveReceivedReviews(){
-        user = FirebaseAuth.getInstance().getCurrentUser();
-        userUid = user.getUid();
-
-        recRef = database.getReference("users/" + userUid).child("receivedReviews");
-        recRef.addChildEventListener(new ChildEventListener() {
-            @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-                Review review = dataSnapshot.getValue(Review.class);
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-
-            }
-        });
-    }
-
-
 }

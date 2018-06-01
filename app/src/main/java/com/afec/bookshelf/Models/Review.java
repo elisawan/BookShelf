@@ -3,8 +3,10 @@ package com.afec.bookshelf.Models;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class Review {
+    public static final int STATUS_RECEIVED = 2;
     public static final int STATUS_WRITTEN = 1;
     public static final int STATUS_PENDING = 0;
+    public static final int STATUS_INVALID = -1;
 
     private int status;
     private String uidfrom;
@@ -12,7 +14,15 @@ public class Review {
     private String comment;
     private Float score;
     private Long timestamp;
+    private String id;
 
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
+    }
 
     public int getStatus() {
         return status;
