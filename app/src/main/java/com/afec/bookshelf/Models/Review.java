@@ -87,4 +87,12 @@ public class Review {
         review1.setUidto(uidto);
         FirebaseDatabase.getInstance().getReference().child("users").child(uidfrom).child("myReviews").push().setValue(review1);
     }
+
+    public void setPendingReviewToWritten(){
+        FirebaseDatabase.getInstance().getReference().child("users").child(uidfrom).child("myReviews").child(id).setValue(this);
+    }
+
+    public void updateReview(){
+        FirebaseDatabase.getInstance().getReference().child("reviews").child(id).setValue(this);
+    }
 }

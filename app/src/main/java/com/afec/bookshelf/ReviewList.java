@@ -9,6 +9,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
@@ -22,6 +24,8 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -117,11 +121,31 @@ public class ReviewList extends Fragment {
         }
 
         @Override
-        public View getView(int position, View convertView, ViewGroup parent) {
+        public View getView(final int position, View convertView, ViewGroup parent) {
             switch(type){
                 case Review.STATUS_PENDING:
                     if(convertView == null)
                         convertView = getLayoutInflater().inflate(R.layout.pending_review_layout, parent, false);
+                    ((TextView)convertView.findViewById(R.id.pending_rev_user_name)).setText(reviewAuthorList.get(position).getUsername());
+                    final RatingBar rating = (RatingBar)convertView.findViewById(R.id.pending_rev_ratingBar);
+                    rating.setRating(0);
+                    final EditText editText = convertView.findViewById(R.id.pending_rev_edit_text);
+                    editText.setText("");
+                    ((Button)convertView.findViewById(R.id.pending_rev_save_button)).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            String comment = editText.getText().toString();
+                            Review review = reviewsList.get(position);
+                            review.setStatus(Review.STATUS_WRITTEN);
+                            review.setPendingReviewToWritten();
+                            review.setComment(comment);
+                            review.setScore(rating.getRating());
+                            review.updateReview();
+                            reviewsList.remove(position);
+                            reviewAuthorList.remove(position);
+                            reviewListAdapter.notifyDataSetChanged();
+                        }
+                    });
                     break;
                 case Review.STATUS_RECEIVED:
                     if(convertView == null)
@@ -138,6 +162,14 @@ public class ReviewList extends Fragment {
                 case Review.STATUS_WRITTEN:
                     if(convertView == null)
                         convertView = getLayoutInflater().inflate(R.layout.written_review_layout, parent, false);
+                    TextView rev_to = (TextView) convertView.findViewById(R.id.rev_to_username);
+                    rev_to.setText(reviewAuthorList.get(position).getUsername());
+
+                    TextView rev_content = (TextView) convertView.findViewById(R.id.rev_content);
+                    rev_content.setText(reviewsList.get(position).getComment());
+
+                    RatingBar rev_rating = (RatingBar) convertView.findViewById(R.id.rev_ratingBar);
+                    rev_rating.setRating(reviewsList.get(position).getScore());
                     break;
             }
 
@@ -158,7 +190,7 @@ public class ReviewList extends Fragment {
                     if (r.getStatus() == Review.STATUS_PENDING) {
                         reviewsList.add(r);
 
-                        database.getReference("users").child(r.getUidfrom()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        database.getReference("users").child(r.getUidto()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 reviewAuthorList.add(dataSnapshot.getValue(User.class));
@@ -184,22 +216,25 @@ public class ReviewList extends Fragment {
 
     public void getWrittenReviews(){
         DatabaseReference ref = database.getReference("users").child(currentUser.getUid()).child("myReviews");
+        // get review reference
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot child : dataSnapshot.getChildren()) {
-                    // get review id
+                    // review id
                     String rev_id = child.getKey();
+                    // review status
                     Review r = child.getValue(Review.class);
                     r.setId(rev_id);
                     if (r.getStatus() == Review.STATUS_WRITTEN) {
+                        // get review content
                         database.getReference("reviews").child(r.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 Review r = dataSnapshot.getValue(Review.class);
                                 reviewsList.add(r);
 
-                                database.getReference("users").child(r.getUidfrom()).addListenerForSingleValueEvent(new ValueEventListener() {
+                                database.getReference("users").child(r.getUidto()).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         reviewAuthorList.add(dataSnapshot.getValue(User.class));
@@ -240,7 +275,7 @@ public class ReviewList extends Fragment {
                     String rev_id = child.getKey();
                     Review r = child.getValue(Review.class);
                     r.setId(rev_id);
-                    if (r.getStatus() == Review.STATUS_WRITTEN) {
+                    if (r.getStatus() == Review.STATUS_RECEIVED) {
                         database.getReference("reviews").child(r.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -277,6 +312,4 @@ public class ReviewList extends Fragment {
             }
         });
     }
-
-
 }
