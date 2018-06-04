@@ -3,27 +3,33 @@ package com.afec.bookshelf.Models;
 import android.content.Context;
 import android.content.SharedPreferences;
 
-public class User {
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+
+import java.io.FileInputStream;
+import java.io.ObjectInputStream;
+import java.io.Serializable;
+
+public class User implements Serializable{
+
     private String uid;
     private int addedBooks;
     private String biography;
     private int borrowedBooks;
     private int lentBooks;
-    private float rating;
     private String username;
     private String email;
     private Long timestamp;
+    private int ratingCount = 0;
+    private int ratingSum = 0;
 
-    public User() {
-    }
+    public User() {}
 
-    public User(String uid, int addedBooks, String biography, int borrowedBooks, int lentBooks, float rating, String username) {
+    public User (String uid, String username){
         this.uid = uid;
-        this.addedBooks = addedBooks;
-        this.biography = biography;
-        this.borrowedBooks = borrowedBooks;
-        this.lentBooks = lentBooks;
-        this.rating = rating;
         this.username = username;
     }
 
@@ -67,12 +73,32 @@ public class User {
         this.lentBooks = lentBooks;
     }
 
-    public float getRating() {
-        return rating;
+    public int getRatingCount() {
+        return ratingCount;
     }
 
-    public void setRating(float rating) {
-        this.rating = rating;
+    public void setRatingCount(int ratingCount) {
+        this.ratingCount = ratingCount;
+    }
+
+    public int getRatingSum() {
+        return ratingSum;
+    }
+
+    public void setRatingSum(int ratingSum) {
+        this.ratingSum = ratingSum;
+    }
+
+    public float getRating() {
+        if(ratingCount!=0)
+            return ratingSum/ratingCount;
+        else
+            return 0;
+    }
+
+    public void setRating(int sum, int count){
+        this.ratingCount = count;
+        this.ratingSum = sum;
     }
 
     public String getUsername() {
@@ -107,7 +133,8 @@ public class User {
         if(this.username==null) //a user cannot be without username
             return false;
         this.biography=sharedPref.getString("biography","");
-        this.rating=sharedPref.getFloat("rating",-1);
+        this.ratingSum=sharedPref.getInt("ratingSum",0);
+        this.ratingCount=sharedPref.getInt("ratingCount",0);
         this.email=sharedPref.getString("emailUtente", null);
         if(this.email==null) //a user cannot be without email
             return false;
@@ -125,7 +152,8 @@ public class User {
         editor.putString("uid", uid);
         editor.putString("username", username);
         editor.putString("biography", biography);
-        editor.putFloat("rating",rating);
+        editor.putInt("ratingCount",ratingCount);
+        editor.putInt("ratingSum",ratingSum);
         editor.putString("email",email);
         editor.putInt("addedBooks",addedBooks);
         editor.putInt("borrowedBooks",borrowedBooks);
@@ -133,5 +161,4 @@ public class User {
         editor.putLong("timestamp",timestamp);
         editor.commit();
     }
-
 }

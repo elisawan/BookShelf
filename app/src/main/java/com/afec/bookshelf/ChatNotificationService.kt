@@ -14,6 +14,7 @@ import com.google.firebase.database.*
 import android.app.PendingIntent
 import android.widget.Toast
 import android.R.string.cancel
+import android.content.ComponentName
 import android.content.pm.PackageManager
 import android.support.v4.app.NotificationCompat
 import com.afec.bookshelf.MainActivity.CHANNEL_ID
@@ -26,6 +27,8 @@ class ChatNotificationService : Service() {
      private var mMessageReference: DatabaseReference? = null
      private var userMe: FirebaseUser? = null
      private var userMeUid: String? = null
+
+     private lateinit var notificationBuilder: NotificationCompat.Builder
 
      override fun onBind(p0: Intent?): IBinder {
          TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
@@ -52,16 +55,12 @@ class ChatNotificationService : Service() {
 
 
      override fun onCreate() {
-
-        Log.e("asdhfablsjdf", "asdfhbaljdfhabjlsdhfalsjhdfba")
-
         var fbAuth = FirebaseAuth.getInstance()
         userMe = fbAuth.currentUser!!
         userMeUid = userMe!!.uid
 
         mDatabase = FirebaseDatabase.getInstance().reference
         mMessageReference = FirebaseDatabase.getInstance().getReference("users").child(userMeUid).child("unreadMessages")
-
 
         val messageEventListener = object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError?) {
@@ -77,11 +76,11 @@ class ChatNotificationService : Service() {
                     intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or  Intent.FLAG_ACTIVITY_CLEAR_TASK)
                     intent.putExtra("fragment","ChatList")
 
-                    val contentIntent = PendingIntent.getActivity(applicationContext, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT)
+                    val contentIntent = PendingIntent.getActivity(applicationContext, 1, intent, PendingIntent.FLAG_UPDATE_CURRENT)
 
                     val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
-                    val notificationBuilder = NotificationCompat.Builder(applicationContext,CHANNEL_ID)
+                    notificationBuilder = NotificationCompat.Builder(applicationContext,CHANNEL_ID)
                             .setContentTitle("Ci sono nuovi messaggi!")
                             .setSmallIcon(R.mipmap.ic_launcher)
                             .setSound(defaultSoundUri)
@@ -91,10 +90,13 @@ class ChatNotificationService : Service() {
 
                     val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
-                    notificationManager.notify(0, notificationBuilder.build())
+                    notificationManager.notify(1, notificationBuilder.build())
                 }
             }
         }
-            mMessageReference!!.addValueEventListener(messageEventListener)
+
+        mMessageReference!!.addValueEventListener(messageEventListener)
+
     }
+
 }

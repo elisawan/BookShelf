@@ -23,6 +23,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import org.w3c.dom.Text;
@@ -144,6 +146,25 @@ public class ReviewList extends Fragment {
                             reviewsList.remove(position);
                             reviewAuthorList.remove(position);
                             reviewListAdapter.notifyDataSetChanged();
+                            //update info in the other user
+                            database.getReference().child("users").child(review.getUidto()).child("ratingComplex").runTransaction(new Transaction.Handler() {
+                                @Override
+                                public Transaction.Result doTransaction(MutableData mutableData) {
+                                    if(mutableData.getValue()==null){
+                                        mutableData.child("sum").setValue(rating.getRating());
+                                        mutableData.child("count").setValue(1);
+                                    }else{
+                                        mutableData.child("sum").setValue((Float)mutableData.getValue()+rating.getRating());
+                                        mutableData.child("count").setValue((Float)mutableData.getValue()+1);
+                                    }
+                                    return Transaction.success(mutableData);
+                                }
+
+                                @Override
+                                public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+                                }
+                            });
                         }
                     });
                     break;

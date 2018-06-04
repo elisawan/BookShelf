@@ -2,11 +2,9 @@ package com.afec.bookshelf;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.widget.Toast;
-
 import com.afec.bookshelf.Models.User;
 import com.firebase.ui.auth.ErrorCodes;
 import com.firebase.ui.auth.IdpResponse;
@@ -18,9 +16,7 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-
 import java.util.Arrays;
-
 
 public class FirebaseLogin extends AppCompatActivity {
 
@@ -45,7 +41,7 @@ public class FirebaseLogin extends AppCompatActivity {
                 public void onDataChange(DataSnapshot snapshot) {
                     if (!snapshot.child(user.getUid()).exists()) {
                         userRef.child(user.getUid())
-                                .setValue(new User(user.getUid(),0, null, 0,0,0, user.getDisplayName()));
+                                .setValue(new User(user.getUid(),user.getDisplayName()));
                     }else{
 
                     }
@@ -74,7 +70,6 @@ public class FirebaseLogin extends AppCompatActivity {
                             .setLogo(R.mipmap.ic_launcher)
                             .build(), RC_SIGN_IN);
         }
-
     }
 
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -96,7 +91,7 @@ public class FirebaseLogin extends AppCompatActivity {
                     public void onDataChange(DataSnapshot snapshot) {
                         if (!snapshot.child(user.getUid()).exists()) {
                             userRef.child(user.getUid())
-                                    .setValue(new User(user.getUid(),0, null, 0,0,0, user.getDisplayName()));
+                                    .setValue(new User(user.getUid(), user.getDisplayName()));
                         }else{
 
                         }
