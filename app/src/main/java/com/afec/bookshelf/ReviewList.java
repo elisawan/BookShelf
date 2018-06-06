@@ -137,7 +137,7 @@ public class ReviewList extends Fragment {
                         @Override
                         public void onClick(View v) {
                             String comment = editText.getText().toString();
-                            Review review = reviewsList.get(position);
+                            final Review review = reviewsList.get(position);
                             review.setStatus(Review.STATUS_WRITTEN);
                             review.setPendingReviewToWritten();
                             review.setComment(comment);
@@ -147,15 +147,19 @@ public class ReviewList extends Fragment {
                             reviewAuthorList.remove(position);
                             reviewListAdapter.notifyDataSetChanged();
                             //update info in the other user
-                            database.getReference().child("users").child(review.getUidto()).child("ratingCount").runTransaction(new Transaction.Handler() {
+                            DatabaseReference userRef = database.getReference().child("users").child(review.getUidto());
+                            userRef.runTransaction(new Transaction.Handler() {
                                 @Override
                                 public Transaction.Result doTransaction(MutableData mutableData) {
-                                    if(mutableData.getValue()==null){
-                                        mutableData.child("ratingSum").setValue(rating.getRating());
+                                    if(mutableData.child("ratingCount")==null) {
                                         mutableData.child("ratingCount").setValue(1);
+                                        mutableData.child("ratingSum").setValue(rating.getRating());
                                     }else{
-                                        mutableData.child("ratingSum").setValue((Float)mutableData.getValue()+rating.getRating());
-                                        mutableData.child("ratingCount").setValue((Integer)mutableData.getValue()+1);
+                                        Integer count = mutableData.child("ratingCount").getValue(Integer.class);
+                                        Float sum = mutableData.child("ratingSum").getValue(Float.class);
+                                        Float rating = review.getScore();
+                                        mutableData.child("ratingCount").setValue(count+1);
+                                        mutableData.child("ratingSum").setValue(sum+review.getScore());
                                     }
                                     return Transaction.success(mutableData);
                                 }

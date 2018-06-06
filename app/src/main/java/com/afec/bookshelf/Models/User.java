@@ -24,7 +24,7 @@ public class User implements Serializable{
     private String email;
     private Long timestamp = (long)0;
     private int ratingCount = 0;
-    private int ratingSum = 0;
+    private float ratingSum = 0;
 
     public User() {}
 
@@ -81,11 +81,11 @@ public class User implements Serializable{
         this.ratingCount = ratingCount;
     }
 
-    public int getRatingSum() {
+    public float getRatingSum() {
         return ratingSum;
     }
 
-    public void setRatingSum(int ratingSum) {
+    public void setRatingSum(float ratingSum) {
         this.ratingSum = ratingSum;
     }
 
@@ -153,7 +153,7 @@ public class User implements Serializable{
         editor.putString("username", username);
         editor.putString("biography", biography);
         editor.putInt("ratingCount",ratingCount);
-        editor.putInt("ratingSum",ratingSum);
+        editor.putFloat("ratingSum",ratingSum);
         editor.putString("email",email);
         editor.putInt("addedBooks",addedBooks);
         editor.putInt("borrowedBooks",borrowedBooks);
