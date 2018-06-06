@@ -64,10 +64,13 @@ class ChatNotificationService : Service() {
 
         val messageEventListener = object : ValueEventListener {
             override fun onCancelled(p0: DatabaseError?) {
-                TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+                return;
             }
 
             override fun onDataChange(p0: DataSnapshot?) {
+                if (!p0!!.exists()){
+                    return;
+                }
                 var unreadMessage = p0!!.getValue(Boolean::class.java)
 
                 if (unreadMessage!!) {

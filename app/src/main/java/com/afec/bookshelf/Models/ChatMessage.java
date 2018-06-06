@@ -32,15 +32,8 @@ public class ChatMessage {
         this.responded=true;
     }
 
-    public ChatMessage(String message, String UID, long timestamp, boolean isRead, String messageID, String chatID){
-        super();
-        this.message=message;
-        this.uid=UID;
-        this.timestamp=timestamp;
-        this.isRead=isRead;
-        this.responded=true;
-        this.messageID=messageID;
-        this.chatID=chatID;
+    public void setRead(Boolean read) {
+        isRead = read;
     }
 
     public String getMessage() {
@@ -103,10 +96,6 @@ public class ChatMessage {
         return isRead;
     }
 
-    public void setRead(Boolean isRead) {
-        this.isRead = isRead;
-    }
-
     public Boolean getResponded() {
         return responded;
     }
@@ -124,6 +113,9 @@ public class ChatMessage {
     }
 
     public String getChatID() {
+        if(chatID == null){
+            this.chatID = Chat.Companion.chatID(this.uid,this.toUserID);
+        }
         return chatID;
     }
 
@@ -139,8 +131,14 @@ public class ChatMessage {
         db.getReference("chat").child(chatID).child(messageID).child("responded").setValue(true);
         //2.send confirmation message to the user who made the request
         FirebaseUser me = FirebaseAuth.getInstance().getCurrentUser();
-        ChatMessage message = new ChatMessage("Hi, I accepted your book request", me.getUid(), System.currentTimeMillis(), false);
-        Chat.Companion.sendMsgToChat(message, toUserID, uid);
+        ChatMessage acceptMessage = new ChatMessage();
+        acceptMessage.message = "Hi, I accepted you book request!";
+        acceptMessage.isRead = false;
+        acceptMessage.timestamp = System.currentTimeMillis();
+        acceptMessage.toUserID = this.uid;
+        acceptMessage.uid = this.toUserID;
+        acceptMessage.chatID = chatID;
+        Chat.Companion.sendMsgToChat(acceptMessage, toUserID, uid);
     }
 
     public void declineRequest(){
@@ -151,7 +149,13 @@ public class ChatMessage {
         db.getReference("chat").child(chatID).child(messageID).child("responded").setValue(true);
         //2.send decline message to the user who made the request
         FirebaseUser me = FirebaseAuth.getInstance().getCurrentUser();
-        ChatMessage message = new ChatMessage("Hi, I'm sorry but had to decline your book request", me.getUid(), System.currentTimeMillis(), false);
-        Chat.Companion.sendMsgToChat(message, toUserID, uid);
+        ChatMessage declineMessage = new ChatMessage();
+        declineMessage.message = "Hi, I'm sorry but had to decline your book request";
+        declineMessage.isRead = false;
+        declineMessage.timestamp = System.currentTimeMillis();
+        declineMessage.toUserID = this.uid;
+        declineMessage.uid = this.toUserID;
+        declineMessage.chatID = chatID;
+        Chat.Companion.sendMsgToChat(declineMessage, toUserID, uid);
     }
 }

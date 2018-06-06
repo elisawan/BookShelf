@@ -60,9 +60,10 @@ public class ShowBook extends Fragment {
         contentList = new ArrayList<OwnerInstanceBook>();
 
         Bundle b = getArguments();
-        if(b == null){
+        if(!b.containsKey("isbn")){
             Toast.makeText(getActivity(),"ISBN not valid",Toast.LENGTH_SHORT).show();
-            myStartFragment(new BookList());
+            myStartFragment(new NearBooks());
+            return null;
         }
         String isbn = b.getString("isbn", null);
         if (isbn != null && isbn.length()==13) {

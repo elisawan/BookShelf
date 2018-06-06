@@ -20,7 +20,6 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-
 import com.afec.bookshelf.Models.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -43,7 +42,6 @@ public class ShowUser extends Fragment {
     String uid;
     User currentUser;
     FirebaseDatabase database;
-
     View v;
 
     @Nullable
@@ -119,8 +117,9 @@ public class ShowUser extends Fragment {
         userRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
+                if(!dataSnapshot.exists()) return;
                 User newUser = dataSnapshot.getValue(User.class);
-                if((currentUser==null || newUser!=null && newUser.getTimestamp()>currentUser.getTimestamp())) {
+                if((currentUser==null || newUser.getTimestamp()>currentUser.getTimestamp())) {
                     currentUser=newUser;
                     updateViewContent(newUser);
                     newUser.updateSharedPrefContent(getContext());

@@ -2,9 +2,7 @@ package com.afec.bookshelf
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
-import android.os.Message
 import android.support.v4.app.Fragment
 import android.util.ArrayMap
 import android.util.Log
@@ -12,9 +10,8 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
-import com.firebase.ui.auth.AuthUI.getApplicationContext
-import com.google.android.gms.tasks.OnFailureListener
-import com.google.android.gms.tasks.OnSuccessListener
+import com.afec.bookshelf.Models.ChatMessage
+import com.afec.bookshelf.Models.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
@@ -28,9 +25,9 @@ import com.google.firebase.storage.FirebaseStorage
 class ChatList : Fragment() {
 
     lateinit var map_of_chat : MutableMap<String,ChatListItem>
-    lateinit var db : FirebaseDatabase
-    lateinit var User : FirebaseUser
-    lateinit var OtherReference : DatabaseReference
+    val dbRef : DatabaseReference = FirebaseDatabase.getInstance().reference
+    val currentUser : FirebaseUser = FirebaseAuth.getInstance().currentUser!!
+    lateinit var chatRef : DatabaseReference
     lateinit var v: View
     lateinit var lv: ListView
 
@@ -39,27 +36,21 @@ class ChatList : Fragment() {
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_chat_list, container, false)
-        lv = v.findViewById(R.id.listView)
 
         map_of_chat = ArrayMap<String,ChatListItem>()
-        db = FirebaseDatabase.getInstance()
-        User = FirebaseAuth.getInstance().currentUser!!
-        OtherReference = db.getReference("users").child(User.uid).child("chat")
 
+
+        lv = v.findViewById(R.id.listView)
         lv.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, position, id ->
             val intent = Intent(context, Chat::class.java)
             intent.putExtra("userYou", map_of_chat.values.toList()[position].UID)
             context?.startActivity(intent)
         }
 
-        FirebaseDatabase.getInstance()
-                .reference
-                .child("users")
-                .child(User.uid)
-                .child("unreadMessages")
-                .setValue(false)
+        dbRef.child("users").child(currentUser.uid).child("unreadMessages").setValue(false)
 
         return v
     }
@@ -67,15 +58,106 @@ class ChatList : Fragment() {
     override fun onResume(){
         super.onResume()
 
-        OtherReference.addValueEventListener(object : ValueEventListener {
+        chatRef = dbRef.child("users").child(currentUser.uid).child("chat")
+        chatRef.addValueEventListener(object : ValueEventListener {
 
             override fun onDataChange(dataSnapshot: DataSnapshot) {
 
                 for (child in dataSnapshot.children) {
                     //For each chat_id find the UID associated
-                    val otherUID : String = child.key
-                    var chatId : String = child.value as String
-                    val username : DatabaseReference = db.getReference("users").child(otherUID).child("username")
+                    val chatWithUid : String = child.key
+                    val chatId : String = child.value as String
+
+                    val users_ref : DatabaseReference = dbRef.child("users").child(chatWithUid)
+                    users_ref.addValueEventListener(object : ValueEventListener{
+                        override fun onCancelled(p0: DatabaseError?) {
+
+                        }
+
+                        override fun onDataChange(p0: DataSnapshot?) {
+                            if(!p0!!.exists()) return
+                            var chatWithUser : User = p0.getValue(User::class.java) as User
+                            var lastMessageQuery : Query = dbRef.child("chat").child(chatId).orderByKey().limitToLast(1)
+                            lastMessageQuery.addChildEventListener(object:ChildEventListener{
+                                override fun onCancelled(p0: DatabaseError?) {
+
+                                }
+
+                                override fun onChildMoved(p0: DataSnapshot?, p1: String?) {
+
+                                }
+
+                                override fun onChildChanged(p0: DataSnapshot?, p1: String?) {
+
+                                }
+
+                                override fun onChildAdded(p0: DataSnapshot?, p1: String?) {
+                                    if(!p0!!.exists())return
+                                    val chatMessage : ChatMessage = p0.getValue(ChatMessage::class.java) as ChatMessage
+                                    var chatListItem : ChatListItem
+                                    if(chatMessage.toUserID == currentUser.uid){
+                                        chatListItem = ChatListItem(chatWithUid,chatWithUser.username,chatMessage.chatID,chatMessage.message,chatMessage.read)
+                                    }else{
+                                        chatListItem = ChatListItem(chatWithUid,chatWithUser.username,chatMessage.chatID,chatMessage.message,true)
+                                    }
+                                    map_of_chat.put(chatMessage.chatID, chatListItem)
+                                    lv.adapter = object : BaseAdapter() {
+
+                                        override fun getCount(): Int {
+                                            return map_of_chat.size
+                                        }
+
+                                        override fun getItem(position: Int): Any {
+                                            return map_of_chat.values.toList()[position]
+                                        }
+
+                                        override fun getItemId(position: Int): Long {
+                                            return position.toLong()
+                                        }
+
+                                        override fun getView(position: Int, convertView: View?, parent: ViewGroup): View {
+                                            var convertView = convertView
+                                            if (convertView == null) {
+                                                convertView = layoutInflater.inflate(R.layout.chat_item, parent, false)
+                                            }
+
+                                            val iv = convertView!!.findViewById<View>(R.id.chat_image) as ImageView
+
+                                            val mImageRef = FirebaseStorage.getInstance().getReference(map_of_chat.values.toList()[position].UID + "/profilePic.png")
+                                            mImageRef.downloadUrl.addOnSuccessListener{
+                                                uri -> Picasso.with(context).load(uri.toString()).noPlaceholder().into(iv)
+                                            }.addOnFailureListener {
+                                                exception -> Log.e("ERRORE RECUPERO IMG: ", exception.message.toString())
+                                                Picasso.with(context).load(R.drawable.ic_account_circle_black_24dp).into(iv)
+                                            }
+
+                                            val notifIcon = convertView!!.findViewById<View>(R.id.chat_notificationIcon) as ImageView
+
+                                            if(map_of_chat.values.toList()[position].isRead == true)
+                                                notifIcon.visibility = View.INVISIBLE
+                                            else
+                                                notifIcon.visibility = View.VISIBLE
+
+                                            val username_tv = convertView?.findViewById<View>(R.id.chat_other_username) as TextView
+                                            username_tv.setText(map_of_chat.values.toList()[position].othername)
+                                            val preview_tv = convertView?.findViewById<View>(R.id.chat_preview) as TextView
+                                            preview_tv.setText(map_of_chat.values.toList()[position].preview)
+
+                                            return convertView
+                                        }
+                                    }
+                                }
+
+                                override fun onChildRemoved(p0: DataSnapshot?) {
+
+                                }
+
+
+                            })
+                        }
+
+                    })
+                   /* val username : DatabaseReference = db.getReference("users").child(otherUID).child("username")
 
                     username.addValueEventListener( object : ValueEventListener {
 
@@ -86,7 +168,6 @@ class ChatList : Fragment() {
                             lastMessageQuery.addValueEventListener(object : ValueEventListener{
                                 override fun onDataChange(dataSnapshot: DataSnapshot) {
 
-                                    //wrong referencing!
                                     if(dataSnapshot.value!=null){
 
                                         var value : String = dataSnapshot.value!!.toString()
@@ -159,7 +240,7 @@ class ChatList : Fragment() {
                         }
 
                         override fun onCancelled(databaseError: DatabaseError) {}
-                    })
+                    })*/
                 }
             }
             override fun onCancelled(databaseError: DatabaseError) {}

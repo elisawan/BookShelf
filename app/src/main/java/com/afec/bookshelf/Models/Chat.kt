@@ -9,7 +9,7 @@ class Chat {
 
         fun firebaseRef():DatabaseReference{
             val db = FirebaseDatabase.getInstance()
-            return db.reference.child("chat")
+            return db.reference
         }
 
         fun chatID(uid1: String, uid2: String): String {
@@ -19,7 +19,8 @@ class Chat {
         fun sendMsgToChat(msg: ChatMessage, uid1: String, uid2: String): Boolean {
             val ref = Chat.firebaseRef()
             val chatID = Chat.chatID(uid1, uid2)
-            ref.child(chatID).push().setValue(msg)
+            ref.child("chat").child(chatID).push().setValue(msg)
+            ref.child("users").child(uid2).child("unreadMessages").setValue(true)
             return true
         }
     }

@@ -85,7 +85,7 @@ public class ReviewList extends Fragment {
         }
 
         lv.setAdapter(reviewListAdapter);
-        lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        /*lv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 Fragment newFragment = new ShowBook();
@@ -100,7 +100,7 @@ public class ReviewList extends Fragment {
                 // Commit the transaction
                 transaction.commit();
             }
-        });
+        });*/
 
 
         return v;
@@ -147,15 +147,15 @@ public class ReviewList extends Fragment {
                             reviewAuthorList.remove(position);
                             reviewListAdapter.notifyDataSetChanged();
                             //update info in the other user
-                            database.getReference().child("users").child(review.getUidto()).child("ratingComplex").runTransaction(new Transaction.Handler() {
+                            database.getReference().child("users").child(review.getUidto()).child("ratingCount").runTransaction(new Transaction.Handler() {
                                 @Override
                                 public Transaction.Result doTransaction(MutableData mutableData) {
                                     if(mutableData.getValue()==null){
-                                        mutableData.child("sum").setValue(rating.getRating());
-                                        mutableData.child("count").setValue(1);
+                                        mutableData.child("ratingSum").setValue(rating.getRating());
+                                        mutableData.child("ratingCount").setValue(1);
                                     }else{
-                                        mutableData.child("sum").setValue((Float)mutableData.getValue()+rating.getRating());
-                                        mutableData.child("count").setValue((Float)mutableData.getValue()+1);
+                                        mutableData.child("ratingSum").setValue((Float)mutableData.getValue()+rating.getRating());
+                                        mutableData.child("ratingCount").setValue((Integer)mutableData.getValue()+1);
                                     }
                                     return Transaction.success(mutableData);
                                 }
@@ -165,6 +165,12 @@ public class ReviewList extends Fragment {
 
                                 }
                             });
+                            Review recvReview = new Review();
+                            recvReview.setId(review.getId());
+                            recvReview.setStatus(Review.STATUS_RECEIVED);
+                            recvReview.setUidfrom(review.getUidfrom());
+                            recvReview.setUidto(review.getUidto());
+                            database.getReference().child("users").child(review.getUidto()).child("myReviews").child(review.getId()).setValue(recvReview);
                         }
                     });
                     break;

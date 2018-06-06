@@ -22,7 +22,7 @@ public class User implements Serializable{
     private int lentBooks;
     private String username;
     private String email;
-    private Long timestamp;
+    private Long timestamp = (long)0;
     private int ratingCount = 0;
     private int ratingSum = 0;
 
