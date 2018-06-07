@@ -124,6 +124,11 @@ public class ReviewList extends Fragment {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
+            try{
+                reviewAuthorList.get(position);
+            }catch(Exception e ){
+                return null;
+            }
             switch(type){
                 case Review.STATUS_PENDING:
                     if(convertView == null)

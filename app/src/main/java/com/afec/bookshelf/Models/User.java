@@ -142,7 +142,7 @@ public class User implements Serializable{
         if(this.username==null) //a user cannot be without username
             return false;
         this.biography=sharedPref.getString("biography","");
-        this.ratingSum=sharedPref.getInt("ratingSum",0);
+        this.ratingSum=sharedPref.getFloat("ratingSum",0);
         this.ratingCount=sharedPref.getInt("ratingCount",0);
         this.email=sharedPref.getString("emailUtente", null);
         if(this.email==null) //a user cannot be without email
