@@ -9,8 +9,8 @@ public class Review {
     public static final int STATUS_INVALID = -1;
 
     private int status;
-    private String uidfrom;
-    private String uidto;
+    String uidfrom;
+    String uidto;
     private String comment;
     private Float score;
     private Long timestamp;
