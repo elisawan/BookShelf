@@ -25,6 +25,7 @@ public class User implements Serializable{
     private Long timestamp = (long)0;
     private int ratingCount = 0;
     private float ratingSum = 0;
+    private int credit=0;
 
     public User() {}
 
@@ -99,6 +100,14 @@ public class User implements Serializable{
     public void setRating(int sum, int count){
         this.ratingCount = count;
         this.ratingSum = sum;
+    }
+
+    public void setCredit(){
+        this.credit = 0;
+    }
+
+    public int getCredit(){
+        return this.credit;
     }
 
     public String getUsername() {

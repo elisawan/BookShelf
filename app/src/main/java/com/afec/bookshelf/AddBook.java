@@ -6,6 +6,7 @@ import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.provider.ContactsContract;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -40,6 +41,8 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.MutableData;
+import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
 
 import com.android.volley.Request;
@@ -371,7 +374,33 @@ public class AddBook extends Fragment {
 
                 //Aggiornamento lista myBooks
                 database.getReference("users").child(user.getUid()).child("myBooks").child(bookId).setValue(newBook.getIsbn());
+
+                //Aggiungo un credito sociale per l'inserimento
+                final DatabaseReference creditRef = database.getReference().child("users").child(user.getUid());
+                creditRef.runTransaction(new Transaction.Handler() {
+                    @Override
+                    public Transaction.Result doTransaction(MutableData mutableData) {
+                        if(mutableData.child("credit")==null) {
+                            mutableData.child("credit").setValue(1);
+                        }else{
+                            Integer count = mutableData.child("credit").getValue(Integer.class);
+                            mutableData.child("credit").setValue(count+1);
+                        }
+                        return Transaction.success(mutableData);
+                    }
+
+                    @Override
+                    public void onComplete(DatabaseError databaseError, boolean b, DataSnapshot dataSnapshot) {
+
+                    }
+                });
+
+
+
             }
+
+
+
 
             @Override
             public void onCancelled(DatabaseError databaseError) {

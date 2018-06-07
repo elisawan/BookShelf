@@ -4,6 +4,8 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.provider.ContactsContract;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,7 +20,12 @@ import com.afec.bookshelf.Models.OwnerInstanceBook;
 import com.afec.bookshelf.Models.User;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.List;
 
@@ -31,7 +38,7 @@ public class OwnerAdapter extends ArrayAdapter<OwnerInstanceBook> {
 
     FirebaseDatabase firebaseDatabase;
     FirebaseUser currentUser;
-
+    DatabaseReference creditRef;
     User owner;
 
     OwnerViewHolder viewHolder;
@@ -59,6 +66,8 @@ public class OwnerAdapter extends ArrayAdapter<OwnerInstanceBook> {
         owner = getItem(position).getOwner();
         viewHolder = (OwnerViewHolder) convertView.getTag();
 
+        creditRef = firebaseDatabase.getReference().child("users").child(currentUserId+"/credit");
+
         if(viewHolder == null){
             viewHolder = new OwnerViewHolder();
             viewHolder.pseudo = (TextView) convertView.findViewById(R.id.pseudo);
@@ -70,49 +79,40 @@ public class OwnerAdapter extends ArrayAdapter<OwnerInstanceBook> {
                 @Override
                 public void onClick(View v) {
                     //Display dialog box
-                    AlertDialog.Builder alertB = new AlertDialog.Builder(getContext());
 
-                    alertB.setMessage("Do you want to sent a request for this book?");
-                    alertB.setCancelable(true);
 
-                    alertB.setPositiveButton(
-                            R.string.Affirmative,
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    String chatId = Chat.Companion.chatID(currentUserId,ownerID);
+                    //prendo il numero di crediti
 
-                                    String msg = "New book request from "+currentUser.getDisplayName()+" of ...";
-                                    ChatMessage message = new ChatMessage(msg, currentUserId, System.currentTimeMillis(), false);
-                                    message.setBookReq(true);
-                                    message.setBookInstance(bookInstanceID);
-                                    message.setBookISBN(isbn);
-                                    message.setToUserID(ownerID);
-                                    message.setResponded(false);
+                    creditRef.addValueEventListener(new ValueEventListener() {
 
-                                    Chat.Companion.sendMsgToChat(message,currentUserId,ownerID);
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            int credits = dataSnapshot.getValue(Integer.class);
+                            if(credits>=1){
+                                sendRequestAlert(credits);
+                            }else{
+                                noCreditsAlert();
+                            }
+                        }
 
-                                    firebaseDatabase.getReference("users").child(currentUserId).child("chat").child(ownerID).setValue(chatId);
-                                    firebaseDatabase.getReference("users").child(ownerID).child("chat").child(currentUserId).setValue(chatId);
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
 
-                                    dialog.cancel();
-                                    Intent intent = new Intent(getContext(), com.afec.bookshelf.Chat.class);
-                                    intent.putExtra("userYou",ownerID);
-                                    getContext().startActivity(intent);
-                                }
-                            });
+                        }
+                    });
 
-                    alertB.setNegativeButton(
-                            R.string.Negative,
-                            new DialogInterface.OnClickListener() {
-                                public void onClick(DialogInterface dialog, int id) {
-                                    dialog.cancel();
-                                }
-                            });
 
-                    AlertDialog alertD = alertB.create();
-                    alertD.show();
+
+
+
                 }
             });
+
+
+
+
+
+
             convertView.setTag(viewHolder);
         }
 
@@ -135,4 +135,61 @@ public class OwnerAdapter extends ArrayAdapter<OwnerInstanceBook> {
 
     }
 
+    //Funzioni alert
+    private void noCreditsAlert(){
+        AlertDialog.Builder alertA = new AlertDialog.Builder(getContext());
+        alertA.setMessage("Non hai abbastanza crediti per richiedere un libro.\n\nAggiungi libri per ottenere crediti spendibili");
+        alertA.setCancelable(true);
+
+        alertA.show();
+    }
+
+
+    private void sendRequestAlert(int crediti){
+        AlertDialog.Builder alertB = new AlertDialog.Builder(getContext());
+        alertB.setMessage("Do you want to sent a request for this book?");
+        alertB.setCancelable(true);
+
+        final int credits = crediti;
+
+        alertB.setPositiveButton(
+                R.string.Affirmative,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+
+                        creditRef.setValue(credits-1);
+
+                        String chatId = Chat.Companion.chatID(currentUserId,ownerID);
+
+                        String msg = "New book request from "+currentUser.getDisplayName()+" of ...";
+                        ChatMessage message = new ChatMessage(msg, currentUserId, System.currentTimeMillis(), false);
+                        message.setBookReq(true);
+                        message.setBookInstance(bookInstanceID);
+                        message.setBookISBN(isbn);
+                        message.setToUserID(ownerID);
+                        message.setResponded(false);
+
+                        Chat.Companion.sendMsgToChat(message,currentUserId,ownerID);
+
+                        firebaseDatabase.getReference("users").child(currentUserId).child("chat").child(ownerID).setValue(chatId);
+                        firebaseDatabase.getReference("users").child(ownerID).child("chat").child(currentUserId).setValue(chatId);
+
+                        dialog.cancel();
+                        Intent intent = new Intent(getContext(), com.afec.bookshelf.Chat.class);
+                        intent.putExtra("userYou",ownerID);
+                        getContext().startActivity(intent);
+                    }
+                });
+
+        alertB.setNegativeButton(
+                R.string.Negative,
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+
+        AlertDialog alertD = alertB.create();
+        alertD.show();
+    }
 }
