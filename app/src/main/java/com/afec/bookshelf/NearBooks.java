@@ -84,9 +84,6 @@ public class NearBooks extends Fragment {
         foundBooks = new ArrayList<BookInstance>();
         booksList = new ArrayList<Book>();
 
-        //populate the grid view with a default radius of 10 km
-        find_near_book(10);
-
         //adapt the search radius according to user selection
         sb.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
 
@@ -107,7 +104,7 @@ public class NearBooks extends Fragment {
 
             }
         });
-
+        gv.setAdapter(bookGridAdapter);
         gv.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
@@ -124,6 +121,8 @@ public class NearBooks extends Fragment {
                 transaction.commit();
             }
         });
+        //populate the grid view with a default radius of 10 km
+        find_near_book(10);
         return v;
     }
 
@@ -132,6 +131,7 @@ public class NearBooks extends Fragment {
         final GeoFire geoFire = new GeoFire(bookInstances);
 
         //reset list of found books
+        bookGridAdapter.notifyDataSetInvalidated();
         booksList.clear();
         foundBooks.clear();
 
@@ -159,42 +159,9 @@ public class NearBooks extends Fragment {
                                 @Override
                                 public void onDataChange(DataSnapshot dataSnapshot) {
                                     Book b = dataSnapshot.getValue(Book.class);
+                                    if(b!=null)
                                         booksList.add(b);
-
-                                    // show on view
-                                    gv.setAdapter(new BaseAdapter() {
-
-                                        @Override
-                                        public int getCount() {
-                                            return booksList.size();
-                                        }
-
-                                        @Override
-                                        public Object getItem(int position) {
-                                            return booksList.get(position);
-                                        }
-
-                                        @Override
-                                        public long getItemId(int position) {
-                                            return position;
-                                        }
-
-                                        @Override
-                                        public View getView(int position, View convertView, ViewGroup parent) {
-                                            if (convertView == null && !booksList.isEmpty()) {
-                                                convertView = getLayoutInflater().inflate(R.layout.book_preview, parent, false);
-
-                                                ImageView iv = (ImageView) convertView.findViewById(R.id.book_image_preview);
-                                                Picasso.with(getActivity()).load(booksList.get(position).getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
-                                                        .into(iv);
-                                                TextView title_tv = (TextView) convertView.findViewById(R.id.book_title_preview);
-                                                title_tv.setText(booksList.get(position).getTitle());
-                                                TextView author_tv = (TextView) convertView.findViewById(R.id.book_autor_preview);
-                                                author_tv.setText(booksList.get(position).getAllAuthors());
-                                            }
-                                            return convertView;
-                                        }
-                                    });
+                                    bookGridAdapter.notifyDataSetChanged();
                                 }
 
                                 @Override
@@ -241,14 +208,14 @@ public class NearBooks extends Fragment {
         if(ContextCompat.checkSelfPermission(getActivity(), android.Manifest.permission.ACCESS_COARSE_LOCATION)!= PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions(getActivity(), new String[] {android.Manifest.permission.ACCESS_COARSE_LOCATION},1);
         }
-        LocationManager lm= (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+        LocationManager lm = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
 
         lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, mLocationListener);
 
         myLocation= new MyLocation();
 
         location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        if(location==null) {
+        if(location == null) {
             lm.requestLocationUpdates(LocationManager.NETWORK_PROVIDER,0,0, this.mLocationListener);
             location = lm.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         }
@@ -277,6 +244,47 @@ public class NearBooks extends Fragment {
         @Override
         public void onProviderDisabled(String provider) {
 
+        }
+    };
+
+    BaseAdapter bookGridAdapter = new BaseAdapter() {
+
+        @Override
+        public int getCount() {
+            return booksList.size();
+        }
+
+        @Override
+        public Object getItem(int position) {
+            return booksList.get(position);
+        }
+
+        @Override
+        public long getItemId(int position) {
+            return position;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            try{
+                booksList.get(position);
+            }catch (Exception e){
+                return null;
+            }
+            if (convertView == null ) {
+                convertView = getLayoutInflater().inflate(R.layout.book_preview, parent, false);
+            }
+            ImageView iv = (ImageView) convertView.findViewById(R.id.book_image_preview);
+            String url = booksList.get(position).getThumbnailUrl();
+            if(url!=null){
+                Picasso.with(getActivity()).load(booksList.get(position).getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
+                        .into(iv);
+            }
+            TextView title_tv = (TextView) convertView.findViewById(R.id.book_title_preview);
+            title_tv.setText(booksList.get(position).getTitle());
+            TextView author_tv = (TextView) convertView.findViewById(R.id.book_autor_preview);
+            author_tv.setText(booksList.get(position).getAllAuthors());
+            return convertView;
         }
     };
 }
