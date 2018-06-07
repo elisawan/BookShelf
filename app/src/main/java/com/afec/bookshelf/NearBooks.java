@@ -1,8 +1,6 @@
 package com.afec.bookshelf;
 
-
 import android.content.pm.PackageManager;
-import android.location.Geocoder;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -21,7 +19,6 @@ import android.widget.ImageView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.afec.bookshelf.Models.Book;
 import com.afec.bookshelf.Models.BookInstance;
 import com.afec.bookshelf.Models.MyLocation;
@@ -37,12 +34,10 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import static android.content.Context.LOCATION_SERVICE;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -67,7 +62,6 @@ public class NearBooks extends Fragment {
         // Required empty public constructor
     }
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -78,7 +72,6 @@ public class NearBooks extends Fragment {
         db = FirebaseDatabase.getInstance();
         CurrentUser = FirebaseAuth.getInstance().getCurrentUser();
         UID = CurrentUser.getUid();
-
 
         // Create the grid view with nearest books
         title = (TextView) v.findViewById(R.id.textView7);
