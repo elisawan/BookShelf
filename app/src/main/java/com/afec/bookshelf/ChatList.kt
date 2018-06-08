@@ -6,9 +6,7 @@ import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.util.ArrayMap
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.*
 import com.afec.bookshelf.Models.ChatMessage
 import com.afec.bookshelf.Models.User
@@ -37,13 +35,14 @@ class ChatList : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
 
+        setHasOptionsMenu(true)
         // Inflate the layout for this fragment
         v = inflater.inflate(R.layout.fragment_chat_list, container, false)
 
         map_of_chat = ArrayMap<String,ChatListItem>()
 
 
-        lv = v.findViewById(R.id.listView)
+        lv = v.findViewById(R.id.listView) as ListView
         lv.onItemClickListener = AdapterView.OnItemClickListener { adapterView, view, position, id ->
             val intent = Intent(context, Chat::class.java)
             intent.putExtra("userYou", map_of_chat.values.toList()[position].UID)
@@ -253,6 +252,12 @@ class ChatList : Fragment() {
 
     override fun onDetach() {
         super.onDetach()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        super.onCreateOptionsMenu(menu, inflater)
+        menu!!.setGroupVisible(R.id.defaultMenu, false)
+        menu.setGroupVisible(R.id.showProfileMenu, false)
     }
 }
 

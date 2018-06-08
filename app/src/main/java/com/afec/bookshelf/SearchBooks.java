@@ -6,14 +6,11 @@ import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v7.widget.Toolbar;
-
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -65,7 +62,7 @@ public class SearchBooks extends Fragment {
 
         Bundle b_author = new Bundle();
         b_author.putString("query", query);
-        b_author.putString("search_on","authors, allAuthors, author");
+        b_author.putString("search_on","authors");
         Fragment searchAuthor = new SearchResult();
         searchAuthor.setArguments(b_author);
         adapter.addFragment(searchAuthor,"Author");
