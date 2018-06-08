@@ -192,7 +192,8 @@ public class MainActivity extends AppCompatActivity {
                     String userName = dataSnapshot.child("username").getValue(String.class);
                     drawerUsername.setText(String.valueOf(userName));
                     int credits = dataSnapshot.child("credit").getValue(Integer.class);
-                    drawerCredits.setText("Crediti sociali:" + String.valueOf(credits));
+                    String crediti = "Social credits: " + String.valueOf(credits);
+                    drawerCredits.setText(crediti);
                 }
             }
             @Override
