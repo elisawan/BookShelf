@@ -10,4 +10,5 @@
     <string name="gallery">Gallerie</string>
     <string name="camera">Camera</string>
     <string name="contact_methods">Contacts</string>
+    <string name="save">Salva</string>
 </resources>

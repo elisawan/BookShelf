@@ -144,6 +144,7 @@ public class ShowUser extends Fragment {
             @Override
             public void onFailure(@NonNull Exception exception) {
                 Log.e("ERRORE RECUPERO IMG: ", exception.getMessage().toString());
+                Picasso.with(getContext()).load(R.drawable.ic_account_circle_black_24dp).into(immagineUtente);
             }
         });
     }

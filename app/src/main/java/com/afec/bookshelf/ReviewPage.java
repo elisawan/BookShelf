@@ -72,19 +72,19 @@ public class ReviewPage extends Fragment {
         b_pending.putInt("query",Review.STATUS_PENDING);
         Fragment pendingReviews = new ReviewList();
         pendingReviews.setArguments(b_pending);
-        adapter.addFragment(pendingReviews,"Pending");
+        adapter.addFragment(pendingReviews,getResources().getString(R.string.pending));
 
         Bundle b_written = new Bundle();
         b_written.putInt("query",Review.STATUS_WRITTEN);
         Fragment writtenReviews = new ReviewList();
         writtenReviews.setArguments(b_written);
-        adapter.addFragment(writtenReviews,"Written");
+        adapter.addFragment(writtenReviews,getResources().getString(R.string.written));
 
         Bundle b_received = new Bundle();
         b_received.putInt("query",Review.STATUS_RECEIVED);
         Fragment receivedReviews = new ReviewList();
         receivedReviews.setArguments(b_received);
-        adapter.addFragment(receivedReviews,"Received");
+        adapter.addFragment(receivedReviews,getResources().getString(R.string.received));
 
         mViewPager.setAdapter(adapter);
     }

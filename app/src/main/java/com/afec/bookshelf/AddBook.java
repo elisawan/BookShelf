@@ -137,7 +137,7 @@ public class AddBook extends Fragment {
                 if(newBook!=null){
                     status = statusSpinner.getSelectedItemId();
                     if(status==0){
-                        Toast.makeText(getActivity(),"Condition of the book is mandatory",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),R.string.book_condition_toast,Toast.LENGTH_SHORT).show();
                     }
                     else {
                         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -159,7 +159,7 @@ public class AddBook extends Fragment {
                         transaction.commit();
                     }
                 }else {
-                    Toast.makeText(getActivity(),"Scan a book first!",Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getActivity(),R.string.scan_a_book_toast,Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -173,7 +173,7 @@ public class AddBook extends Fragment {
             }
             else
             {
-                Toast.makeText(getActivity(),"No valid ISBN ",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),R.string.no_valid_ISBN_toast,Toast.LENGTH_SHORT).show();
             }
         }
 
@@ -189,7 +189,7 @@ public class AddBook extends Fragment {
                     }
                     else
                     {
-                        Toast.makeText(getActivity(),"ISBN must be 13 characters long",Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getActivity(),R.string.ISBN_must_be_13_toast,Toast.LENGTH_SHORT).show();
                         return false;
                     }
                 }
@@ -216,7 +216,7 @@ public class AddBook extends Fragment {
                             newBook.setIsbn(isbn);
                             setViews();
                         } catch (bookNotFound e) {
-                            Toast.makeText(getActivity(),"ISBN doesn't exists",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(),R.string.ISBN_not_found_toast,Toast.LENGTH_SHORT).show();
                             newBook = null;
                         }catch (IOException e){
                             Log.e("error", e.getMessage());
@@ -227,7 +227,7 @@ public class AddBook extends Fragment {
             @Override
             public void onErrorResponse(VolleyError error) {
                 //Log.e("Response error", "That didn't work!");
-                Toast.makeText(getActivity(),"Network error",Toast.LENGTH_SHORT).show();
+                Toast.makeText(getActivity(),R.string.Network_error,Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -348,9 +348,9 @@ public class AddBook extends Fragment {
                     @Override
                     public void onComplete(String key, DatabaseError error) {
                         if (error != null) {
-                            Toast.makeText(getActivity(),"There was an error saving the location to GeoFire: " + error,Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(),R.string.Geofire_error,Toast.LENGTH_SHORT).show();
                         } else {
-                            Toast.makeText(getActivity(),"Location saved on server successfully!",Toast.LENGTH_SHORT).show();
+                            Toast.makeText(getActivity(),R.string.Geofire_success,Toast.LENGTH_SHORT).show();
                         }
                     }
                 });

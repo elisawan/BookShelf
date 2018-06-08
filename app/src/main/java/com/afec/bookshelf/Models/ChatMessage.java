@@ -1,6 +1,7 @@
 package com.afec.bookshelf.Models;
 
 import com.afec.bookshelf.Models.Chat;
+import com.afec.bookshelf.R;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DatabaseReference;
@@ -132,7 +133,7 @@ public class ChatMessage {
         //2.send confirmation message to the user who made the request
         FirebaseUser me = FirebaseAuth.getInstance().getCurrentUser();
         ChatMessage acceptMessage = new ChatMessage();
-        acceptMessage.message = "Hi, I accepted you book request!";
+        acceptMessage.message = String.valueOf(R.string.book_request_accepted_message);
         acceptMessage.isRead = false;
         acceptMessage.timestamp = System.currentTimeMillis();
         acceptMessage.toUserID = this.uid;
@@ -150,7 +151,7 @@ public class ChatMessage {
         //2.send decline message to the user who made the request
         FirebaseUser me = FirebaseAuth.getInstance().getCurrentUser();
         ChatMessage declineMessage = new ChatMessage();
-        declineMessage.message = "Hi, I'm sorry but had to decline your book request";
+        declineMessage.message = String.valueOf(R.string.book_request_declined_message) ;
         declineMessage.isRead = false;
         declineMessage.timestamp = System.currentTimeMillis();
         declineMessage.toUserID = this.uid;

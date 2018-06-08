@@ -15,7 +15,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:paddingStart="20dp"
-            android:text="Books around me"
+            android:text="@string/title_book_around_you"
             android:textColor="#000000"
             android:textSize="30sp" />
 
