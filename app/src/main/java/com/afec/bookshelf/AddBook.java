@@ -35,6 +35,7 @@ import com.firebase.geofire.GeoFire;
 import com.firebase.geofire.GeoLocation;
 import com.algolia.search.saas.Client;
 import com.algolia.search.saas.Index;
+import com.google.firebase.analytics.FirebaseAnalytics;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -77,6 +78,7 @@ public class AddBook extends Fragment {
     MyLocation myLocation;
     long status;
     String currentDateTime;
+    private FirebaseAnalytics mFirebaseAnalytics;
 
     // Algolia: add new added book to algolia
     Client client;
@@ -88,6 +90,8 @@ public class AddBook extends Fragment {
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+
+        mFirebaseAnalytics = FirebaseAnalytics.getInstance(getContext());
 
         View v = inflater.inflate(R.layout.activity_add_book, container, false);
 
@@ -395,7 +399,9 @@ public class AddBook extends Fragment {
                     }
                 });
 
-
+                Bundle bundle = new Bundle();
+                bundle.putString(FirebaseAnalytics.Param.CONTENT_TYPE, "book");
+                mFirebaseAnalytics.logEvent(FirebaseAnalytics.Event.SHARE, bundle);
 
             }
 

@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity {
     Toolbar myToolbar;
     private DrawerLayout mDrawerLayout;
     Menu menu;
-    TextView drawerUsername, drawerEmail;
+    TextView drawerUsername, drawerEmail, drawerCredits;
     LinearLayout drawerLayout;
 
     // Firebase
@@ -175,6 +175,7 @@ public class MainActivity extends AppCompatActivity {
             });
         drawerUsername= (TextView) header.findViewById(R.id.sidebar_username);
         drawerEmail = (TextView) header.findViewById(R.id.sidebar_mail);
+        drawerCredits = (TextView) header.findViewById(R.id.sidebar_credits);
         drawerLayout = (LinearLayout) findViewById(R.id.drawer_layout);
 
         // Firebase
@@ -183,13 +184,15 @@ public class MainActivity extends AppCompatActivity {
 
         // Fill navigation drawer view
         drawerEmail.setText(user.getEmail());
-        userRef = db.getReference("users").child(user.getUid()).child("username");
+        userRef = db.getReference("users").child(user.getUid());
         userRef.addListenerForSingleValueEvent(new ValueEventListener()  {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 if(dataSnapshot.exists()) {
-                    String userName = dataSnapshot.getValue(String.class);
+                    String userName = dataSnapshot.child("username").getValue(String.class);
                     drawerUsername.setText(String.valueOf(userName));
+                    int credits = dataSnapshot.child("credit").getValue(Integer.class);
+                    drawerCredits.setText("Crediti sociali:" + String.valueOf(credits));
                 }
             }
             @Override
