@@ -12,8 +12,9 @@
     <string name="save">Save</string>
     <string name="phone_call">Phone call</string>
     <string name="whatsapp">Whats App</string>
-    <string name="lent_books">Lent Books</string>
-    <string name="borrowed_books">Borrowed Books</string>
+    <string name="lent_books">Lent</string>
+    <string name="borrowed_books">Borrowed</string>
+    <string name="credit_user">credit</string>
     <string name="title_activity_add_book">AddBook</string>
     <string name="book_title">Book title</string>
     <string name="myBooks">My books</string>

@@ -128,7 +128,7 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(myToolbar);
         ActionBar actionbar = getSupportActionBar();
         actionbar.setDisplayHomeAsUpEnabled(true);
-        actionbar.setTitle(Html.fromHtml("<font color='#ffffff'>Book Hook</font>"));
+        actionbar.setTitle(Html.fromHtml("<font color='#ffffff'>BookShelf</font>"));
         actionbar.setHomeAsUpIndicator(R.drawable.ic_menu);
 
         // Navigation drawer header

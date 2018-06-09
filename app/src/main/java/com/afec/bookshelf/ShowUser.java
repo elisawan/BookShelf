@@ -36,7 +36,7 @@ import com.squareup.picasso.Picasso;
 public class ShowUser extends Fragment {
 
     ImageView immagineUtente;
-    TextView nomeUtente, bioUtente, lentBookCount, borrowedBookCount;
+    TextView nomeUtente, bioUtente, lentBookCount, borrowedBookCount, email;
     RatingBar ratingBar;
     Dialog builder;
     String uid;
@@ -101,6 +101,8 @@ public class ShowUser extends Fragment {
         borrowedBookCount = (TextView) v.findViewById(R.id.borrowed_book_count);
         ratingBar = (RatingBar) v.findViewById(R.id.ratingUser);
 
+        email = (TextView) v.findViewById(R.id.show_user_mail);
+
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         currentUser = new User();
         if(!currentUser.getUserLocalData(getContext(),uid)){
@@ -162,5 +164,6 @@ public class ShowUser extends Fragment {
         ratingBar.setRating(u.getRating());
         nomeUtente.setText(String.valueOf(u.getUsername()));
         bioUtente.setText(String.valueOf(u.getBiography()));
+        email.setText(String.valueOf(u.getEmail()));
     }
 }
