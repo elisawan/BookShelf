@@ -7,8 +7,12 @@ import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentPagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
@@ -20,10 +24,13 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
+
+import com.afec.bookshelf.Models.Review;
 import com.afec.bookshelf.Models.User;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -33,16 +40,25 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
+import java.util.List;
+
+
 public class ShowUser extends Fragment {
 
     ImageView immagineUtente;
-    TextView nomeUtente, bioUtente, lentBookCount, borrowedBookCount, email;
+    TextView nomeUtente, bioUtente, lentBookCount, borrowedBookCount, credit;
     RatingBar ratingBar;
     Dialog builder;
     String uid;
     User currentUser;
     FirebaseDatabase database;
+    FirebaseUser currentUserFirebase;
     View v;
+
+    private ReviewPage.SectionsPagerAdapter mSectionsPagerAdapter;
+    private ViewPager mViewPager;
+
 
     @Nullable
     @Override
@@ -68,7 +84,65 @@ public class ShowUser extends Fragment {
         //Mettere tutte le inizializzazioni qui in config
         config();
 
+        database = FirebaseDatabase.getInstance();
+        currentUserFirebase = FirebaseAuth.getInstance().getCurrentUser();
+
+
         return v;
+    }
+
+    private void setupViewPager(ViewPager mViewPager){
+        ReviewPage.SectionsPagerAdapter adapter = new ReviewPage.SectionsPagerAdapter(getActivity().getSupportFragmentManager());
+
+        Bundle b_pending = new Bundle();
+        b_pending.putInt("query", Review.STATUS_PENDING);
+        Fragment pendingReviews = new ReviewList();
+        pendingReviews.setArguments(b_pending);
+        adapter.addFragment(pendingReviews,getResources().getString(R.string.pending));
+
+        Bundle b_written = new Bundle();
+        b_written.putInt("query",Review.STATUS_WRITTEN);
+        Fragment writtenReviews = new ReviewList();
+        writtenReviews.setArguments(b_written);
+        adapter.addFragment(writtenReviews,getResources().getString(R.string.written));
+
+        Bundle b_received = new Bundle();
+        b_received.putInt("query",Review.STATUS_RECEIVED);
+        Fragment receivedReviews = new ReviewList();
+        receivedReviews.setArguments(b_received);
+        adapter.addFragment(receivedReviews,getResources().getString(R.string.received));
+
+        mViewPager.setAdapter(adapter);
+    }
+
+    public static class SectionsPagerAdapter extends FragmentPagerAdapter {
+
+        private final List<Fragment> mFragmentList = new ArrayList<>();
+        private final List<String> mFragmentTitleList = new ArrayList<>();
+
+        public SectionsPagerAdapter(FragmentManager fm) {
+            super(fm);
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            return mFragmentList.get(position);
+        }
+
+        @Override
+        public int getCount() {
+            return mFragmentList.size();
+        }
+
+        @Override
+        public String getPageTitle(int position){
+            return mFragmentTitleList.get(position);
+        }
+
+        public void addFragment(Fragment fragment, String title){
+            mFragmentList.add(fragment);
+            mFragmentTitleList.add(title);
+        }
     }
 
     public void publicationQuickView(){
@@ -99,9 +173,9 @@ public class ShowUser extends Fragment {
 
         lentBookCount = (TextView) v.findViewById(R.id.lent_book_count);
         borrowedBookCount = (TextView) v.findViewById(R.id.borrowed_book_count);
-        ratingBar = (RatingBar) v.findViewById(R.id.ratingUser);
+        credit = (TextView) v.findViewById(R.id.credit_user_count);
 
-        email = (TextView) v.findViewById(R.id.show_user_mail);
+        ratingBar = (RatingBar) v.findViewById(R.id.ratingUser);
 
         uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
         currentUser = new User();
@@ -113,6 +187,23 @@ public class ShowUser extends Fragment {
 
         database = FirebaseDatabase.getInstance();
         DatabaseReference userRef;
+
+        //for the review part ----------------------------------------------------------------------
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the activity.
+        mSectionsPagerAdapter = new ReviewPage.SectionsPagerAdapter(getActivity().getSupportFragmentManager());
+
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = (ViewPager) v.findViewById(R.id.rev_container_user);
+        setupViewPager(mViewPager);
+
+        TabLayout tabLayout = (TabLayout) v.findViewById(R.id.rev_tabs_user);
+        tabLayout.setupWithViewPager(mViewPager);
+
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
+        tabLayout.addOnTabSelectedListener(new TabLayout.ViewPagerOnTabSelectedListener(mViewPager));
+
+        //------------------------------------------------------------------------------------------
 
         //listener for capturing changes on user attributes
         userRef= database.getReference("users").child(uid);
@@ -164,6 +255,5 @@ public class ShowUser extends Fragment {
         ratingBar.setRating(u.getRating());
         nomeUtente.setText(String.valueOf(u.getUsername()));
         bioUtente.setText(String.valueOf(u.getBiography()));
-        email.setText(String.valueOf(u.getEmail()));
     }
 }

@@ -89,7 +89,7 @@ public class ReviewPage extends Fragment {
         mViewPager.setAdapter(adapter);
     }
 
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
+    public static class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         private final List<Fragment> mFragmentList = new ArrayList<>();
         private final List<String> mFragmentTitleList = new ArrayList<>();

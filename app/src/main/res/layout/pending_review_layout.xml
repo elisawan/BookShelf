@@ -18,22 +18,26 @@
 
             <TextView
                 android:id="@+id/pending_rev_user_name"
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_marginBottom="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginEnd="7dp"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="7dp"
                 android:text="TextView"
+                android:textStyle="bold"
                 app:layout_constraintBottom_toTopOf="@+id/pending_rev_ratingBar"
+                app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toEndOf="@+id/pending_rev_user_image"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintVertical_bias="0.0" />
 
             <ImageView
                 android:id="@+id/pending_rev_user_image"
                 android:layout_width="75dp"
                 android:layout_height="75dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="7dp"
                 android:src="@drawable/ic_account_circle_black_24dp"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent" />
@@ -42,35 +46,36 @@
                 android:id="@+id/pending_rev_ratingBar"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
-                android:layout_marginTop="8dp"
                 app:layout_constraintBottom_toTopOf="@+id/pending_rev_edit_text"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/pending_rev_user_image" />
+                app:layout_constraintHorizontal_bias="0.522"
+                app:layout_constraintStart_toEndOf="@+id/pending_rev_user_image" />
 
             <EditText
                 android:id="@+id/pending_rev_edit_text"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
-                android:layout_marginStart="8dp"
+                android:layout_height="51dp"
+                android:layout_marginBottom="7dp"
+                android:layout_marginEnd="7dp"
+                android:layout_marginStart="7dp"
+                android:layout_marginTop="8dp"
                 android:hint="Leave a comment..."
                 android:inputType="textMultiLine"
-                android:textAlignment="center"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toStartOf="@+id/pending_rev_save_button"
-                app:layout_constraintStart_toStartOf="parent" />
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/pending_rev_user_image"
+                app:layout_constraintVertical_bias="1.0" />
 
             <Button
                 android:id="@+id/pending_rev_save_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
-                android:layout_marginEnd="8dp"
+                android:layout_marginBottom="7dp"
+                android:background="@color/colorPrimaryDark"
                 android:text="@string/save"
+                android:textColor="@android:color/white"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent" />
         </android.support.constraint.ConstraintLayout>
