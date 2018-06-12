@@ -127,11 +127,7 @@ public class ReviewList extends Fragment {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            try{
-                reviewAuthorList.get(position);
-            }catch(Exception e ){
-                return null;
-            }
+
             switch(type){
                 case Review.STATUS_PENDING:
                     if(convertView == null)
@@ -224,17 +220,16 @@ public class ReviewList extends Fragment {
                 for(DataSnapshot child : dataSnapshot.getChildren()) {
                     // get review id
                     String rev_id = child.getKey();
-                    Review r = child.getValue(Review.class);
+                    final Review r = child.getValue(Review.class);
                     r.setId(rev_id);
                     if (r.getStatus() == Review.STATUS_PENDING) {
-                        reviewsList.add(r);
 
                         database.getReference("users").child(r.getUidto()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 reviewAuthorList.add(dataSnapshot.getValue(User.class));
+                                reviewsList.add(r);
                                 reviewListAdapter.notifyDataSetChanged();
-
                             }
 
                             @Override
@@ -270,13 +265,13 @@ public class ReviewList extends Fragment {
                         database.getReference("reviews").child(r.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                Review r = dataSnapshot.getValue(Review.class);
-                                reviewsList.add(r);
+                                final Review r = dataSnapshot.getValue(Review.class);
 
                                 database.getReference("users").child(r.getUidto()).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         reviewAuthorList.add(dataSnapshot.getValue(User.class));
+                                        reviewsList.add(r);
                                         reviewListAdapter.notifyDataSetChanged();
 
                                     }
@@ -318,13 +313,14 @@ public class ReviewList extends Fragment {
                         database.getReference("reviews").child(r.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                Review r = dataSnapshot.getValue(Review.class);
-                                reviewsList.add(r);
+                                final Review r = dataSnapshot.getValue(Review.class);
+
 
                                 database.getReference("users").child(r.getUidfrom()).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         reviewAuthorList.add(dataSnapshot.getValue(User.class));
+                                        reviewsList.add(r);
                                         reviewListAdapter.notifyDataSetChanged();
 
                                     }
