@@ -55,7 +55,6 @@ public class ShowBook extends Fragment {
         tv_publisher = (TextView) v.findViewById(R.id.book_publisher);
         tv_title = (TextView) v.findViewById(R.id.book_title);
         iv_book = (ImageView) v.findViewById(R.id.book_image);
-        tv_desc = (TextView) v.findViewById(R.id.book_description);
 
         contentList = new ArrayList<OwnerInstanceBook>();
 
@@ -81,7 +80,6 @@ public class ShowBook extends Fragment {
                         tv_publisher.setText(b.getPublisher());
                     }
                     tv_isbn.setText(b.getIsbn());
-                    tv_desc.setText(b.getDescription());
                     Picasso.with(getActivity()).load(b.getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
                             .into(iv_book);
                 }
