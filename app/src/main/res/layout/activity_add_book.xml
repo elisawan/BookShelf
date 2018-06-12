@@ -137,7 +137,6 @@
                 android:textColor="@android:color/white"
                 android:layout_width="168dp"
                 android:layout_height="match_parent"
-                android:layout_margin="7dp"
                 android:layout_weight="1"
                 android:text="@string/scan"
                 app:layout_constraintBottom_toTopOf="@+id/ISBN_reader"
@@ -156,21 +155,29 @@
                 android:inputType="number"
                 app:layout_constraintEnd_toEndOf="parent"
                 tools:layout_editor_absoluteY="106dp" />
+
         </LinearLayout>
 
-        <Button
-            android:id="@+id/confirm_button"
-            android:background="@color/colorPrimaryDark"
-            android:textColor="@android:color/white"
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_gravity="end"
-            android:layout_marginLeft="7dp"
-            android:layout_marginRight="7dp"
-            android:text="@string/confirm"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/edit_location" />
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/confirm_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="bottom"
+                android:layout_weight="1"
+                android:background="@color/colorPrimaryDark"
+                android:text="@string/confirm"
+                android:textColor="@android:color/white"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/edit_location" />
+        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>
