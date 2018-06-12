@@ -1,31 +1,35 @@
 package com.afec.bookshelf
 
 import android.os.Bundle
+import android.support.design.widget.TabLayout
 import android.support.v4.app.Fragment
+import android.support.v4.view.ViewPager
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.*
 import com.afec.bookshelf.Models.Review
-import com.afec.bookshelf.Models.User
 import com.google.firebase.database.*
 import com.google.firebase.storage.FirebaseStorage
 import com.squareup.picasso.Picasso
 
 class ShowUserPublic : Fragment() {
 
+    lateinit var uid:String;
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
+
+        setHasOptionsMenu(true)
+
         // Inflate the layout for this fragment
-        val v:View = inflater.inflate(R.layout.fragment_show_user_public, container, false)
+        val v:View = inflater.inflate(R.layout.activity_show_user, container, false)
         val b:Bundle? = arguments;
         var username:String
         var borrowedBooks:String
         var lentBooks:String
         var bio:String
         var rating:String
-        var uid:String
+
 
         if(b!=null){
             username = b.getString("username","-")
@@ -42,14 +46,16 @@ class ShowUserPublic : Fragment() {
 
         val nomeUtenteTV : TextView = v.findViewById(R.id.nomeUtente);
         nomeUtenteTV.text = username;
-        val bioTV:TextView = v.findViewById<TextView>(R.id.bioUtente);
+        val bioTV:TextView = v.findViewById(R.id.bioUtente);
         bioTV.setText(bio);
-        val borrowedTV:TextView = v.findViewById<TextView>(R.id.taken_book_count);
+        val borrowedTV:TextView = v.findViewById(R.id.borrowed_book_count);
         borrowedTV.setText(borrowedBooks);
-        val lentTV:TextView = v.findViewById<TextView>(R.id.shared_book_count);
+        val lentTV:TextView = v.findViewById(R.id.lent_book_count);
         lentTV.setText(lentBooks);
-        val ratingRB:RatingBar = v.findViewById<RatingBar>(R.id.ratingUser) as RatingBar;
+        val ratingRB:RatingBar = v.findViewById(R.id.ratingUser);
         ratingRB.rating = rating.toFloat()
+        v.findViewById<TextView>(R.id.credit_user).visibility = View.GONE;
+        v.findViewById<TextView>(R.id.credit_user_count).visibility = View.GONE;
         val imageView: ImageView = v.findViewById(R.id.immagineUtente)
         val mImageRef = FirebaseStorage.getInstance().getReference( uid + "/profilePic.png")
         mImageRef.downloadUrl.addOnSuccessListener{
@@ -58,90 +64,51 @@ class ShowUserPublic : Fragment() {
             exception -> Log.e("ERRORE RECUPERO IMG: ", exception.message.toString())
             Picasso.with(context).load(R.drawable.ic_account_circle_black_24dp).into(imageView)
         }
-        var reviewListView : ListView
-        reviewListView = v.findViewById(R.id.owner_review_list) as ListView
-        var reviewList : ArrayList<Review> = ArrayList()
-        var reviewAuthorList : ArrayList<User> = ArrayList()
-        var reviewListAdapter = object : BaseAdapter() {
-            override fun getCount(): Int {
-                return reviewList.size
-            }
 
-            override fun getItem(position: Int): Any {
-                return reviewList.get(position)
-            }
 
-            override fun getItemId(position: Int): Long {
-                return position.toLong()
-            }
+        //for the review part ----------------------------------------------------------------------
+        // Create the adapter that will return a fragment for each of the three
+        // primary sections of the activity.
+        var mSectionsPagerAdapter: ReviewPage.SectionsPagerAdapter? = null
+        var mViewPager: ViewPager? = null
+        mSectionsPagerAdapter = ReviewPage.SectionsPagerAdapter(activity!!.supportFragmentManager)
 
-            override fun getView(position: Int, convertView: View?, parent: ViewGroup): View? {
-                var convertView = convertView
-                try {
-                    reviewList.get(position)
-                } catch (e: Exception) {
-                    return null
-                }
+        // Set up the ViewPager with the sections adapter.
+        mViewPager = v.findViewById<View>(R.id.rev_container_user) as ViewPager
+        setupViewPager(mViewPager)
 
-                if (convertView == null)
-                    convertView = layoutInflater.inflate(R.layout.received_review_layout, parent, false)
-                val review_author = convertView!!.findViewById<View>(R.id.review_user_name) as TextView
-                review_author.setText(reviewAuthorList.get(position).getUsername())
+        val tabLayout = v.findViewById<View>(R.id.rev_tabs_user) as TabLayout
+        tabLayout.setupWithViewPager(mViewPager)
 
-                val review_comment = convertView.findViewById<View>(R.id.review_comment) as TextView
-                review_comment.setText(reviewList.get(position).getComment())
+        mViewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tabLayout))
+        tabLayout.addOnTabSelectedListener(TabLayout.ViewPagerOnTabSelectedListener(mViewPager))
 
-                val review_rating = convertView.findViewById<View>(R.id.review_score) as RatingBar
-                review_rating.rating = reviewList.get(position).getScore()!!
-
-                return convertView
-            }
-        }
-
-        reviewListView.adapter = reviewListAdapter
-
-        val reviewRef : DatabaseReference = dbRef.child("users").child(uid).child("myReviews")
-        reviewRef.addValueEventListener(object:ValueEventListener{
-            override fun onCancelled(p0: DatabaseError?) {
-
-            }
-
-            override fun onDataChange(p0: DataSnapshot?) {
-                if (!p0!!.exists()) return;
-                for(child:DataSnapshot  in p0!!.getChildren()) {
-                    val r: Review = child.getValue(Review::class.java) as Review
-                    if (r.status == Review.STATUS_RECEIVED) {
-                        dbRef.child("users").child(r.uidfrom).addListenerForSingleValueEvent(object : ValueEventListener {
-                            override fun onCancelled(p0: DatabaseError?) {
-
-                            }
-
-                            override fun onDataChange(p0: DataSnapshot?) {
-                                if (!p0!!.exists()) return;
-                                val a: User = p0.getValue(User::class.java) as User
-                                dbRef.child("reviews").child(r.id).addListenerForSingleValueEvent(object : ValueEventListener {
-                                    override fun onCancelled(p0: DatabaseError?) {
-
-                                    }
-
-                                    override fun onDataChange(p0: DataSnapshot?) {
-                                        if (!p0!!.exists()) return;
-                                        val r: Review = p0.getValue(Review::class.java) as Review
-                                        reviewAuthorList.add(a)
-                                        reviewList.add(r)
-                                        reviewListAdapter.notifyDataSetChanged()
-                                    }
-
-                                })
-                            }
-
-                        })
-                    }
-                }
-            }
-
-        })
-
+        //------------------------------------------------------------------------------------------
         return v;
+    }
+    override fun onCreateOptionsMenu(menu: Menu?, inflater: MenuInflater?) {
+        super.onCreateOptionsMenu(menu, inflater)
+        menu!!.setGroupVisible(R.id.defaultMenu, false)
+        menu.setGroupVisible(R.id.showProfileMenu, false)
+    }
+
+    private fun setupViewPager(mViewPager: ViewPager) {
+        val adapter = ReviewPage.SectionsPagerAdapter(activity!!.supportFragmentManager)
+
+        val b_written = Bundle()
+        b_written.putInt("query", Review.STATUS_WRITTEN)
+        b_written.putString("user", uid);
+        val writtenReviews = ReviewList()
+        writtenReviews.arguments = b_written
+        adapter.addFragment(writtenReviews, resources.getString(R.string.written))
+
+        val b_received = Bundle()
+        b_received.putInt("query", Review.STATUS_RECEIVED)
+        b_received.putString("user", uid);
+        val receivedReviews = ReviewList()
+        receivedReviews.arguments = b_received
+        adapter.addFragment(receivedReviews, resources.getString(R.string.received))
+
+        mViewPager.adapter = adapter
     }
 }

@@ -8,6 +8,8 @@ import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -48,6 +50,7 @@ public class ShowBook extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.activity_show_book, container, false);
 
+        setHasOptionsMenu(true);
         mListView = (ListView) v.findViewById(R.id.list_of_owner);
         tv_author = (TextView) v.findViewById(R.id.book_autor);
         tv_ed_year = (TextView) v.findViewById(R.id.book_year_edition);
@@ -170,5 +173,12 @@ public class ShowBook extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        menu.setGroupVisible(R.id.defaultMenu,false);
+        menu.setGroupVisible(R.id.showProfileMenu,false);
     }
 }

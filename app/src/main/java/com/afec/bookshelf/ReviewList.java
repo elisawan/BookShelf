@@ -2,19 +2,17 @@ package com.afec.bookshelf;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentTransaction;
-import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-
 import com.afec.bookshelf.Models.Review;
 import com.afec.bookshelf.Models.User;
 import com.google.firebase.auth.FirebaseAuth;
@@ -26,16 +24,13 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.MutableData;
 import com.google.firebase.database.Transaction;
 import com.google.firebase.database.ValueEventListener;
-
-import org.w3c.dom.Text;
-
 import java.util.ArrayList;
 import java.util.List;
 
 public class ReviewList extends Fragment {
 
     FirebaseDatabase database;
-    FirebaseUser currentUser;
+    String uid;
 
     List<User> reviewAuthorList;
     List<Review> reviewsList;
@@ -59,18 +54,24 @@ public class ReviewList extends Fragment {
         View v = inflater.inflate(R.layout.review_list, container, false);
         lv = v.findViewById(R.id.review_list_view);
 
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        Bundle b = getArguments();
+        if(b!=null) {
+            if (b.containsKey("query")) {
+                type = b.getInt("query", Review.STATUS_INVALID);
+            }else{
+                type = Review.STATUS_INVALID;
+            }
+            if (b.containsKey("user")) {
+                uid = b.getString("user");
+            } else {
+                uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            }
+        }
+
         database = FirebaseDatabase.getInstance();
 
         reviewsList = new ArrayList<Review>();
         reviewAuthorList = new ArrayList<User>();
-
-        // arguments
-        type = Review.STATUS_INVALID;
-        Bundle b = getArguments();
-        if(b.containsKey("query")) {
-            type = b.getInt("query", Review.STATUS_INVALID);
-        }
 
         switch(type){
             case Review.STATUS_PENDING:
@@ -124,11 +125,7 @@ public class ReviewList extends Fragment {
 
         @Override
         public View getView(final int position, View convertView, ViewGroup parent) {
-            try{
-                reviewAuthorList.get(position);
-            }catch(Exception e ){
-                return null;
-            }
+
             switch(type){
                 case Review.STATUS_PENDING:
                     if(convertView == null)
@@ -214,24 +211,23 @@ public class ReviewList extends Fragment {
     };
 
     public void getPendingReviews(){
-        DatabaseReference ref = database.getReference("users").child(currentUser.getUid()).child("myReviews");
+        DatabaseReference ref = database.getReference("users").child(uid).child("myReviews");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 for(DataSnapshot child : dataSnapshot.getChildren()) {
                     // get review id
                     String rev_id = child.getKey();
-                    Review r = child.getValue(Review.class);
+                    final Review r = child.getValue(Review.class);
                     r.setId(rev_id);
                     if (r.getStatus() == Review.STATUS_PENDING) {
-                        reviewsList.add(r);
 
                         database.getReference("users").child(r.getUidto()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
                                 reviewAuthorList.add(dataSnapshot.getValue(User.class));
+                                reviewsList.add(r);
                                 reviewListAdapter.notifyDataSetChanged();
-
                             }
 
                             @Override
@@ -251,7 +247,7 @@ public class ReviewList extends Fragment {
     }
 
     public void getWrittenReviews(){
-        DatabaseReference ref = database.getReference("users").child(currentUser.getUid()).child("myReviews");
+        DatabaseReference ref = database.getReference("users").child(uid).child("myReviews");
         // get review reference
         ref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -267,13 +263,13 @@ public class ReviewList extends Fragment {
                         database.getReference("reviews").child(r.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                Review r = dataSnapshot.getValue(Review.class);
-                                reviewsList.add(r);
+                                final Review r = dataSnapshot.getValue(Review.class);
 
                                 database.getReference("users").child(r.getUidto()).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         reviewAuthorList.add(dataSnapshot.getValue(User.class));
+                                        reviewsList.add(r);
                                         reviewListAdapter.notifyDataSetChanged();
 
                                     }
@@ -302,7 +298,7 @@ public class ReviewList extends Fragment {
     }
 
     public void getReceivedReviews(){
-        DatabaseReference ref = database.getReference("users").child(currentUser.getUid()).child("myReviews");
+        DatabaseReference ref = database.getReference("users").child(uid).child("myReviews");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -315,13 +311,14 @@ public class ReviewList extends Fragment {
                         database.getReference("reviews").child(r.getId()).addListenerForSingleValueEvent(new ValueEventListener() {
                             @Override
                             public void onDataChange(DataSnapshot dataSnapshot) {
-                                Review r = dataSnapshot.getValue(Review.class);
-                                reviewsList.add(r);
+                                final Review r = dataSnapshot.getValue(Review.class);
+
 
                                 database.getReference("users").child(r.getUidfrom()).addListenerForSingleValueEvent(new ValueEventListener() {
                                     @Override
                                     public void onDataChange(DataSnapshot dataSnapshot) {
                                         reviewAuthorList.add(dataSnapshot.getValue(User.class));
+                                        reviewsList.add(r);
                                         reviewListAdapter.notifyDataSetChanged();
 
                                     }
@@ -348,4 +345,6 @@ public class ReviewList extends Fragment {
             }
         });
     }
+
+   
 }

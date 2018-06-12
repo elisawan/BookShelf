@@ -8,23 +8,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.TabHost;
-
 import com.afec.bookshelf.Models.Review;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
-import com.google.firebase.database.ChildEventListener;
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -34,8 +24,8 @@ import java.util.List;
 
 public class ReviewPage extends Fragment {
 
-    FirebaseUser currentUser;
     FirebaseDatabase database;
+    String uid;
 
     private static final String TAG = "ReviewPage activity";
     private SectionsPagerAdapter mSectionsPagerAdapter;
@@ -46,8 +36,16 @@ public class ReviewPage extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.activity_reviews, container, false);
 
+        Bundle b = getArguments();
+        if(b!=null){
+            if(b.containsKey("user")){
+                uid = b.getString("user");
+            }else{
+                uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            }
+        }
+
         database = FirebaseDatabase.getInstance();
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         // Create the adapter that will return a fragment for each of the three
         // primary sections of the activity.
@@ -118,4 +116,6 @@ public class ReviewPage extends Fragment {
             mFragmentTitleList.add(title);
         }
     }
+
+
 }
