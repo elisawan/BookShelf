@@ -24,7 +24,6 @@ import android.view.Window;
 import android.widget.ImageView;
 import android.widget.RatingBar;
 import android.widget.TextView;
-
 import com.afec.bookshelf.Models.Review;
 import com.afec.bookshelf.Models.User;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -39,10 +38,8 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.squareup.picasso.Picasso;
-
 import java.util.ArrayList;
 import java.util.List;
-
 
 public class ShowUser extends Fragment {
 
@@ -59,13 +56,18 @@ public class ShowUser extends Fragment {
     private ReviewPage.SectionsPagerAdapter mSectionsPagerAdapter;
     private ViewPager mViewPager;
 
-
+    @Override
+    public void onCreate(Bundle b){
+        super.onCreate(b);
+        setHasOptionsMenu(true);
+    }
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         v = inflater.inflate(R.layout.activity_show_user, container, false);
         v.setFocusableInTouchMode(true);
         v.requestFocus();
+
         v.setOnKeyListener( new View.OnKeyListener()
         {
             @Override
@@ -86,7 +88,6 @@ public class ShowUser extends Fragment {
 
         database = FirebaseDatabase.getInstance();
         currentUserFirebase = FirebaseAuth.getInstance().getCurrentUser();
-
 
         return v;
     }
@@ -156,8 +157,6 @@ public class ShowUser extends Fragment {
     }
 
     public void config(){
-
-        setHasOptionsMenu(true);
 
         immagineUtente = (ImageView) v.findViewById(R.id.immagineUtente);
         //percepisce il tap lungo
@@ -240,6 +239,8 @@ public class ShowUser extends Fragment {
                 Picasso.with(getContext()).load(R.drawable.ic_account_circle_black_24dp).into(immagineUtente);
             }
         });
+
+
     }
 
     @Override
