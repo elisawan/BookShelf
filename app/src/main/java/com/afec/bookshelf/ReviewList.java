@@ -30,7 +30,7 @@ import java.util.List;
 public class ReviewList extends Fragment {
 
     FirebaseDatabase database;
-    FirebaseUser currentUser;
+    String uid;
 
     List<User> reviewAuthorList;
     List<Review> reviewsList;
@@ -54,18 +54,24 @@ public class ReviewList extends Fragment {
         View v = inflater.inflate(R.layout.review_list, container, false);
         lv = v.findViewById(R.id.review_list_view);
 
-        currentUser = FirebaseAuth.getInstance().getCurrentUser();
+        Bundle b = getArguments();
+        if(b!=null) {
+            if (b.containsKey("query")) {
+                type = b.getInt("query", Review.STATUS_INVALID);
+            }else{
+                type = Review.STATUS_INVALID;
+            }
+            if (b.containsKey("user")) {
+                uid = b.getString("user");
+            } else {
+                uid = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            }
+        }
+
         database = FirebaseDatabase.getInstance();
 
         reviewsList = new ArrayList<Review>();
         reviewAuthorList = new ArrayList<User>();
-
-        // arguments
-        type = Review.STATUS_INVALID;
-        Bundle b = getArguments();
-        if(b.containsKey("query")) {
-            type = b.getInt("query", Review.STATUS_INVALID);
-        }
 
         switch(type){
             case Review.STATUS_PENDING:
@@ -205,7 +211,7 @@ public class ReviewList extends Fragment {
     };
 
     public void getPendingReviews(){
-        DatabaseReference ref = database.getReference("users").child(currentUser.getUid()).child("myReviews");
+        DatabaseReference ref = database.getReference("users").child(uid).child("myReviews");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -241,7 +247,7 @@ public class ReviewList extends Fragment {
     }
 
     public void getWrittenReviews(){
-        DatabaseReference ref = database.getReference("users").child(currentUser.getUid()).child("myReviews");
+        DatabaseReference ref = database.getReference("users").child(uid).child("myReviews");
         // get review reference
         ref.addValueEventListener(new ValueEventListener() {
             @Override
@@ -292,7 +298,7 @@ public class ReviewList extends Fragment {
     }
 
     public void getReceivedReviews(){
-        DatabaseReference ref = database.getReference("users").child(currentUser.getUid()).child("myReviews");
+        DatabaseReference ref = database.getReference("users").child(uid).child("myReviews");
         ref.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
