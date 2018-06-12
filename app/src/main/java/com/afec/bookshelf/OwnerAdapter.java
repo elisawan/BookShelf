@@ -4,7 +4,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.provider.ContactsContract;
+import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +20,8 @@ import com.afec.bookshelf.Models.ChatMessage;
 import com.afec.bookshelf.Models.Chat;
 import com.afec.bookshelf.Models.OwnerInstanceBook;
 import com.afec.bookshelf.Models.User;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.ChildEventListener;
@@ -26,6 +30,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -100,20 +107,27 @@ public class OwnerAdapter extends ArrayAdapter<OwnerInstanceBook> {
 
                         }
                     });
+                }
+            });
 
+            convertView.setTag(viewHolder);
 
+            //listener for capturing profile image changes
+            StorageReference mImageRef = FirebaseStorage.getInstance().getReference(currentUserId + "/profilePic.png");
+            mImageRef.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                @Override
+                public void onSuccess(Uri uri) {
+                    Picasso.with(getContext()).load(uri.toString()).noPlaceholder().into(viewHolder.avatar);
 
-
-
+                }
+            }).addOnFailureListener(new OnFailureListener() {
+                @Override
+                public void onFailure(@NonNull Exception exception) {
+                    Log.e("ERRORE RECUPERO IMG: ", exception.getMessage().toString());
                 }
             });
 
 
-
-
-
-
-            convertView.setTag(viewHolder);
         }
 
 
@@ -138,7 +152,7 @@ public class OwnerAdapter extends ArrayAdapter<OwnerInstanceBook> {
     //Funzioni alert
     private void noCreditsAlert(){
         AlertDialog.Builder alertA = new AlertDialog.Builder(getContext());
-        alertA.setMessage("Non hai abbastanza crediti per richiedere un libro.\n\nAggiungi libri per ottenere crediti spendibili");
+        alertA.setMessage(R.string.not_enough_credits);
         alertA.setCancelable(true);
 
         alertA.show();
@@ -147,7 +161,7 @@ public class OwnerAdapter extends ArrayAdapter<OwnerInstanceBook> {
 
     private void sendRequestAlert(int crediti){
         AlertDialog.Builder alertB = new AlertDialog.Builder(getContext());
-        alertB.setMessage("Do you want to sent a request for this book?");
+        alertB.setMessage(R.string.book_request_question);
         alertB.setCancelable(true);
 
         final int credits = crediti;

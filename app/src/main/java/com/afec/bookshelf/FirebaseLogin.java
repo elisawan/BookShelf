@@ -67,7 +67,8 @@ public class FirebaseLogin extends AppCompatActivity {
                             .setAvailableProviders(Arrays.asList(
                                     new AuthUI.IdpConfig.EmailBuilder().build(),
                                     new AuthUI.IdpConfig.GoogleBuilder().build()))
-                            .setLogo(R.mipmap.ic_launcher)
+                            .setTheme(R.style.LoginStyle)
+                            .setLogo(R.mipmap.ic_background)
                             .build(), RC_SIGN_IN);
         }
     }

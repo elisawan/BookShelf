@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#efecca</color>
+    <color name="colorPrimary">#fdfcf9</color>
     <color name="colorPrimaryDark">#046380</color>
     <color name="colorPrimaryDarkDarker">#023b4c</color>
     <color name="colorAccent">#e60b57</color>
@@ -10,7 +10,11 @@
     <color name="colorTabSearchAuthor">#046380</color>
     <color name="colorTabSearchPublisher">#046380</color>
 
-    <color name="colorNuanceDark">#a7a37e</color>
+    <color name="colorTabPending">#046380</color>
+    <color name="colorTabWritten">#046380</color>
+    <color name="colorTabReceived">#046380</color>
+
+    <color name="colorNuanceDark">#c1bea4</color>
     <color name="colorNuanceLite">#E6E2AF</color>
     <color name="colorSelected">#CDDC39</color>
 

@@ -273,7 +273,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                 public void onClick(View v) {
                     Boolean status=message.getResponded();
                     if(status==null || status==true){
-                        Toast.makeText( itemView.getContext() ,"Book request no more valid",Toast.LENGTH_SHORT).show();
+                        Toast.makeText( itemView.getContext() ,R.string.book_request_no_more_valid_toast,Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -328,7 +328,7 @@ public class MessageListAdapter extends RecyclerView.Adapter {
 
                         //5.Display dialog box
                         AlertDialog.Builder alertB = new AlertDialog.Builder(v.getContext());
-                        alertB.setMessage("Book request accepted");
+                        alertB.setMessage(R.string.book_request_accepted_alert);
                         AlertDialog alertD = alertB.create();
                         alertD.show();
                 }
@@ -338,13 +338,13 @@ public class MessageListAdapter extends RecyclerView.Adapter {
                 public void onClick(View v) {
                     Boolean status=message.getResponded();
                     if(status==null || status==true){
-                        Toast.makeText( itemView.getContext() ,"Book request no more valid",Toast.LENGTH_SHORT).show();
+                        Toast.makeText( itemView.getContext() ,R.string.book_request_no_more_valid_toast,Toast.LENGTH_SHORT).show();
                         return;
                     }
                     message.declineRequest();
                     //Display dialog box
                     AlertDialog.Builder alertB = new AlertDialog.Builder(v.getContext());
-                    alertB.setMessage("Book request declined");
+                    alertB.setMessage(R.string.book_request_declined_alert);
                     AlertDialog alertD = alertB.create();
                     alertD.show();
                 }

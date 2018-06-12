@@ -26,19 +26,19 @@
                 android:id="@+id/tabPending"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pending" />
+                android:text="@string/pending" />
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabWritten"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Written" />
+                android:text="@string/written" />
 
             <android.support.design.widget.TabItem
                 android:id="@+id/tabReceived"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Received" />
+                android:text="@string/received" />
 
         </android.support.design.widget.TabLayout>
     </android.support.design.widget.AppBarLayout>

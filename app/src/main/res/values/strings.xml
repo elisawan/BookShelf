@@ -12,8 +12,9 @@
     <string name="save">Save</string>
     <string name="phone_call">Phone call</string>
     <string name="whatsapp">Whats App</string>
-    <string name="lent_books">Lent Books</string>
-    <string name="borrowed_books">Borrowed Books</string>
+    <string name="lent_books">Lent</string>
+    <string name="borrowed_books">Borrowed</string>
+    <string name="credit_user">credit</string>
     <string name="title_activity_add_book">AddBook</string>
     <string name="book_title">Book title</string>
     <string name="myBooks">My books</string>
@@ -40,7 +41,7 @@
     <string name="Delete_permission">Are you sure you want to delete it?</string>
     <string name="menu_search">Menu search</string>
     <string name="action_settings">Settings</string>
-    <string name="search_hint">Search hint</string>
+    <string name="search_hint">Title, Author, Publisher..</string>
     <string name="title_book_around_you">Books around me</string>
 
     <string name="SearchByAll">All</string>
@@ -55,4 +56,40 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title">Title</string>
+    <string name="author">Author</string>
+    <string name="edition_year">Edition Year</string>
+    <string name="publisher">Publisher</string>
+    <string name="status">Status</string>
+    <string name="available">Available</string>
+    <string name="location">Location</string>
+    <string name="edit">Edit</string>
+    <string name="delete">Delete</string>
+    <string name="isbn_number">ISBN number</string>
+    <string name="scan">Scan</string>
+    <string name="confirm">Confirm</string>
+    <string name="book_condition_toast">Condition of the book is mandatory</string>
+    <string name="scan_a_book_toast">Scan a book first!</string>
+    <string name="no_valid_ISBN_toast">No valid ISBN found</string>
+    <string name="ISBN_must_be_13_toast">ISBN must be 13 characters long</string>
+    <string name="ISBN_not_found_toast">ISBN not found</string>
+    <string name="Network_error">Network error</string>
+    <string name="Geofire_error">There was an error saving the location to GeoFire: </string>
+    <string name="Geofire_success">Location saved successfully!</string>
+    <string name="new_message_notification">You have unread messages!</string>
+    <string name="book_request_no_more_valid_toast">Book request is no more valid</string>
+    <string name="book_request_accepted_alert">Book request accepted</string>
+    <string name="book_request_declined_alert">Book request no more valid</string>
+    <string name="book_request_accepted_message">Hi, I accepted you book request!</string>
+    <string name="book_request_declined_message">Hi, I\'m sorry but had to decline your book request</string>
+    <string name="not_enough_credits">You don\'t have enough credits to request a book.&#xD;Add books to obtain credits.</string>
+    <string name="book_request_question">Do you want to sent a request for this book?</string>
+    <string name="pending">Pending</string>
+    <string name="written">Written</string>
+    <string name="received">Received</string>
+    <string name="chat">Chat</string>
+    <string name="reviews">Reviews</string>
+    <string name="logout">Logout</string>
+
+
 </resources>

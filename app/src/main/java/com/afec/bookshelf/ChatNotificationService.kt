@@ -84,7 +84,7 @@ class ChatNotificationService : Service() {
                     val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
                     notificationBuilder = NotificationCompat.Builder(applicationContext,CHANNEL_ID)
-                            .setContentTitle("Ci sono nuovi messaggi!")
+                            .setContentTitle(R.string.new_message_notification.toString())
                             .setSmallIcon(R.mipmap.ic_launcher)
                             .setSound(defaultSoundUri)
                             .setContentIntent(contentIntent)
