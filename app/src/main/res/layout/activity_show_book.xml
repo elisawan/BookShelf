@@ -108,13 +108,13 @@
                 android:textStyle="bold" />
 
 
-            <ListView
-                android:id="@+id/list_of_owner"
-                style="@style/Widget.AppCompat.ListView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:headerDividersEnabled="false" />
-
         </LinearLayout>
+
+        <ListView
+            android:id="@+id/list_of_owner"
+            style="@style/Widget.AppCompat.ListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:headerDividersEnabled="false" />
     </LinearLayout>
 </LinearLayout>

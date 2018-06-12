@@ -98,11 +98,11 @@
         <Button
             android:id="@+id/button_edit_confirm"
             android:text="@string/save"
+            android:background="@color/colorPrimaryDark"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="bottom"
             android:layout_weight="1"
-            android:background="@color/colorPrimaryDark"
             android:textColor="@android:color/white" />
     </LinearLayout>
 
