@@ -48,7 +48,7 @@
             android:layout_height="match_parent"
             android:horizontalSpacing="20dp"
             android:numColumns="2"
-            android:padding="20dp"
+
             android:verticalSpacing="20dp" />
     </LinearLayout>
 
