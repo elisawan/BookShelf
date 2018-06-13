@@ -405,9 +405,6 @@ public class AddBook extends Fragment {
 
             }
 
-
-
-
             @Override
             public void onCancelled(DatabaseError databaseError) {
 
@@ -424,6 +421,9 @@ public class AddBook extends Fragment {
             obj.put("authors", newBook.getAuthors());
             obj.put("isbn", newBook.getIsbn());
             obj.put("thumbnailUrl", newBook.getThumbnailUrl());
+            if(newBook.getPublisher()!=null){
+                obj.put("publisher", newBook.getPublisher());
+            }
         }catch (JSONException e){
 
         }

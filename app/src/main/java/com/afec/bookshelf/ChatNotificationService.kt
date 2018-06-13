@@ -7,18 +7,12 @@ import android.media.RingtoneManager
 import android.os.Binder
 import android.os.IBinder
 import android.util.Log
-import android.view.ViewParent
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.*
 import android.app.PendingIntent
-import android.widget.Toast
-import android.R.string.cancel
-import android.content.ComponentName
-import android.content.pm.PackageManager
 import android.support.v4.app.NotificationCompat
 import com.afec.bookshelf.MainActivity.CHANNEL_ID
-import java.util.*
 
 class ChatNotificationService : Service() {
 
@@ -84,7 +78,7 @@ class ChatNotificationService : Service() {
                     val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
                     notificationBuilder = NotificationCompat.Builder(applicationContext,CHANNEL_ID)
-                            .setContentTitle(R.string.new_message_notification.toString())
+                            .setContentTitle(resources.getString(R.string.new_message_notification))
                             .setSmallIcon(R.mipmap.ic_launcher)
                             .setSound(defaultSoundUri)
                             .setContentIntent(contentIntent)

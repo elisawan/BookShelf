@@ -148,7 +148,7 @@ public class MyBookActivity extends Fragment {
             Toast.makeText(getActivity(),"Book not found",Toast.LENGTH_SHORT).show();
         }
 
-        delButton.setOnClickListener(
+        /*delButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -197,9 +197,9 @@ public class MyBookActivity extends Fragment {
                         alert11.show();
                     }
                 }
-        );
+        );*/
 
-        locButton.setOnClickListener(
+       /* locButton.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -231,7 +231,7 @@ public class MyBookActivity extends Fragment {
                         });
                     }
                 }
-        );
+        );*/
 
         avCheckbox.setOnClickListener(new View.OnClickListener() {
             @Override

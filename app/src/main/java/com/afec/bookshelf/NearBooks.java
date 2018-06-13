@@ -172,7 +172,7 @@ public class NearBooks extends Fragment {
 
                     @Override
                     public void onCancelled(DatabaseError databaseError) {
-
+                        bookGridAdapter.notifyDataSetChanged();
                     }
                 });
             }
@@ -279,6 +279,8 @@ public class NearBooks extends Fragment {
             if(url!=null){
                 Picasso.with(getActivity()).load(booksList.get(position).getThumbnailUrl()).placeholder(R.drawable.book_image_placeholder)
                         .into(iv);
+            }else{
+                iv.setImageDrawable((getResources().getDrawable(R.drawable.book_image_placeholder)));
             }
             TextView title_tv = (TextView) convertView.findViewById(R.id.book_title_preview);
             title_tv.setText(booksList.get(position).getTitle());
