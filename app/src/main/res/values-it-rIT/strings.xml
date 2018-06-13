@@ -73,4 +73,6 @@
     <string name="chat">Chat</string>
     <string name="reviews">Recensioni</string>
     <string name="logout">Disconnettiti</string>
+    <string name="credit_user">Crediti</string>
+    <string name="menu_search">Menù di ricerca</string>
 </resources>

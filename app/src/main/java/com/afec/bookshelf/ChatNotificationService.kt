@@ -78,7 +78,8 @@ class ChatNotificationService : Service() {
                     val defaultSoundUri = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION)
 
                     notificationBuilder = NotificationCompat.Builder(applicationContext,CHANNEL_ID)
-                            .setContentTitle(resources.getString(R.string.new_message_notification))
+                            .setContentTitle("BookShelf")
+                            .setContentText(resources.getString(R.string.new_message_notification))
                             .setSmallIcon(R.mipmap.ic_launcher)
                             .setSound(defaultSoundUri)
                             .setContentIntent(contentIntent)
