@@ -1,4 +1,28 @@
 <resources>
+    <!-- General strings -->
+    <!-- Chat strings -->
+    <string name="SEND">SEND</string>
+    <string name="enter_message_hint">Enter message</string>
+    <!-- Show book strings -->
+    <string name="owners">Owners</string>
+    <!-- Search book strings -->
+    <string name="SearchByAll">All</string>
+    <string name="SearchByTitle">Title</string>
+    <string name="SearchByAuthor">Author</string>
+    <string name="SearchByPublisher">Publisher</string>
+    <string name="title_activity_search_books">SearchBooks</string>
+    <!-- reviews strings -->
+    <string name="pending">Pending</string>
+    <string name="written">Written</string>
+    <string name="received">Received</string>
+    <!-- my book strings -->
+    <string name="title">title</string>
+    <string name="author">author</string>
+    <string name="edition_year">edition_year</string>
+    <string name="publisher">Publisher</string>
+
+    <!-- General strings -->
+
     <string name="app_name">BookShelf</string>
     <string name="nome_utente">Username</string>
     <string name="email">Email</string>
@@ -44,11 +68,7 @@
     <string name="search_hint">Title, Author, Publisher..</string>
     <string name="title_book_around_you">Books around me</string>
 
-    <string name="SearchByAll">All</string>
-    <string name="SearchByTitle">Title</string>
-    <string name="SearchByAuthor">Author</string>
-    <string name="SearchByPublisher">Publisher</string>
-    <string name="title_activity_search_books">SearchBooks</string>
+
     <string name="tab_text_1">Tab 1</string>
     <string name="tab_text_2">Tab 2</string>
     <string name="tab_text_3">Tab 3</string>
@@ -56,10 +76,7 @@
 
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <string name="title">Title</string>
-    <string name="author">Author</string>
-    <string name="edition_year">Edition Year</string>
-    <string name="publisher">Publisher</string>
+
     <string name="status">Status</string>
     <string name="available">Available</string>
     <string name="location">Location</string>
@@ -80,13 +97,11 @@
     <string name="book_request_no_more_valid_toast">Book request is no more valid</string>
     <string name="book_request_accepted_alert">Book request accepted</string>
     <string name="book_request_declined_alert">Book request no more valid</string>
-    <string name="book_request_accepted_message">Hi, I accepted you book request!</string>
+    <string name="book_request_accepted_message">Hi, I accepted your request!</string>
     <string name="book_request_declined_message">Hi, I\'m sorry but had to decline your book request</string>
     <string name="not_enough_credits">You don\'t have enough credits to request a book.&#xD;Add books to obtain credits.</string>
     <string name="book_request_question">Do you want to sent a request for this book?</string>
-    <string name="pending">Pending</string>
-    <string name="written">Written</string>
-    <string name="received">Received</string>
+
     <string name="chat">Chat</string>
     <string name="reviews">Reviews</string>
     <string name="logout">Logout</string>

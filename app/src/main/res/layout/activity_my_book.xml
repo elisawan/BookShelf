@@ -58,7 +58,7 @@
                     android:layout_weight="1"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:text="@string/author" />
+                    android:text="author" />
 
                 <TextView
                     android:id="@+id/book_year_edition"
@@ -68,7 +68,7 @@
                     android:layout_weight="1"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:text="@string/edition_year" />
+                    android:text="edition_year" />
 
                 <TextView
                     android:id="@+id/book_publisher"
@@ -78,7 +78,7 @@
                     android:layout_weight="1"
                     android:ellipsize="end"
                     android:singleLine="true"
-                    android:text="@string/publisher" />
+                    android:text="publisher" />
 
                 <TextView
                     android:id="@+id/book_isbn"
