@@ -105,7 +105,6 @@
     <string name="chat">Chat</string>
     <string name="reviews">Reviews</string>
     <string name="logout">Logout</string>
-    <string name="Logout_permission">Are you sure you want to logout?</string>
 
 
 </resources>
